@@ -13,18 +13,25 @@ class TaskController{
 
     }
 
-    start(){
+    safeStart(){
         this.started = true;
+        this.task.start();
     }
 
     finishWithFailure(){
         this.finished = true;
         this.failed = true;
+        this.safeEnd();
     }
 
     finishWithSuccess(){
         this.finished = true;
         this.failed = false;
+        this.safeEnd();
+    }
+
+    safeEnd(){
+
     }
 
 }

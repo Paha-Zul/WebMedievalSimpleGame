@@ -4,6 +4,7 @@
 /// <reference path="./Building.ts"/>
 /// <reference path="./Helper.ts"/>
 /// <reference path="./Behaviours.ts"/>
+/// <reference path="./CircularQueue.ts"/>
 /// <reference path="./tasks/BlackBoard.ts"/>
 /// <reference path="./tasks/actions/MoveTo.ts"/>
 /// <reference path="./tasks/actions/FollowWaypoint.ts"/>
@@ -40,17 +41,19 @@ function preload () {
 function create () {
     game.physics.startSystem(Phaser.Physics.ARCADE);
     unitGroup = game.add.group();
-    createColonyAndUnitsLeader();
+    createColonyAndUnitsNormal();
 
     //Adds an event to the mouse.
     game.input.onDown.add(placeBuilding , this);
 
+    //Some text stuff...
     var text = "- phaser -\n with a sprinkle of \n pixi dust.";
     var style = { font: "20px Arial", fill: "#ff0044", align: "center" };
 
     foodText = game.add.text(0, 0, text, style);
     colonyText = game.add.text(0, 20, text, style);
 
+    //Adding some buttons...
     leaderButton = game.add.button(game.world.centerX - 125, 0, 'war', pressLeader, this, 2, 1, 0);
     regularButton = game.add.button(game.world.centerX + 25, 0, 'normal', pressRegular, this, 2, 1, 0);
 }

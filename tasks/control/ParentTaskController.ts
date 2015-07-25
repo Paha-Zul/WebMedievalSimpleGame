@@ -1,4 +1,4 @@
-///<reference path="TaskController.ts"/>
+///<reference path="../../Game.ts"/>
 
 /**
  * Created by Paha on 7/25/2015.

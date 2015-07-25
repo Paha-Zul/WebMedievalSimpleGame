@@ -21,12 +21,11 @@ class Sequence extends ParentTask{
         if(this.control.currTask === null){
             this.control.finishWithFailure();
         }else {
-            if(!this.control.currTask.getControl().started) this.control.currTask.start(); //If not started, start.
-            if(this.control.currTask.getControl().finished && this.control.currTask.getControl().failed)
-                this.childFailed();         //If failed, fail.
-            else if(this.control.currTask.getControl().finished)
-                this.childSucceeded();      //If succeeded, succeed.
-            else
+            if(!this.control.currTask.getControl().started) this.control.currTask.getControl().safeStart(); //If not started, start.
+            if(this.control.currTask.getControl().finished){
+                if(this.control.currTask.getControl().failed) this.childFailed();
+                else this.childSucceeded();
+            }else
                 this.control.currTask.update(delta);//Otherwise update.
         }
     }

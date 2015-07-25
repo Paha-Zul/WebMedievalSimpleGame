@@ -31,6 +31,7 @@ var Colony = (function (_super) {
         };
         this.timer = this.game.time.events.loop(Phaser.Timer.SECOND * 1, this.calcRate, this);
         this.type = 'colony';
+        this.taskQueue = new CircularQueue(100);
     }
     Colony.prototype.update = function (delta) {
         _super.prototype.update.call(this, delta);
@@ -43,6 +44,12 @@ var Colony = (function (_super) {
             this.armyList[i].update(delta);
         for (i = 0; i < this.buildingList.length; i++)
             this.buildingList[i].update(delta);
+    };
+    Colony.prototype.addTaskToQueue = function (task) {
+        this.taskQueue.add(task);
+    };
+    Colony.prototype.getTaskFromQueue = function () {
+        return this.taskQueue.getFirst();
     };
     Colony.prototype.destroy = function () {
         var i = 0;

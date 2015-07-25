@@ -16,10 +16,11 @@ class Colony extends Unit{
     constructor(x, y, public game){
         super(x, y, game, null, 50, 50);
         this.timer = this.game.time.events.loop(Phaser.Timer.SECOND*1, this.calcRate, this);
+        this.type = 'colony';
     }
 
-    update = (delta) =>{
-        //super.update(delta);
+    update(delta){
+        super.update(delta);
 
         var i;
         for(i=0;i<this.freePeasantList.length;i++)
@@ -30,7 +31,7 @@ class Colony extends Unit{
             this.armyList[i].update(delta);
         for(i=0;i<this.buildingList.length;i++)
             this.buildingList[i].update(delta);
-    };
+    }
 
     addFreePeasant = (x, y, game, colony) : Unit =>{
         var unit = new Unit(x, y, game, colony);
@@ -42,4 +43,23 @@ class Colony extends Unit{
         this.avgResources = this.resources - this.lastResources;
         this.lastResources = this.resources;
     };
+
+    destroy(){
+        var i=0;
+        for(i=0;i<this.freePeasantList.length;i++)
+            this.freePeasantList[i].destroy();
+        for(i=0;i<this.workerList.length;i++)
+            this.workerList[i].destroy();
+        for(i=0;i<this.armyList.length;i++)
+            this.armyList[i].destroy();
+        for(i=0;i<this.buildingList.length;i++)
+            this.buildingList[i].destroy();
+
+        this.freePeasantList = [];
+        this.workerList = [];
+        this.armyList = [];
+        this.buildingList = [];
+
+        this.text.destroy();
+    }
 }

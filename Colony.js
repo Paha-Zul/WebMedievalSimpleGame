@@ -20,18 +20,6 @@ var Colony = (function (_super) {
         this.buildingList = [];
         this.lastResources = 0;
         this.avgResources = 0;
-        this.update = function (delta) {
-            //super.update(delta);
-            var i;
-            for (i = 0; i < _this.freePeasantList.length; i++)
-                _this.freePeasantList[i].update(delta);
-            for (i = 0; i < _this.workerList.length; i++)
-                _this.workerList[i].update(delta);
-            for (i = 0; i < _this.armyList.length; i++)
-                _this.armyList[i].update(delta);
-            for (i = 0; i < _this.buildingList.length; i++)
-                _this.buildingList[i].update(delta);
-        };
         this.addFreePeasant = function (x, y, game, colony) {
             var unit = new Unit(x, y, game, colony);
             _this.freePeasantList.push(unit);
@@ -42,7 +30,36 @@ var Colony = (function (_super) {
             _this.lastResources = _this.resources;
         };
         this.timer = this.game.time.events.loop(Phaser.Timer.SECOND * 1, this.calcRate, this);
+        this.type = 'colony';
     }
+    Colony.prototype.update = function (delta) {
+        _super.prototype.update.call(this, delta);
+        var i;
+        for (i = 0; i < this.freePeasantList.length; i++)
+            this.freePeasantList[i].update(delta);
+        for (i = 0; i < this.workerList.length; i++)
+            this.workerList[i].update(delta);
+        for (i = 0; i < this.armyList.length; i++)
+            this.armyList[i].update(delta);
+        for (i = 0; i < this.buildingList.length; i++)
+            this.buildingList[i].update(delta);
+    };
+    Colony.prototype.destroy = function () {
+        var i = 0;
+        for (i = 0; i < this.freePeasantList.length; i++)
+            this.freePeasantList[i].destroy();
+        for (i = 0; i < this.workerList.length; i++)
+            this.workerList[i].destroy();
+        for (i = 0; i < this.armyList.length; i++)
+            this.armyList[i].destroy();
+        for (i = 0; i < this.buildingList.length; i++)
+            this.buildingList[i].destroy();
+        this.freePeasantList = [];
+        this.workerList = [];
+        this.armyList = [];
+        this.buildingList = [];
+        this.text.destroy();
+    };
     return Colony;
 })(Unit);
 //# sourceMappingURL=Colony.js.map

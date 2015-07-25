@@ -7,11 +7,15 @@ var Unit = (function () {
         var _this = this;
         this.game = game;
         this.colony = colony;
+        this.width = width;
+        this.height = height;
         this.name = 'peasant';
-        this.type = 'unit';
+        this.type = 'humanoid';
         this.control = 'auto';
         this.active = true;
         this.behaviour = null;
+        this.idleCounter = 0;
+        this.walkCounter = 0;
         this.resources = 0;
         this.posCounter = 0;
         this.positions = [];
@@ -23,17 +27,16 @@ var Unit = (function () {
         this.randWalk = Math.random() * 2000;
         this.randRotation = Math.random() * 360;
         this.moveSpeed = 2;
-        this.update = function (delta) {
-            _this.wander(delta);
-        };
         //Wanders or something
         this.wander = function (delta) {
             if (_this.control === 'manual')
                 return;
-            if (_this.leader !== null)
+            if (_this.leader !== null) {
                 _this.behaviour = followLeader;
-            else if (_this.colony.buildingList.length != 0 && _this.behaviour === null)
+            }
+            else if (_this.colony.buildingList.length != 0 && _this.behaviour === null) {
                 _this.behaviour = transfer;
+            }
             //Calculate the distance to the target if we have one.
             var disToTarget;
             if (_this.target !== null)
@@ -44,9 +47,8 @@ var Unit = (function () {
                     _this.behaviour(_this, disToTarget, 5);
             }
             else if (_this.leader !== null) {
-                if (_this.behaviour !== null) {
+                if (_this.behaviour !== null)
                     _this.behaviour(_this);
-                }
             }
             //If the target is null, just move around aimlessly
             if (_this.target === null && _this.leader === null) {
@@ -106,10 +108,28 @@ var Unit = (function () {
                 _this.sprite.y = position.y;
             }
         };
-        this.sprite = makeSquareSprite(width || 10, height || 10);
+        this.width = width || 10;
+        this.height = height || 10;
+        this.sprite = makeSquareSprite(this.width, this.height);
         this.sprite.x = x;
         this.sprite.y = y;
+        this.blackBoard = new BlackBoard();
+        this.blackBoard.me = this;
+        var style = { font: "18px Arial", fill: "#1765D1", align: "center" };
+        this.text = game.add.text(x, y - this.height - 5, '', style);
     }
+    Unit.prototype.update = function (delta) {
+        this.text.text = '' + this.resources;
+        this.text.position.set(this.sprite.x, this.sprite.y - this.height - 20);
+        if (this.type === 'humanoid')
+            this.wander(delta);
+    };
+    Unit.prototype.destroy = function () {
+        this.sprite.destroy(true);
+        this.text.destroy(true);
+        this.leader = null;
+        this.behaviour = null;
+    };
     return Unit;
 })();
 //# sourceMappingURL=Unit.js.map

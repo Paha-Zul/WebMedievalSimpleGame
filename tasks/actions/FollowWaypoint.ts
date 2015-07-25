@@ -2,10 +2,12 @@
  * Created by Paha on 7/25/2015.
  */
 
-///<reference path="../Game.ts"/>
+///<reference path="../../Game.ts"/>
 
-class FollowPoint extends Task{
-    constructor(bb:BlackBoard) {
+class FollowWaypoint extends LeafTask{
+    counter:number = 0;
+
+    constructor(bb:BlackBoard){
         super(bb);
     }
 
@@ -16,11 +18,17 @@ class FollowPoint extends Task{
     update(delta) {
         super.update(delta);
 
-        this.move(this.bb.targetPosition, this.bb.disToStop);
+        if(this.move(this.bb.waypoints[this.counter], this.bb.disToStop)){
+            this.counter++;
+            if(this.bb.waypoints.length <= this.counter) {
+                this.bb.waypoints = [];
+                this.getControl().finishWithSuccess();
+            }
+        }
     }
 
-    finish(failed:boolean) {
-        super.finish(failed);
+    end() {
+        return super.end();
     }
 
     move(position:Phaser.Point, disToStop:number){

@@ -52,21 +52,22 @@ class Unit{
         //If we have a behaviour, execute it.
         if(this.behaviour !== null){
             this.behaviour.update(delta);
-            if(this.behaviour.finished){
-                if(this.behaviour.nextTask === null)
-                    this.behaviour = null;
-                else this.behaviour = this.behaviour.nextTask;
+            if(this.behaviour.getControl().finished){
+                this.behaviour = null;
             }
         }else{
             if(this.colony !== null && this.colony.buildingList.length > 0){
 
-                //TODO This is really freaking ugly code. Find a better way to do this!
-                this.behaviour = new GetRandomBuilding(this.blackBoard);
-                this.behaviour.nextTask = new MoveTo(this.blackBoard);
-                this.behaviour.nextTask.nextTask = new TakeResource(this.blackBoard);
-                this.behaviour.nextTask.nextTask.nextTask = new GetColony(this.blackBoard);
-                this.behaviour.nextTask.nextTask.nextTask.nextTask = new MoveTo(this.blackBoard);
-                this.behaviour.nextTask.nextTask.nextTask.nextTask.nextTask = new GiveResource(this.blackBoard);
+                var seq:Sequence = new Sequence(this.blackBoard);
+                seq.addTask(new GetRandomBuilding(this.blackBoard));
+                seq.addTask(new MoveTo(this.blackBoard));
+                seq.addTask(new TakeResource(this.blackBoard));
+                seq.addTask(new GetColony(this.blackBoard));
+                seq.addTask(new MoveTo(this.blackBoard));
+                seq.addTask(new GiveResource(this.blackBoard));
+
+                this.behaviour = seq;
+                this.behaviour.start();
             }
         }
     }

@@ -5,13 +5,17 @@
 /// <reference path="./Helper.ts"/>
 /// <reference path="./Behaviours.ts"/>
 /// <reference path="./tasks/BlackBoard.ts"/>
-/// <reference path="./tasks/MoveTo.ts"/>
-/// <reference path="./tasks/FollowWaypoint.ts"/>
-/// <reference path="./tasks/FollowPointRelativeToTarget.ts"/>
-/// <reference path="./tasks/GetRandomBuilding.ts"/>
-/// <reference path="./tasks/GetColony.ts"/>
-/// <reference path="./tasks/TakeResource.ts"/>
-/// <reference path="./tasks/GiveResource.ts"/>
+/// <reference path="./tasks/actions/MoveTo.ts"/>
+/// <reference path="./tasks/actions/FollowWaypoint.ts"/>
+/// <reference path="./tasks/actions/FollowPointRelativeToTarget.ts"/>
+/// <reference path="./tasks/actions/GetRandomBuilding.ts"/>
+/// <reference path="./tasks/actions/GetColony.ts"/>
+/// <reference path="./tasks/actions/TakeResource.ts"/>
+/// <reference path="./tasks/actions/GiveResource.ts"/>
+/// <reference path="./tasks/composite/ParentTask.ts"/>
+/// <reference path="./tasks/composite/Sequence.ts"/>
+/// <reference path="./tasks/control/TaskController.ts"/>
+/// <reference path="./tasks/control/ParentTaskController.ts"/>
 var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render });
 var colonyList = [];
 var foodText;
@@ -81,18 +85,27 @@ function createColonyAndUnitsLeader() {
     }
     leader.control = 'manual';
     leader.blackBoard.disToStop = 1;
-    leader.blackBoard.waypoints.push(new Phaser.Point(700, game.world.centerY));
-    leader.blackBoard.waypoints.push(new Phaser.Point(500, 100));
-    leader.blackBoard.waypoints.push(new Phaser.Point(300, 100));
-    leader.blackBoard.waypoints.push(new Phaser.Point(100, 500));
+    leader.blackBoard.waypoints.push(new Phaser.Point(400, 400));
+    leader.blackBoard.waypoints.push(new Phaser.Point(500, 500));
     leader.blackBoard.waypoints.push(new Phaser.Point(600, 500));
+    leader.blackBoard.waypoints.push(new Phaser.Point(700, 300));
+    leader.blackBoard.waypoints.push(new Phaser.Point(700, 200));
+    leader.blackBoard.waypoints.push(new Phaser.Point(650, 100));
+    leader.blackBoard.waypoints.push(new Phaser.Point(600, 100));
+    leader.blackBoard.waypoints.push(new Phaser.Point(300, 100));
+    leader.blackBoard.waypoints.push(new Phaser.Point(200, 300));
+    leader.blackBoard.waypoints.push(new Phaser.Point(200, 500));
+    leader.blackBoard.waypoints.push(new Phaser.Point(300, 500));
+    leader.blackBoard.waypoints.push(new Phaser.Point(400, 400));
     leader.behaviour = new FollowWaypoint(leader.blackBoard);
 }
 function createColonyAndUnitsNormal() {
     var colony = new Colony(game.world.centerX, game.world.centerY, game);
     colonyList[0] = colony;
-    for (var i = 0; i < 20; i++)
-        colony.addFreePeasant(game.world.centerX, game.world.centerY, game, colony);
+    for (var i = 0; i < 30; i++) {
+        var p = colony.addFreePeasant(game.world.centerX, game.world.centerY, game, colony);
+        p.blackBoard.moveSpeed = 1.5 + Math.random() * 0.5;
+    }
 }
 function placeBuilding() {
     colonyList[0].buildingList.push(new Building(game.input.activePointer.x, game.input.activePointer.y, game, colonyList[0]));

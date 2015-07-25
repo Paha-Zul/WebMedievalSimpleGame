@@ -2,9 +2,9 @@
  * Created by Paha on 7/25/2015.
  */
 
-///<reference path="../Game.ts"/>
+///<reference path="../../Game.ts"/>
 
-class TakeResource extends Task{
+class TakeResource extends LeafTask{
 
     constructor(bb:BlackBoard) {
         super(bb);
@@ -23,10 +23,6 @@ class TakeResource extends Task{
             this.bb.target.resources = 0;
         }
 
-        this.finish(false);
-    }
-
-    finish(failed:boolean) {
-        super.finish(failed);
+        this.getControl().finishWithSuccess();
     }
 }

@@ -2,9 +2,9 @@
  * Created by Paha on 7/25/2015.
  */
 
-/// <reference path="../Game.ts"/>
+/// <reference path="../../Game.ts"/>
 
-class GetRandomBuilding extends Task{
+class GetRandomBuilding extends LeafTask{
 
     constructor(bb:BlackBoard) {
         super(bb);
@@ -19,10 +19,7 @@ class GetRandomBuilding extends Task{
 
         this.bb.target = this.bb.me.colony.buildingList[~~(Math.random()*this.bb.me.colony.buildingList.length)]
         this.bb.targetPosition = this.bb.target.sprite.position;
-        this.finish(false);
+        this.getControl().finishWithSuccess()
     }
 
-    finish(failed:boolean) {
-        super.finish(failed);
-    }
 }

@@ -2,58 +2,41 @@
  * Created by Paha on 7/25/2015.
  */
 
-///<reference path="../Game.ts"/>
+///<reference path="../Task.ts"/>
 
-class FollowWaypoint extends Task{
-    counter:number = 0;
-
+class MoveTo extends LeafTask{
     constructor(bb:BlackBoard){
         super(bb);
     }
 
-    start() {
+    start(){
         super.start();
     }
 
-    update(delta) {
+    update(delta){
         super.update(delta);
 
-        console.log('updating');
-        if(this.move(this.bb.waypoints[this.counter], this.bb.disToStop)){
-            this.counter++;
-            if(this.bb.waypoints.length <= this.counter) {
-                this.bb.waypoints = [];
-                this.finish(false);
-            }
-        }
-    }
+        //TODO Let's move this function back to the unit and call it from there so we can reuse code.
 
-    finish(failed:boolean) {
-        super.finish(failed);
-    }
-
-    move(position:Phaser.Point, disToStop:number){
         var sprite:Phaser.Sprite = this.bb.me.sprite;
-        var pos = position;
+        var pos = this.bb.targetPosition;
 
         var disToTarget = sprite.position.distance(pos);
         var rotToTarget = sprite.position.angle(pos, false);
 
         //If we are still outside the stop range, move!
-        if(disToTarget > disToStop) {
+        if(disToTarget > this.bb.disToStop) {
             var x = Math.cos(rotToTarget) * this.bb.moveSpeed;
             var y = Math.sin(rotToTarget) * this.bb.moveSpeed;
 
             sprite.x += x;
             sprite.y += y;
             sprite.angle = rotToTarget*(180/Math.PI);
-
-            return false;
         }else{
             sprite.x = pos.x;
             sprite.y = pos.y;
 
-            return true;
+            this.getControl().finishWithSuccess()
         }
     }
 }

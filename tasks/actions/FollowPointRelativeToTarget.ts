@@ -1,10 +1,11 @@
+///<reference path="..\LeafTask.ts"/>
 /**
  * Created by Paha on 7/25/2015.
  */
 
-///<reference path="../Game.ts"/>
+///<reference path="../../Game.ts"/>
 
-class FollowPointRelativeToTarget extends Task{
+class FollowPointRelativeToTarget extends LeafTask{
 
     constructor(bb:BlackBoard) {
         super(bb);
@@ -31,8 +32,8 @@ class FollowPointRelativeToTarget extends Task{
         super.start();
     }
 
-    finish(failed:boolean) {
-        super.finish(failed);
+    end() {
+        return super.end();
     }
 
     move(position:Phaser.Point, disToStop:number){

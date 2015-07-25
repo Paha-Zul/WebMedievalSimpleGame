@@ -2,9 +2,9 @@
  * Created by Paha on 7/25/2015.
  */
 
-///<reference path="../Game.ts"/>
+///<reference path="../../Game.ts"/>
 
-class GetColony extends Task{
+class GetColony extends LeafTask{
 
     constructor(bb:BlackBoard) {
         super(bb);
@@ -19,10 +19,6 @@ class GetColony extends Task{
 
         this.bb.target = this.bb.me.colony;
         this.bb.targetPosition = this.bb.target.sprite.position;
-        this.finish(false);
-    }
-
-    finish(failed:boolean) {
-        super.finish(failed);
+        this.getControl().finishWithSuccess();
     }
 }

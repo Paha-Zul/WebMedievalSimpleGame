@@ -6,11 +6,15 @@
  */
 
 class BlackBoard{
+    target:Unit;
     targetPosition:Phaser.Point;
-    disToStop:number=0;
+    waypoints:Phaser.Point[] = [];
+    disToStop:number=1;
     moveSpeed:number=2;
+    idleTime:number=500;
 
     me:Unit;
+    game:Phaser.Game;
 
     constructor(){}
 }

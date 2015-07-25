@@ -9,22 +9,23 @@ class Task{
     started:boolean = false;
     finished:boolean = false;
     failed:boolean = false;
+    nextTask:Task = null;
 
-    constructor(public task:Task, public bb:BlackBoard){
+    constructor(public bb:BlackBoard){
 
     }
 
     start(){
-
+        this.started = true;
     }
 
     update(delta){
-        if(this.task) this.task.update(delta);
-        else this.finish(true);
+
     }
 
     finish(failed:boolean){
         this.failed = failed;
+        this.finished = true;
     }
 
 

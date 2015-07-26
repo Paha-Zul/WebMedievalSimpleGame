@@ -7,6 +7,8 @@ var __extends = this.__extends || function (d, b) {
 };
 /**
  * Created by Paha on 7/23/2015.
+ *
+ * Super prototyping extension of the prototype class.
  */
 var Colony = (function (_super) {
     __extends(Colony, _super);

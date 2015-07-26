@@ -2,6 +2,8 @@
 
 /**
  * Created by Paha on 7/23/2015.
+ *
+ * Super prototyping extension of the prototype class.
  */
 class Colony extends Unit{
     static playerCounter : number;

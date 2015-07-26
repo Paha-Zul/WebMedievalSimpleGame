@@ -3,6 +3,8 @@
 /// <reference path="./tasks/BlackBoard.ts"/>
 /**
  * Created by Paha on 7/23/2015.
+ *
+ * A prototyping class. Needs to be cleaned up later but such you know?
  */
 var Unit = (function () {
     function Unit(x, y, game, colony, width, height) {

@@ -6,6 +6,9 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+/**
+ * An extension of the super prototype class.
+ */
 var Building = (function (_super) {
     __extends(Building, _super);
     function Building(x, y, game, colony, width, height) {

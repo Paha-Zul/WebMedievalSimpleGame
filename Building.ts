@@ -1,6 +1,9 @@
 /// <reference path="./Game.ts"/>
 ///<reference path="Unit.ts"/>
 
+/**
+ * An extension of the super prototype class.
+ */
 class Building extends Unit {
     counter:number = 0;
     refillTime:number = 1000;

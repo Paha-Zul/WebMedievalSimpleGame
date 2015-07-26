@@ -2,6 +2,10 @@
  * Created by Paha on 7/25/2015.
  */
 
+/**
+ * Circular Queue implementation so we can remove the cost
+ * of splicing arrays.
+ */
 class CircularQueue<T>{
     private queue:T[] = [];
     private currIndex:number = 0;
@@ -35,10 +39,16 @@ class CircularQueue<T>{
         return data;
     }
 
+    /**
+     * @returns {boolean} True if full, false otherwise.
+     */
     isFull():boolean{
         return (this.currIndex+1)%this.length == this.startIndex;
     }
 
+    /**
+     * @returns {boolean} True if empty, false otherwise.
+     */
     isEmpty():boolean{
         return this.currIndex == this.startIndex;
     }

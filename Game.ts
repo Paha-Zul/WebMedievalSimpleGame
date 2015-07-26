@@ -61,6 +61,8 @@ function create () {
     foodText = game.add.text(0, 0, text, style);
     colonyText = game.add.text(0, 20, text, style);
     buildingText = game.add.text(0, 40, building, style);
+    game.add.text(0, 60, 'Press H for houses, F for farms. Click to spawn buildings.', style);
+
 
     //Adding some buttons...
     leaderButton = game.add.button(game.world.centerX - 125, 0, 'war', pressLeader, this, 2, 1, 0);
@@ -147,6 +149,10 @@ function createColonyAndUnitsNormal(){
 }
 
 function startExample(){
+    /*
+     * Incredibly ugly prototype code here. Quick and dirty...
+     */
+
     var colony = new Colony(game.world.centerX, game.world.centerY, game, 100, 100);
     colonyList[0] = colony;
 

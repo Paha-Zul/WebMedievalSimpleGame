@@ -12,15 +12,15 @@ class LeafTask extends Task{
         this.control = new TaskController(this);
     }
 
-    start() {
+    start():void {
         super.start();
     }
 
-    update(delta) {
+    update(delta):void  {
         super.update(delta);
     }
 
-    end() {
+    end():void  {
         super.end();
     }
 

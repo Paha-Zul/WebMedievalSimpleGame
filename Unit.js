@@ -15,6 +15,7 @@ var Unit = (function () {
         this.type = 'humanoid';
         this.control = 'auto';
         this.active = true;
+        this.started = false;
         this.behaviour = null;
         this.idleCounter = 0;
         this.walkCounter = 0;
@@ -65,14 +66,34 @@ var Unit = (function () {
         this.blackBoard = new BlackBoard();
         this.blackBoard.me = this;
         this.blackBoard.game = game;
-        var style = { font: "18px Arial", fill: "#1765D1", align: "center" };
-        this.text = game.add.text(x, y - this.height - 5, '', style);
     }
     Unit.prototype.update = function (delta) {
-        this.text.text = '' + this.resources;
-        this.text.position.set(this.sprite.x, this.sprite.y - this.height - 20);
-        if (this.type !== 'humanoid')
-            return;
+        if (!this.started)
+            this.start();
+        if (this.text !== undefined && this.text !== null) {
+            this.text.text = '' + this.resources;
+            this.text.position.set(this.sprite.x, this.sprite.y - this.height / 2 - 20);
+        }
+        //For prototyping, only let humanoids do this section.
+        if (this.type === 'humanoid') {
+            //this.behaviourStuff(delta);
+            this.otherBehaviourStuff(delta);
+        }
+    };
+    Unit.prototype.start = function () {
+        this.started = true;
+        if (this.name === 'house')
+            this.sprite.loadTexture('house');
+        else if (this.name === 'farm')
+            this.sprite.loadTexture('farm');
+        else if (this.name === 'colony')
+            this.sprite.loadTexture('capitol');
+        if (this.name !== 'house') {
+            var style = { font: "18px Arial", fill: "#1765D1", align: "center" };
+            this.text = game.add.text(this.sprite.x, this.sprite.y - this.height / 2 - 20, '', style);
+        }
+    };
+    Unit.prototype.behaviourStuff = function (delta) {
         //If we have a behaviour, execute it.
         if (this.behaviour !== null) {
             this.behaviour.update(delta);
@@ -83,22 +104,51 @@ var Unit = (function () {
         else {
             if (this.colony !== null && this.colony.buildingList.length > 0) {
                 var seq = new Sequence(this.blackBoard);
-                seq.addTask(new GetRandomBuilding(this.blackBoard));
-                seq.addTask(new MoveTo(this.blackBoard));
-                seq.addTask(new TakeResource(this.blackBoard));
-                seq.addTask(new GetColony(this.blackBoard));
-                seq.addTask(new MoveTo(this.blackBoard));
-                seq.addTask(new GiveResource(this.blackBoard));
+                seq.control.addTask(new GetRandomBuilding(this.blackBoard));
+                seq.control.addTask(new MoveTo(this.blackBoard));
+                seq.control.addTask(new TakeResource(this.blackBoard));
+                seq.control.addTask(new GetColony(this.blackBoard));
+                seq.control.addTask(new MoveTo(this.blackBoard));
+                seq.control.addTask(new GiveResource(this.blackBoard));
                 this.behaviour = seq;
                 this.behaviour.start();
             }
         }
     };
+    Unit.prototype.otherBehaviourStuff = function (delta) {
+        //If we have a behaviour, execute it.
+        if (this.behaviour !== null) {
+            if (!this.behaviour.getControl().started)
+                this.behaviour.getControl().safeStart();
+            this.behaviour.update(delta);
+            if (this.behaviour.getControl().finished) {
+                this.behaviour = null;
+            }
+        }
+        else {
+            //Try and get a beh from the colony. This will be a function.
+            var beh = this.colony.getTaskFromQueue();
+            //If we actually got one, execute the function which will return a behaviour.
+            if (beh !== null)
+                this.behaviour = beh(this.blackBoard);
+            else {
+                this.behaviour = this.wander(this.blackBoard);
+            }
+        }
+    };
     Unit.prototype.destroy = function () {
         this.sprite.destroy(true);
-        this.text.destroy(true);
+        if (this.text !== undefined && this.text !== null)
+            this.text.destroy(true);
         this.leader = null;
         this.behaviour = null;
+    };
+    Unit.prototype.wander = function (bb) {
+        var seq = new Sequence(bb);
+        seq.control.addTask(new RandomLocation(bb));
+        seq.control.addTask(new MoveTo(bb));
+        seq.control.addTask(new Idle(bb));
+        return seq;
     };
     return Unit;
 })();

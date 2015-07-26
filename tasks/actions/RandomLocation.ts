@@ -4,28 +4,28 @@
 
 ///<reference path="../../Game.ts"/>
 
-class Idle extends LeafTask{
-    timer:Phaser.TimerEvent;
+class RandomLocation extends LeafTask{
 
     constructor(bb:BlackBoard) {
         super(bb);
     }
 
+
     start() {
         super.start();
-
-        this.timer = this.bb.game.time.events.add(this.bb.idleTime, this.finish, this);
     }
 
     update(delta) {
         super.update(delta);
-    }
 
-    end():void {
-        super.end();
-    }
+        var x = Math.random()*100 - 50;
+        var y = Math.random()*100 - 50;
 
-    finish(){
+        this.bb.targetPosition = new Phaser.Point(this.bb.me.sprite.x + x, this.bb.me.sprite.y + y);
         this.control.finishWithSuccess();
+    }
+
+    end() {
+        super.end();
     }
 }

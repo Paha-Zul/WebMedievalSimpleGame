@@ -6,8 +6,8 @@
 ///<reference path="../../Game.ts"/>
 
 class ParentTask extends Task{
-    protected control:ParentTaskController;
-    index:number=0;
+    public control:ParentTaskController;
+    protected index:number=0;
 
     constructor(bb:BlackBoard) {
         super(bb);
@@ -30,10 +30,6 @@ class ParentTask extends Task{
 
     getControl():TaskController {
         return this.control;
-    }
-
-    public addTask(task:Task){
-        this.control.tasks.push(task);
     }
 
     protected childFailed(){

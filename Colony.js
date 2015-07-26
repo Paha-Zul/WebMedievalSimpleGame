@@ -10,9 +10,9 @@ var __extends = this.__extends || function (d, b) {
  */
 var Colony = (function (_super) {
     __extends(Colony, _super);
-    function Colony(x, y, game) {
+    function Colony(x, y, game, width, height) {
         var _this = this;
-        _super.call(this, x, y, game, null, 50, 50);
+        _super.call(this, x, y, game, null, width, height);
         this.game = game;
         this.freePeasantList = [];
         this.workerList = [];
@@ -25,12 +25,18 @@ var Colony = (function (_super) {
             _this.freePeasantList.push(unit);
             return unit;
         };
+        this.addBuilding = function (x, y, game, colony, width, height) {
+            var unit = new Building(x, y, game, colony, width, height);
+            _this.freePeasantList.push(unit);
+            return unit;
+        };
         this.calcRate = function () {
             _this.avgResources = _this.resources - _this.lastResources;
             _this.lastResources = _this.resources;
         };
         this.timer = this.game.time.events.loop(Phaser.Timer.SECOND * 1, this.calcRate, this);
         this.type = 'colony';
+        this.name = 'colony';
         this.taskQueue = new CircularQueue(100);
     }
     Colony.prototype.update = function (delta) {
@@ -45,11 +51,11 @@ var Colony = (function (_super) {
         for (i = 0; i < this.buildingList.length; i++)
             this.buildingList[i].update(delta);
     };
-    Colony.prototype.addTaskToQueue = function (task) {
-        this.taskQueue.add(task);
+    Colony.prototype.addTaskToQueue = function (func) {
+        this.taskQueue.add(func);
     };
     Colony.prototype.getTaskFromQueue = function () {
-        return this.taskQueue.getFirst();
+        return this.taskQueue.popFirst();
     };
     Colony.prototype.destroy = function () {
         var i = 0;

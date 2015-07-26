@@ -30,7 +30,7 @@ class TaskController{
         this.safeEnd();
     }
 
-    safeEnd(){
+    safeEnd():void{
 
     }
 

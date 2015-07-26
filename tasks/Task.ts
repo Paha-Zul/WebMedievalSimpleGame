@@ -12,15 +12,15 @@ class Task{
 
     }
 
-    start(){
+    start():void{
 
     }
 
-    update(delta){
+    update(delta):void{
 
     }
 
-    end(){
+    end():void{
 
     }
 

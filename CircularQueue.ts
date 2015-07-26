@@ -12,6 +12,11 @@ class CircularQueue<T>{
             this.queue.push(null);
     }
 
+    /**
+     * Adds a piece of data to this queue.
+     * @param data The data to add.
+     * @returns {boolean} True if the data was added, false otherwise.
+     */
     add(data:T):boolean{
         if(this.isFull()) return false;
         this.queue[this.currIndex] = data; //Set data
@@ -19,7 +24,11 @@ class CircularQueue<T>{
         return true;
     }
 
-    getFirst():T{
+    /**
+     * Pops the first piece of data off of the queue and returns it.
+     * @returns {any} The data that was popped, or null if the queue was empty.
+     */
+    popFirst():T{
         if(this.isEmpty()) return null;
         var data:T = this.queue[this.startIndex]; //Get the data from the end.
         this.startIndex = (this.startIndex+1)%this.length; //Increment the index;

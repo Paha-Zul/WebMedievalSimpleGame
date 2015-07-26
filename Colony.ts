@@ -12,13 +12,14 @@ class Colony extends Unit{
     lastResources : number = 0;
     avgResources : number = 0;
     timer : Phaser.TimerEvent;
-    taskQueue:CircularQueue<Task>;
+    taskQueue:CircularQueue<any>;
 
-    constructor(x, y, public game){
-        super(x, y, game, null, 50, 50);
+    constructor(x, y, public game, width?, height?){
+        super(x, y, game, null, width, height);
         this.timer = this.game.time.events.loop(Phaser.Timer.SECOND*1, this.calcRate, this);
         this.type = 'colony';
-        this.taskQueue = new CircularQueue<Task>(100);
+        this.name = 'colony';
+        this.taskQueue = new CircularQueue<any>(100);
     }
 
     update(delta){
@@ -41,12 +42,18 @@ class Colony extends Unit{
         return unit;
     };
 
-    addTaskToQueue(task:Task){
-        this.taskQueue.add(task);
+    addBuilding = (x, y, game, colony, width?, height?) : Building =>{
+        var unit = new Building(x, y, game, colony, width, height);
+        this.freePeasantList.push(unit);
+        return unit;
+    };
+
+    addTaskToQueue(func:any){
+        this.taskQueue.add(func);
     }
 
     getTaskFromQueue():Task{
-        return this.taskQueue.getFirst();
+        return this.taskQueue.popFirst();
     }
 
     calcRate = () =>{

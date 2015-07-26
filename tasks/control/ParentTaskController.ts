@@ -4,9 +4,9 @@
  * Created by Paha on 7/25/2015.
  */
 class ParentTaskController extends TaskController{
-    tasks:Task[];
-    currTask:Task;
-    index:number;
+    public tasks:Task[];
+    public currTask:Task;
+    public index:number;
 
     constructor(task:Task) {
         super(task);
@@ -14,5 +14,9 @@ class ParentTaskController extends TaskController{
         this.tasks = [];
         this.currTask = null;
         this.index = 0;
+    }
+
+    addTask(task:Task){
+        this.tasks.push(task);
     }
 }

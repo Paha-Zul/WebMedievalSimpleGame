@@ -25,20 +25,4 @@ function transfer(unit, disToTarget, disToStop) {
         }
     }
 }
-function followLeader(unit) {
-    if (unit.targetPos === null) {
-        unit.posCounter = unit.leader.posCounter++;
-        unit.targetPos = new Phaser.Point(unit.leader.positions[unit.posCounter].x, unit.leader.positions[unit.posCounter].y);
-    }
-    else {
-        //Find the rotation of the point relative to the leaders position.
-        var pos = unit.leader.positions[unit.posCounter];
-        var rot = unit.leader.sprite.angle;
-        var x = Math.cos(rot) * pos.x - Math.sin(rot) * pos.y; //Rotation stuff.
-        var y = Math.sin(rot) * pos.x + Math.cos(rot) * pos.y;
-        //Add it to the X and Y of the leader.
-        unit.targetPos.x = x + unit.leader.sprite.x;
-        unit.targetPos.y = y + unit.leader.sprite.y;
-    }
-}
 //# sourceMappingURL=Behaviours.js.map

@@ -7,7 +7,7 @@
  * A prototyping class. Needs to be cleaned up later but such you know?
  */
 var Unit = (function () {
-    function Unit(x, y, game, colony, width, height) {
+    function Unit(x, y, game, colony, type, width, height) {
         var _this = this;
         this.game = game;
         this.colony = colony;
@@ -23,7 +23,7 @@ var Unit = (function () {
         this.walkCounter = 0;
         this.resources = 0;
         this.posCounter = 0;
-        this.positions = [];
+        this.group = null;
         this.flag = false;
         this.target = null;
         this.targetPos = null;
@@ -68,7 +68,25 @@ var Unit = (function () {
         this.blackBoard = new BlackBoard();
         this.blackBoard.me = this;
         this.blackBoard.game = game;
+        this.type = type || this.type;
     }
+    Unit.prototype.start = function () {
+        this.started = true;
+        if (this.leader !== null)
+            this.leader.group.addUnit(this);
+        if (this.name === 'house')
+            this.sprite.loadTexture('house');
+        else if (this.name === 'farm')
+            this.sprite.loadTexture('farm');
+        else if (this.name === 'colony')
+            this.sprite.loadTexture('capitol');
+        else if (this.name === 'leader')
+            this.group = new Group(this);
+        if (this.name !== 'house') {
+            var style = { font: "18px Arial", fill: "#1765D1", align: "center" };
+            this.text = game.add.text(this.sprite.x, this.sprite.y - this.height / 2 - 20, '', style);
+        }
+    };
     Unit.prototype.update = function (delta) {
         if (!this.started)
             this.start();
@@ -80,19 +98,6 @@ var Unit = (function () {
         if (this.type === 'humanoid') {
             //this.behaviourStuff(delta);
             this.otherBehaviourStuff(delta);
-        }
-    };
-    Unit.prototype.start = function () {
-        this.started = true;
-        if (this.name === 'house')
-            this.sprite.loadTexture('house');
-        else if (this.name === 'farm')
-            this.sprite.loadTexture('farm');
-        else if (this.name === 'colony')
-            this.sprite.loadTexture('capitol');
-        if (this.name !== 'house') {
-            var style = { font: "18px Arial", fill: "#1765D1", align: "center" };
-            this.text = game.add.text(this.sprite.x, this.sprite.y - this.height / 2 - 20, '', style);
         }
     };
     Unit.prototype.behaviourStuff = function (delta) {
@@ -153,5 +158,50 @@ var Unit = (function () {
         return seq;
     };
     return Unit;
+})();
+var Group = (function () {
+    function Group(leader) {
+        this.posCounter = 0;
+        this.spacing = 15;
+        this.lines = 3;
+        this.leader = leader;
+        this.positions = [];
+        this.unitList = [];
+    }
+    Group.prototype.addUnit = function (unit) {
+        this.unitList.push(unit);
+        this.reformGroup();
+    };
+    Group.prototype.removeUnit = function (unit) {
+        for (var i = 0; i < this.unitList.length; i++) {
+            if (this.unitList[i] === unit) {
+                this.unitList.splice(i, 1);
+                break;
+            }
+        }
+        this.reformGroup();
+    };
+    Group.prototype.reformGroup = function () {
+        //TODO Kinda performance heavy to do for every addition/subtraction. Maybe have a timer to wait
+        //TODO since an add/remove?
+        //TODO Maybe not... got up to 700 units before getting under 50 frames and that's probably due to rendering.
+        this.posCounter = 0;
+        var num = this.unitList.length;
+        var spacing = 15; //Spacing between spaces
+        var lines = 3; //# of lines deep.
+        for (var i = 0; i < num; i++) {
+            var index = ~~(i / ~~(num / lines));
+            var div = ~~(num / lines);
+            var x = -(index + 1) * spacing;
+            var y = i % div * spacing - div / 2 * spacing;
+            var point = new Phaser.Point(x, y);
+            this.positions.push(point);
+            this.unitList[i].leader = this.leader;
+            this.unitList[i].blackBoard.target = this.leader;
+            this.unitList[i].blackBoard.targetPosition = point;
+            this.unitList[i].behaviour = new FollowPointRelativeToTarget(this.unitList[i].blackBoard);
+        }
+    };
+    return Group;
 })();
 //# sourceMappingURL=Unit.js.map

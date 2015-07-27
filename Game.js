@@ -29,6 +29,7 @@ var leaderButton;
 var regularButton;
 var houseKey, farmKey;
 var building = 'farm';
+var spawnTimer;
 function preload() {
     game.load.image('logo', 'phaser.png');
     game.load.image('normal', 'img/normal_button.png');
@@ -78,25 +79,10 @@ function createColonyAndUnitsLeader() {
     //Create a leader
     leader = colony.addFreePeasant(game.world.centerX, game.world.centerY, game, colony);
     leader.blackBoard.moveSpeed = 1.5;
-    /*
-     * This area will create points for units to follow
-     */
-    var amt = numUnits; //Amt of spaces
-    var spacing = 15; //Spacing between spaces
-    var lines = 3; //# of lines deep.
-    for (i = 0; i < amt; i++) {
-        var index = ~~(i / ~~(amt / lines));
-        var div = ~~(amt / lines);
-        var x = -(index + 1) * spacing;
-        var y = i % div * spacing - div / 2 * spacing;
-        leader.positions.push(new Phaser.Point(x, y));
-    }
+    leader.name = 'leader';
     for (var i = 0; i < numUnits; i++) {
         var p = colony.addFreePeasant(game.world.centerX, game.world.centerY, game, colony);
         p.leader = leader;
-        p.blackBoard.target = leader;
-        p.blackBoard.targetPosition = leader.positions[leader.posCounter++];
-        p.behaviour = new FollowPointRelativeToTarget(p.blackBoard);
     }
     leader.control = 'manual';
     leader.blackBoard.disToStop = 1;
@@ -113,6 +99,7 @@ function createColonyAndUnitsLeader() {
     leader.blackBoard.waypoints.push(new Phaser.Point(300, 500));
     leader.blackBoard.waypoints.push(new Phaser.Point(400, 400));
     leader.behaviour = new FollowWaypoint(leader.blackBoard);
+    //spawnTimer = game.time.events.loop(1000, () => colony.addFreePeasant(game.world.centerX, game.world.centerY, game, colony).leader = leader, this);
 }
 function createColonyAndUnitsNormal() {
     var colony = new Colony(game.world.centerX, game.world.centerY, game, 100, 100);

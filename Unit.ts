@@ -19,11 +19,11 @@ class Unit{
     walkCounter : number = 0;
     resources : number = 0;
     posCounter : number = 0;
-    positions : Phaser.Point[] = [];
+    group : Group = null;
     flag : boolean = false;
     target : any = null;
     targetPos : Phaser.Point = null;
-    leader : any = null;
+    leader : Unit = null;
     randIdle: number =  Math.random() * 2000;
     randWalk : number = Math.random() * 2000;
     randRotation : number = Math.random() * 360;
@@ -31,7 +31,7 @@ class Unit{
     text:Phaser.Text;
     blackBoard:BlackBoard;
 
-    constructor(x:number, y:number, public game : Phaser.Game, public colony:Colony, public width?, public height?){
+    constructor(x:number, y:number, public game : Phaser.Game, public colony:Colony, type?:string, public width?:number, public height?:number){
         this.width = width || 10;
         this.height = height || 10;
         this.sprite = makeSquareSprite(this.width, this.height);
@@ -40,6 +40,28 @@ class Unit{
         this.blackBoard = new BlackBoard();
         this.blackBoard.me = this;
         this.blackBoard.game = game;
+        this.type = type||this.type;
+    }
+
+    start():void{
+        this.started = true;
+
+        if(this.leader !== null)
+            this.leader.group.addUnit(this);
+
+        if(this.name === 'house')
+            this.sprite.loadTexture('house');
+        else if(this.name === 'farm')
+            this.sprite.loadTexture('farm');
+        else if(this.name === 'colony')
+            this.sprite.loadTexture('capitol');
+        else if(this.name === 'leader')
+            this.group = new Group(this);
+
+        if(this.name !== 'house'){
+            var style = { font: "18px Arial", fill: "#1765D1", align: "center" };
+            this.text = game.add.text(this.sprite.x, this.sprite.y - this.height/2 - 20, '', style);
+        }
     }
 
     public update(delta : number) {
@@ -57,21 +79,6 @@ class Unit{
         }
     }
 
-    start():void{
-        this.started = true;
-
-        if(this.name === 'house')
-            this.sprite.loadTexture('house');
-        else if(this.name === 'farm')
-            this.sprite.loadTexture('farm');
-        else if(this.name === 'colony')
-            this.sprite.loadTexture('capitol');
-
-        if(this.name !== 'house'){
-            var style = { font: "18px Arial", fill: "#1765D1", align: "center" };
-            this.text = game.add.text(this.sprite.x, this.sprite.y - this.height/2 - 20, '', style);
-        }
-    }
 
     behaviourStuff(delta){
         //If we have a behaviour, execute it.
@@ -165,5 +172,63 @@ class Unit{
 
         return seq;
     }
+
 }
+
+class Group{
+    private leader:Unit;
+    private unitList:Unit[];
+    private positions:Phaser.Point[];
+    private posCounter:number = 0;
+    private spacing:number = 15;
+    private lines:number = 3;
+
+
+    constructor(leader:Unit){
+        this.leader = leader;
+        this.positions = [];
+        this.unitList = [];
+    }
+
+    addUnit(unit:Unit){
+        this.unitList.push(unit);
+        this.reformGroup();
+    }
+
+    removeUnit(unit:Unit){
+        //Remove the unit from the list by searching/splicing.
+        for(var i=0;i<this.unitList.length;i++){
+            if(this.unitList[i] === unit) {
+                this.unitList.splice(i, 1);
+                break;
+            }
+        }
+        this.reformGroup();
+    }
+
+    private reformGroup(){
+        //TODO Kinda performance heavy to do for every addition/subtraction. Maybe have a timer to wait
+        //TODO since an add/remove?
+        //TODO Maybe not... got up to 700 units before getting under 50 frames and that's probably due to rendering.
+        this.posCounter = 0;
+
+        var num = this.unitList.length;
+        var spacing = 15; //Spacing between spaces
+        var lines = 3; //# of lines deep.
+
+        for(var i=0;i<num;i++){
+            var index = ~~(i/~~(num/lines));
+            var div = ~~(num/lines);
+            var x = -(index+1)*spacing;
+            var y = i%div*spacing - div/2*spacing;
+            var point = new Phaser.Point(x, y);
+            this.positions.push(point);
+            this.unitList[i].leader = this.leader;
+            this.unitList[i].blackBoard.target = this.leader;
+            this.unitList[i].blackBoard.targetPosition = point;
+            this.unitList[i].behaviour = new FollowPointRelativeToTarget(this.unitList[i].blackBoard);
+        }
+    }
+}
+
 

@@ -6,6 +6,7 @@
 
 class FollowWaypoint extends LeafTask{
     counter:number = 0;
+    timeCounter:number = 0;
 
     constructor(bb:BlackBoard){
         super(bb);
@@ -18,11 +19,17 @@ class FollowWaypoint extends LeafTask{
     update(delta) {
         super.update(delta);
 
+        //TODO Probably don't want to keep the timeCounter delay... just for testing.
+
         if(this.move(this.bb.waypoints[this.counter], this.bb.disToStop)){
-            this.counter++;
-            if(this.bb.waypoints.length <= this.counter) {
-                this.bb.waypoints = [];
-                this.getControl().finishWithSuccess();
+            this.timeCounter+=delta;
+            if(this.timeCounter >= 1000) {
+                this.timeCounter = 0;
+                this.counter++;
+                if (this.bb.waypoints.length <= this.counter) {
+                    this.bb.waypoints = [];
+                    this.getControl().finishWithSuccess();
+                }
             }
         }
     }
@@ -32,6 +39,8 @@ class FollowWaypoint extends LeafTask{
     }
 
     move(position:Phaser.Point, disToStop:number){
+        //TODO Should move this to the unit call for more reusability.
+
         var sprite:Phaser.Sprite = this.bb.me.sprite;
         var pos = position;
 

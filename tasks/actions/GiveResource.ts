@@ -18,8 +18,10 @@ class GiveResource extends LeafTask{
     update(delta) {
         super.update(delta);
 
-        this.bb.target.resources += this.bb.me.resources;
-        this.bb.me.resources = 0;
+        this.bb.target.food += this.bb.me.food;
+        this.bb.target.iron += this.bb.me.iron;
+        this.bb.me.food = 0;
+        this.bb.me.iron = 0;
         this.getControl().finishWithSuccess();
     }
 }

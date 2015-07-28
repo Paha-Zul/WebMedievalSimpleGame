@@ -34,8 +34,8 @@ var Colony = (function (_super) {
             return unit;
         };
         this.calcRate = function () {
-            _this.avgResources = _this.resources - _this.lastResources;
-            _this.lastResources = _this.resources;
+            _this.avgResources = _this.food - _this.lastResources;
+            _this.lastResources = _this.food;
         };
         this.timer = this.game.time.events.loop(Phaser.Timer.SECOND * 1, this.calcRate, this);
         this.type = 'colony';

@@ -33,10 +33,11 @@ var regularButton:Phaser.Button;
 var houseButton:Phaser.Button;
 var farmButton:Phaser.Button;
 var barracksButton:Phaser.Button;
+var mineButton:Phaser.Button;
 
 var houseKey:Phaser.Key, farmKey:Phaser.Key;
 
-var building:string = 'farm';
+var buildingType:string = 'farm';
 
 var spawnTimer:Phaser.TimerEvent;
 
@@ -48,10 +49,12 @@ function preload () {
     game.load.image('farm', 'img/farm.png');
     game.load.image('capitol', 'img/capitol.png');
     game.load.image('barracks', 'img/barracks.png');
+    game.load.image('mine', 'img/mine.png');
 
     game.load.image('buildBarracks', 'img/button_barracks.png');
     game.load.image('buildHouse', 'img/button_house.png');
     game.load.image('buildFarm', 'img/button_farm.png');
+    game.load.image('buildMine', 'img/button_mine.png');
 
     this.game.stage.backgroundColor = '#DDDDDD'
 }
@@ -70,15 +73,16 @@ function create () {
 
     foodText = game.add.text(0, 0, text, style);
     colonyText = game.add.text(0, 20, text, style);
-    buildingText = game.add.text(0, 40, building, style);
+    buildingText = game.add.text(0, 40, buildingType, style);
 
     //Adding some buttons...
     leaderButton = game.add.button(game.world.centerX - 125, 0, 'war', pressLeader, this, 2, 1, 0);
     regularButton = game.add.button(game.world.centerX + 25, 0, 'normal', pressRegular, this, 2, 1, 0);
 
-    houseButton = game.add.button(0, game.world.height - 50, 'buildHouse', ()=>buildingText.text = building='house', this, 2, 1, 0);
-    farmButton = game.add.button(60, game.world.height - 50, 'buildFarm', ()=>buildingText.text = building='farm', this, 2, 1, 0);
-    barracksButton = game.add.button(120, game.world.height - 50, 'buildBarracks', ()=>buildingText.text = building='barracks', this, 2, 1, 0);
+    houseButton = game.add.button(0, game.world.height - 50, 'buildHouse', ()=>buildingText.text = buildingType='house', this, 2, 1, 0);
+    farmButton = game.add.button(60, game.world.height - 50, 'buildFarm', ()=>buildingText.text = buildingType='farm', this, 2, 1, 0);
+    barracksButton = game.add.button(120, game.world.height - 50, 'buildBarracks', ()=>buildingText.text = buildingType='barracks', this, 2, 1, 0);
+    mineButton = game.add.button(180, game.world.height - 50, 'buildMine', ()=>buildingText.text = buildingType='mine', this, 2, 1, 0);
 
     houseButton.onInputOver.add(()=>game.input.disabled = true, this);
     houseButton.onInputOut.add(()=>game.input.disabled = false, this);
@@ -86,6 +90,8 @@ function create () {
     farmButton.onInputOut.add(()=>game.input.disabled = false, this);
     barracksButton.onInputOver.add(()=>game.input.disabled = true, this);
     barracksButton.onInputOut.add(()=>game.input.disabled = false, this);
+    mineButton.onInputOver.add(()=>game.input.disabled = true, this);
+    mineButton.onInputOut.add(()=>game.input.disabled = false, this);
 }
 
 function update() {
@@ -93,7 +99,7 @@ function update() {
     for(var i=0;i<l;i++)
         colonyList[i].update(game.time.physicsElapsedMS);
 
-    foodText.text = 'resources: '+colonyList[0].resources+', rate: '+colonyList[0].avgResources;
+    foodText.text = 'food: '+colonyList[0].food+', rate: '+colonyList[0].avgResources;
     colonyText.text = 'peasants: '+colonyList[0].freePeasantList.length;
 }
 
@@ -182,22 +188,20 @@ function startExample(){
         }
     }
 
+    x = 200;
+    y = 75;
+
+    for(var i=0;i<5;i++){
+        colony.addBuilding(x, y, game, colony, 75, 75).name = 'mine';
+        x+=90;
+    }
+
 }
 
 function placeBuilding(){
-    if(building === 'farm') {
-        var farm = new Building(game.input.activePointer.x, game.input.activePointer.y, game, colonyList[0], 100, 100)
-        colonyList[0].buildingList.push(farm);
-        farm.name = 'farm';
-    }else if(building === 'house') {
-        var house = new Building(game.input.activePointer.x, game.input.activePointer.y, game, colonyList[0], 40, 40);
-        colonyList[0].buildingList.push(house);
-        house.name = 'house';
-    }else if(building === 'barracks') {
-        var barracks = new Building(game.input.activePointer.x, game.input.activePointer.y, game, colonyList[0], 50, 50);
-        colonyList[0].buildingList.push(barracks);
-        barracks.name = 'barracks';
-    }
+    var building = new Building(game.input.activePointer.x, game.input.activePointer.y, game, colonyList[0], 100, 100);
+    colonyList[0].buildingList.push(building);
+    building.name = buildingType;
 }
 
 function pressLeader(){

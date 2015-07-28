@@ -71,8 +71,8 @@ class Colony extends Unit{
     }
 
     calcRate = () =>{
-        this.avgResources = this.resources - this.lastResources;
-        this.lastResources = this.resources;
+        this.avgResources = this.food - this.lastResources;
+        this.lastResources = this.food;
     };
 
     destroy(){

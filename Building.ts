@@ -12,46 +12,66 @@ class Building extends Unit {
     constructor(x, y, game, colony, width?, height?) {
         super(x, y, game, colony, width||30, height||30);
 
-        this.type = 'building';
+        this.type = 'buildingType';
         this.name = 'farm';
-        this.resources = 0;
+        this.food = 0;
         this.blackBoard.moveSpeed = 0;
     }
-
 
     start():void {
         super.start();
 
-
+        if(this.name === 'mine')
+            this.refillTime = 2000;
     }
 
     update(delta){
         super.update(delta);
 
+        //For a farm....
         if(this.name === 'farm') {
-            //If we have 0 resources, wait some time before refilling.
-            if (this.resources === 0) {
+            //If we have 0 food, wait some time before refilling.
+            if (this.food === 0) {
                 this.counter += delta; //Increment
                 if (this.counter >= this.refillTime) {
                     this.counter = 0; //Reset
-                    this.resources = 1; //Reset
+                    this.food = 1; //Reset
 
                     //We add a new task to the colony queue.
                     this.colony.addTaskToQueue(this.getResourceTask);
                 }
             }
-        }if(this.name === 'house' && this.worker === null){
+
+        //For a mine...
+        }else if(this.name === 'mine'){
+            //If we have 0 iron, wait some time before refilling.
+            if (this.iron === 0) {
+                this.counter += delta; //Increment
+                if (this.counter >= this.refillTime) {
+                    this.counter = 0; //Reset
+                    this.iron = 1; //Reset
+
+                    //We add a new task to the colony queue.
+                    this.colony.addTaskToQueue(this.getResourceTask);
+                }
+            }
+
+        //For a house...
+        }else if(this.name === 'house' && this.worker === null){
             this.worker = this.colony.addFreePeasant(this.sprite.x, this.sprite.y, this.game, this.colony);
+
+        //For a barracks...
         }else if(this.name === 'barracks'){
             this.counter += delta;
-            if(this.counter >= this.refillTime){
+            if(this.counter >= this.refillTime && this.colony.food >= 1){
                 this.counter = 0;
                 var p = this.colony.addFreePeasant(this.sprite.x, this.sprite.y, this.game, this.colony);
                 p.name = 'soldier';
+                this.colony.food--;
             }
         }
 
-        //this.resText.text = ''+this.resources;
+        //this.resText.text = ''+this.food;
     }
 
     getResourceTask = (bb:BlackBoard):Task => {

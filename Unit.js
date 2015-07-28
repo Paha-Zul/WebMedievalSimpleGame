@@ -21,7 +21,8 @@ var Unit = (function () {
         this.behaviour = null;
         this.idleCounter = 0;
         this.walkCounter = 0;
-        this.resources = 0;
+        this.food = 0;
+        this.iron = 0;
         this.posCounter = 0;
         this.group = null;
         this.flag = false;
@@ -88,6 +89,9 @@ var Unit = (function () {
             if (list.length > 0)
                 list[0].addUnit(this);
         }
+        else if (this.name === 'mine') {
+            this.sprite.loadTexture('mine');
+        }
         if (this.name !== 'house' && this.name !== 'soldier' && this.name !== 'barracks') {
             var style = { font: "18px Arial", fill: "#1765D1", align: "center" };
             this.text = game.add.text(this.sprite.x, this.sprite.y - this.height / 2 - 20, '', style);
@@ -97,40 +101,27 @@ var Unit = (function () {
         if (!this.started)
             this.start();
         if (this.text !== undefined && this.text !== null) {
-            this.text.position.set(this.sprite.x, this.sprite.y - this.height / 2 - 20);
-            if (this.name !== 'leader') {
-                this.text.text = '' + this.resources;
+            if (this.name === 'colony') {
+                this.text.text = 'F: ' + this.food + " I: " + this.iron;
             }
             else if (this.name === 'leader') {
                 this.text.text = '' + this.group.getNumUnits();
             }
+            else if (this.name === 'mine') {
+                this.text.text = 'I: ' + this.iron;
+            }
+            else if (this.name === 'peasant') {
+                this.text.text = '' + (this.iron + this.food);
+            }
+            else {
+                this.text.text = 'F: ' + this.food;
+            }
+            this.text.position.set(this.sprite.x - this.text.width / 2, this.sprite.y - this.height / 2 - 20);
         }
         //For prototyping, only let humanoids do this section.
         if (this.type === 'humanoid') {
             //this.behaviourStuff(delta);
             this.otherBehaviourStuff(delta);
-        }
-    };
-    Unit.prototype.behaviourStuff = function (delta) {
-        //If we have a behaviour, execute it.
-        if (this.behaviour !== null) {
-            this.behaviour.update(delta);
-            if (this.behaviour.getControl().finished) {
-                this.behaviour = null;
-            }
-        }
-        else {
-            if (this.colony !== null && this.colony.buildingList.length > 0) {
-                var seq = new Sequence(this.blackBoard);
-                seq.control.addTask(new GetRandomBuilding(this.blackBoard));
-                seq.control.addTask(new MoveTo(this.blackBoard));
-                seq.control.addTask(new TakeResource(this.blackBoard));
-                seq.control.addTask(new GetColony(this.blackBoard));
-                seq.control.addTask(new MoveTo(this.blackBoard));
-                seq.control.addTask(new GiveResource(this.blackBoard));
-                this.behaviour = seq;
-                this.behaviour.start();
-            }
         }
     };
     Unit.prototype.otherBehaviourStuff = function (delta) {
@@ -144,8 +135,10 @@ var Unit = (function () {
             }
         }
         else {
+            var beh = null;
             //Try and get a beh from the colony. This will be a function.
-            var beh = this.colony.getTaskFromQueue();
+            if (this.name === 'peasant')
+                var beh = this.colony.getTaskFromQueue();
             //If we actually got one, execute the function which will return a behaviour.
             if (beh !== null)
                 this.behaviour = beh(this.blackBoard);

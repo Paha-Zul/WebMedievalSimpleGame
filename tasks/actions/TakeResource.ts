@@ -18,10 +18,10 @@ class TakeResource extends LeafTask{
     update(delta) {
         super.update(delta);
 
-        if(this.bb.target.resources >= 0){
-            this.bb.me.resources += this.bb.target.resources;
-            this.bb.target.resources = 0;
-        }
+        this.bb.me.food += this.bb.target.food;
+        this.bb.me.iron += this.bb.target.iron;
+        this.bb.target.food = 0;
+        this.bb.target.iron = 0;
 
         this.getControl().finishWithSuccess();
     }

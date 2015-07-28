@@ -10,9 +10,9 @@ var __extends = this.__extends || function (d, b) {
  *
  * Super prototyping extension of the prototype class.
  */
-var Colony = (function (_super) {
-    __extends(Colony, _super);
-    function Colony(x, y, game, width, height) {
+var Capitol = (function (_super) {
+    __extends(Capitol, _super);
+    function Capitol(x, y, game, width, height) {
         var _this = this;
         _super.call(this, x, y, game, null, width, height);
         this.game = game;
@@ -51,7 +51,7 @@ var Colony = (function (_super) {
         this.name = 'colony';
         this.taskQueue = new CircularQueue(100);
     }
-    Colony.prototype.update = function (delta) {
+    Capitol.prototype.update = function (delta) {
         _super.prototype.update.call(this, delta);
         var i;
         for (i = 0; i < this.freePeasantList.length; i++)
@@ -63,22 +63,22 @@ var Colony = (function (_super) {
         for (i = 0; i < this.buildingList.length; i++)
             this.buildingList[i].update(delta);
     };
-    Colony.prototype.addGroup = function (leader) {
+    Capitol.prototype.addGroup = function (leader) {
         var group = new Group(leader);
         leader.group = group;
         this.groupList.push(group);
         return group;
     };
-    Colony.prototype.getGroupList = function () {
+    Capitol.prototype.getGroupList = function () {
         return this.groupList;
     };
-    Colony.prototype.addTaskToQueue = function (func) {
+    Capitol.prototype.addTaskToQueue = function (func) {
         this.taskQueue.add(func);
     };
-    Colony.prototype.getTaskFromQueue = function () {
+    Capitol.prototype.getTaskFromQueue = function () {
         return this.taskQueue.popFirst();
     };
-    Colony.prototype.destroy = function () {
+    Capitol.prototype.destroy = function () {
         var i = 0;
         for (i = 0; i < this.freePeasantList.length; i++)
             this.freePeasantList[i].destroy();
@@ -94,6 +94,6 @@ var Colony = (function (_super) {
         this.buildingList = [];
         this.text.destroy();
     };
-    return Colony;
+    return Capitol;
 })(Unit);
 //# sourceMappingURL=Colony.js.map

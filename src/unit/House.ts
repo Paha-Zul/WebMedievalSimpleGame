@@ -6,7 +6,7 @@
 
 class House extends Building{
 
-    constructor(x:number, y:number, game:Phaser.Game, colony:Colony, width?:number, height?:number) {
+    constructor(x:number, y:number, game:Phaser.Game, colony:Capitol, width?:number, height?:number) {
         super(x, y, game, colony, width, height);
     }
 

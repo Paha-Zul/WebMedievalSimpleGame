@@ -5,7 +5,7 @@
  *
  * Super prototyping extension of the prototype class.
  */
-class Colony extends Unit{
+class Capitol extends Unit{
     static playerCounter : number;
     freePeasantList : Unit[] = [];
     workerList : Unit[] = [];

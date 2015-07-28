@@ -30,7 +30,7 @@ class Unit{
     text:Phaser.Text;
     blackBoard:BlackBoard;
 
-    constructor(x:number, y:number, public game : Phaser.Game, public colony:Colony, public width?:number, public height?:number){
+    constructor(x:number, y:number, public game : Phaser.Game, public colony:Capitol, public width?:number, public height?:number){
         this.width = width || 10;
         this.height = height || 10;
         this.sprite = makeSquareSprite(this.width, this.height);

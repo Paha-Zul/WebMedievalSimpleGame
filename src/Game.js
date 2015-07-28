@@ -38,6 +38,7 @@ var mineButton;
 var houseKey, farmKey;
 var buildingType = 'farm';
 var spawnTimer;
+var cursors;
 function preload() {
     game.load.image('normal', 'img/normal_button.png');
     game.load.image('war', 'img/war_button.png');
@@ -54,6 +55,8 @@ function preload() {
 }
 function create() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
+    game.world.setBounds(0, 0, 2000, 2000);
+    game.camera.setPosition(600, 700);
     unitGroup = game.add.group();
     startExample();
     //Adds an event to the mouse.
@@ -61,6 +64,7 @@ function create() {
         if (!game.input.disabled)
             placeBuilding();
     }, this);
+    cursors = game.input.keyboard.createCursorKeys();
     //Some text stuff...
     var text = "- phaser -\n with a sprinkle of \n pixi dust.";
     var style = { font: "20px Arial", fill: "#ff0044", align: "center" };
@@ -89,13 +93,34 @@ function update() {
         colonyList[i].update(game.time.physicsElapsedMS);
     foodText.text = 'food: ' + colonyList[0].food + ', rate: ' + colonyList[0].avgResources;
     colonyText.text = 'peasants: ' + colonyList[0].freePeasantList.length;
+    if (cursors.up.isDown) {
+        game.camera.y -= 4;
+    }
+    else if (cursors.down.isDown) {
+        game.camera.y += 4;
+    }
+    if (cursors.left.isDown) {
+        game.camera.x -= 4;
+    }
+    else if (cursors.right.isDown) {
+        game.camera.x += 4;
+    }
+    if (game.input.mouse.wheelDelta !== 0) {
+        var mult = 0.1;
+        var val = game.input.mouse.wheelDelta * mult;
+        game.world.scale.x += val;
+        game.world.scale.y += val;
+        game.input.mouse.wheelDelta = 0;
+        game.camera.setPosition(game.camera.x + game.camera.x * val, game.camera.y + game.camera.y * val);
+        console.log('scale: ' + game.world.scale);
+    }
 }
 function render() {
 }
 function createColonyAndUnitsLeader() {
     var numUnits = 30;
     //Create a colony.
-    var colony = new Colony(game.world.centerX, game.world.centerY, game, 100, 100);
+    var colony = new Capitol(game.world.centerX, game.world.centerY, game, 100, 100);
     colonyList[0] = colony;
     //Create a leader
     leader = colony.addFreePeasant(game.world.centerX, game.world.centerY, game, colony);
@@ -125,26 +150,28 @@ function createColonyAndUnitsLeader() {
     leader.blackBoard.idleTime = 10000000000;
     leader.behaviour = seq;
     //spawnTimer = game.time.events.loop(1000, () => colony.addFreePeasant(game.world.centerX, game.world.centerY, game, colony).leader = leader, this);
+    leader.colony.food = 100000;
+    leader.colony.iron = 100000;
 }
 function createColonyAndUnitsNormal() {
-    var colony = new Colony(game.world.centerX, game.world.centerY, game, 100, 100);
+    var colony = new Capitol(game.world.centerX, game.world.centerY, game, 100, 100);
     colonyList[0] = colony;
 }
 function startExample() {
     /*
      * Incredibly ugly prototype code here. Quick and dirty...
      */
-    var colony = new Colony(game.world.centerX, game.world.centerY, game, 100, 100);
+    var colony = new Capitol(game.world.centerX, game.world.centerY, game, 100, 100);
     colonyList[0] = colony;
-    var x = 50, y = 100;
+    var x = game.world.centerX - 300, y = game.world.centerY - 100;
     var width = 40, height = 40;
     for (var i = 0; i < 10; i++)
         colony.addBuilding('house', x, i * 40 + y, game, colony, width, height);
-    x = 90;
+    x = game.world.centerX - 350;
     for (var i = 0; i < 10; i++)
         colony.addBuilding('house', x, i * 40 + y, game, colony, width, height);
-    x = 750;
-    y = 100;
+    x = game.world.centerX + 300;
+    y = game.world.centerY - 200;
     width = 100;
     height = 100;
     for (var i = 0; i < 8; i++) {
@@ -156,15 +183,18 @@ function startExample() {
             x -= width;
         }
     }
-    x = 200;
-    y = 75;
+    x = game.world.centerX - 200;
+    y = game.world.centerY - 200;
     for (var i = 0; i < 5; i++) {
         colony.addBuilding('mine', x, y, game, colony, 75, 75);
         x += 90;
     }
 }
 function placeBuilding() {
-    colonyList[0].addBuilding(buildingType, game.input.activePointer.x, game.input.activePointer.y, game, colonyList[0], 100, 100);
+    //TODO This has to change with the scale of the world.
+    var x = game.input.activePointer.x + game.camera.x;
+    var y = game.input.activePointer.y + game.camera.y;
+    colonyList[0].addBuilding(buildingType, x, y, game, colonyList[0], 100, 100);
 }
 function pressLeader() {
     colonyList[0].destroy();

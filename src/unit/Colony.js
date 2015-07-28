@@ -1,4 +1,4 @@
-/// <reference path="./Game.ts"/>
+/// <reference path="./../Game.ts"/>
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -28,9 +28,18 @@ var Colony = (function (_super) {
             _this.freePeasantList.push(unit);
             return unit;
         };
-        this.addBuilding = function (x, y, game, colony, width, height) {
-            var unit = new Building(x, y, game, colony, width, height);
-            _this.freePeasantList.push(unit);
+        this.addBuilding = function (type, x, y, game, colony, width, height) {
+            var unit = null;
+            if (type === 'house')
+                unit = new House(x, y, game, colony, width, height);
+            if (type === 'farm')
+                unit = new Farm(x, y, game, colony, width, height);
+            if (type === 'barracks')
+                unit = new Barracks(x, y, game, colony, width, height);
+            if (type === 'mine')
+                unit = new Mine(x, y, game, colony, width, height);
+            unit.name = type;
+            _this.buildingList.push(unit);
             return unit;
         };
         this.calcRate = function () {

@@ -1,6 +1,4 @@
-/// <reference path="./Game.ts"/>
-/// <reference path="./tasks/Task.ts"/>
-/// <reference path="./tasks/BlackBoard.ts"/>
+/// <reference path="./../Game.ts"/>
 /**
  * Created by Paha on 7/23/2015.
  *

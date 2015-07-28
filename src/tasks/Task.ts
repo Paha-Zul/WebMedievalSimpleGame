@@ -1,4 +1,4 @@
-///<reference path="control\TaskController.ts"/>
+///<reference path="control/TaskController.ts"/>
 /**
  * Created by Paha on 7/24/2015.
  */

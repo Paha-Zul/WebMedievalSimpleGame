@@ -1,4 +1,4 @@
-///<reference path="..\control\ParentTaskController.ts"/>
+///<reference path="../control/ParentTaskController.ts"/>
 /**
  * Created by Paha on 7/25/2015.
  */

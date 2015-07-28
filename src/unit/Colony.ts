@@ -1,4 +1,4 @@
-/// <reference path="./Game.ts"/>
+/// <reference path="./../Game.ts"/>
 
 /**
  * Created by Paha on 7/23/2015.
@@ -45,9 +45,16 @@ class Colony extends Unit{
         return unit;
     };
 
-    addBuilding = (x, y, game, colony, width?, height?) : Building =>{
-        var unit = new Building(x, y, game, colony, width, height);
-        this.freePeasantList.push(unit);
+    addBuilding = (type:string, x, y, game, colony, width?, height?) : Building =>{
+        var unit:Building = null;
+        if(type === 'house') unit = new House(x, y, game, colony, width, height);
+        if(type === 'farm') unit = new Farm(x, y, game, colony, width, height);
+        if(type === 'barracks') unit = new Barracks(x, y, game, colony, width, height);
+        if(type === 'mine') unit = new Mine(x, y, game, colony, width, height);
+
+        unit.name = type;
+
+        this.buildingList.push(unit);
         return unit;
     };
 

@@ -1,4 +1,4 @@
-/// <reference path="./Game.ts"/>
+/// <reference path="./../Game.ts"/>
 function makeSquareSprite(width, height) {
     var bmd = game.add.bitmapData(width, height);
     bmd.ctx.beginPath();

@@ -1,39 +1,23 @@
-///<reference path="..\LeafTask.ts"/>
+///<reference path="../LeafTask.ts"/>
 /**
  * Created by Paha on 7/25/2015.
  */
 
 ///<reference path="../../Game.ts"/>
 
-class FollowPointRelativeToTarget extends LeafTask{
-
+class FollowPoint extends LeafTask{
     constructor(bb:BlackBoard) {
         super(bb);
     }
-
-    update(delta) {
-        super.update(delta);
-
-        var pos = this.bb.targetPosition;
-        var target = this.bb.target;
-        var rot = this.bb.target.sprite.angle*(Math.PI/180);
-
-        var x = Math.cos(rot)*pos.x - Math.sin(rot)*pos.y;
-        var y = Math.sin(rot)*pos.x + Math.cos(rot)*pos.y;
-
-        x += target.sprite.x;
-        y += target.sprite.y;
-
-        this.move(new Phaser.Point(x, y), this.bb.disToStop);
-    }
-
 
     start() {
         super.start();
     }
 
-    end() {
-        return super.end();
+    update(delta) {
+        super.update(delta);
+
+        this.move(this.bb.targetPosition, this.bb.disToStop);
     }
 
     move(position:Phaser.Point, disToStop:number){

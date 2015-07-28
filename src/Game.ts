@@ -1,24 +1,30 @@
-/// <reference path="./build/phaser.d.ts"/>
-/// <reference path="./Unit.ts"/>
-/// <reference path="./Colony.ts"/>
-/// <reference path="./Building.ts"/>
-/// <reference path="./Helper.ts"/>
-/// <reference path="./Behaviours.ts"/>
-/// <reference path="./CircularQueue.ts"/>
-/// <reference path="./tasks/BlackBoard.ts"/>
-/// <reference path="./tasks/actions/MoveTo.ts"/>
-/// <reference path="./tasks/actions/FollowWaypoint.ts"/>
-/// <reference path="./tasks/actions/FollowPointRelativeToTarget.ts"/>
-/// <reference path="./tasks/actions/GetRandomBuilding.ts"/>
-/// <reference path="./tasks/actions/GetColony.ts"/>
-/// <reference path="./tasks/actions/TakeResource.ts"/>
-/// <reference path="./tasks/actions/GiveResource.ts"/>
-/// <reference path="./tasks/actions/RandomLocation.ts"/>
-/// <reference path="./tasks/actions/Idle.ts"/>
-/// <reference path="./tasks/composite/ParentTask.ts"/>
-/// <reference path="./tasks/composite/Sequence.ts"/>
-/// <reference path="./tasks/control/TaskController.ts"/>
-/// <reference path="./tasks/control/ParentTaskController.ts"/>
+/// <reference path="./../build/phaser.d.ts"/>
+/// <reference path="./unit/Unit.ts"/>
+/// <reference path="./unit/Colony.ts"/>
+/// <reference path="./unit/Building.ts"/>
+/// <reference path="./unit/House.ts"/>
+/// <reference path="./unit/Farm.ts"/>
+/// <reference path="./unit/Barracks.ts"/>
+/// <reference path="./unit/Mine.ts"/>
+
+/// <reference path="./util/Helper.ts"/>
+/// <reference path="./util/Behaviours.ts"/>
+/// <reference path="./util/CircularQueue.ts"/>
+
+/// <reference path="tasks/BlackBoard.ts"/>
+/// <reference path="tasks/actions/MoveTo.ts"/>
+/// <reference path="tasks/actions/FollowWaypoint.ts"/>
+/// <reference path="tasks/actions/FollowPointRelativeToTarget.ts"/>
+/// <reference path="tasks/actions/GetRandomBuilding.ts"/>
+/// <reference path="tasks/actions/GetColony.ts"/>
+/// <reference path="tasks/actions/TakeResource.ts"/>
+/// <reference path="tasks/actions/GiveResource.ts"/>
+/// <reference path="tasks/actions/RandomLocation.ts"/>
+/// <reference path="tasks/actions/Idle.ts"/>
+/// <reference path="tasks/composite/ParentTask.ts"/>
+/// <reference path="tasks/composite/Sequence.ts"/>
+/// <reference path="tasks/control/TaskController.ts"/>
+/// <reference path="tasks/control/ParentTaskController.ts"/>
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update, render : render});
 var colonyList:Colony[] = [];
@@ -42,7 +48,6 @@ var buildingType:string = 'farm';
 var spawnTimer:Phaser.TimerEvent;
 
 function preload () {
-    game.load.image('logo', 'phaser.png');
     game.load.image('normal', 'img/normal_button.png');
     game.load.image('war', 'img/war_button.png');
     game.load.image('house', 'img/house.png');
@@ -165,25 +170,27 @@ function startExample(){
     var x=50, y=100;
     var width = 40, height = 40;
 
+    //Make some houses
     for(var i=0;i<10;i++)
-        colony.addBuilding(x, i*40 + y, game, colony, width, height).name = 'house';
+        colony.addBuilding('house', x, i*40 + y, game, colony, width, height);
 
     x=90;
 
+    //Make some more houses
     for(var i=0;i<10;i++)
-        colony.addBuilding(x, i*40 + y, game, colony, width, height).name = 'house';
+        colony.addBuilding('house', x, i*40 + y, game, colony, width, height);
 
     x=750;
     y=100;
     width = 100;
     height = 100;
 
+    //Make some farms
     for(var i=0;i<8;i++){
+        colony.addBuilding('farm', x, y, game, colony, width, height);
         if(i<4){
-            colony.addBuilding(x, y, game, colony, width, height).name = 'farm';
             y+=height;
         }else{
-            colony.addBuilding(x, y, game, colony, width, height).name = 'farm';
             x-=width;
         }
     }
@@ -191,17 +198,15 @@ function startExample(){
     x = 200;
     y = 75;
 
+    //Make some mines
     for(var i=0;i<5;i++){
-        colony.addBuilding(x, y, game, colony, 75, 75).name = 'mine';
+        colony.addBuilding('mine', x, y, game, colony, 75, 75);
         x+=90;
     }
-
 }
 
 function placeBuilding(){
-    var building = new Building(game.input.activePointer.x, game.input.activePointer.y, game, colonyList[0], 100, 100);
-    colonyList[0].buildingList.push(building);
-    building.name = buildingType;
+    colonyList[0].addBuilding(buildingType, game.input.activePointer.x, game.input.activePointer.y, game, colonyList[0], 100, 100);
 }
 
 function pressLeader(){

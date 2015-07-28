@@ -31,7 +31,7 @@ class Unit{
     text:Phaser.Text;
     blackBoard:BlackBoard;
 
-    constructor(x:number, y:number, public game : Phaser.Game, public colony:Colony, type?:string, public width?:number, public height?:number){
+    constructor(x:number, y:number, public game : Phaser.Game, public colony:Colony, public width?:number, public height?:number){
         this.width = width || 10;
         this.height = height || 10;
         this.sprite = makeSquareSprite(this.width, this.height);
@@ -40,25 +40,30 @@ class Unit{
         this.blackBoard = new BlackBoard();
         this.blackBoard.me = this;
         this.blackBoard.game = game;
-        this.type = type||this.type;
     }
 
     start():void{
         this.started = true;
 
-        if(this.leader !== null)
-            this.leader.group.addUnit(this);
-
         if(this.name === 'house')
             this.sprite.loadTexture('house');
         else if(this.name === 'farm')
             this.sprite.loadTexture('farm');
+        else if(this.name === 'barracks')
+            this.sprite.loadTexture('barracks');
         else if(this.name === 'colony')
             this.sprite.loadTexture('capitol');
         else if(this.name === 'leader')
-            this.group = new Group(this);
+            this.colony.addGroup(this);
+        else if(this.name === 'peasant'){
 
-        if(this.name !== 'house'){
+        }else if(this.name === 'soldier'){
+            var list = this.colony.getGroupList();
+            if(list.length > 0)
+                list[0].addUnit(this);
+        }
+
+        if(this.name !== 'house' && this.name !== 'soldier' && this.name !== 'barracks'){
             var style = { font: "18px Arial", fill: "#1765D1", align: "center" };
             this.text = game.add.text(this.sprite.x, this.sprite.y - this.height/2 - 20, '', style);
         }
@@ -68,8 +73,12 @@ class Unit{
         if(!this.started) this.start();
 
         if(this.text !== undefined && this.text !== null) {
-            this.text.text = '' + this.resources;
-            this.text.position.set(this.sprite.x, this.sprite.y - this.height/2 - 20);
+            this.text.position.set(this.sprite.x, this.sprite.y - this.height / 2 - 20);
+            if(this.name !== 'leader') {
+                this.text.text = '' + this.resources;
+            }else if(this.name === 'leader'){
+                this.text.text = '' + this.group.getNumUnits();
+            }
         }
 
         //For prototyping, only let humanoids do this section.
@@ -182,6 +191,7 @@ class Group{
     private posCounter:number = 0;
     private spacing:number = 15;
     private lines:number = 3;
+    private unitsPerLine:number = 15;
 
 
     constructor(leader:Unit){
@@ -206,19 +216,24 @@ class Group{
         this.reformGroup();
     }
 
+    getNumUnits():number{
+        return this.unitList.length;
+    }
+
     private reformGroup(){
         //TODO Kinda performance heavy to do for every addition/subtraction. Maybe have a timer to wait
         //TODO since an add/remove?
         //TODO Maybe not... got up to 700 units before getting under 50 frames and that's probably due to rendering.
         this.posCounter = 0;
+        this.lines = ~~(this.unitList.length/this.unitsPerLine) + 1;
+        this.positions = [];
 
         var num = this.unitList.length;
         var spacing = 15; //Spacing between spaces
-        var lines = 3; //# of lines deep.
 
         for(var i=0;i<num;i++){
-            var index = ~~(i/~~(num/lines));
-            var div = ~~(num/lines);
+            var index = ~~(i/~~(num/this.lines));
+            var div = ~~(num/this.lines);
             var x = -(index+1)*spacing;
             var y = i%div*spacing - div/2*spacing;
             var point = new Phaser.Point(x, y);

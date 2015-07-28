@@ -7,7 +7,7 @@
  * A prototyping class. Needs to be cleaned up later but such you know?
  */
 var Unit = (function () {
-    function Unit(x, y, game, colony, type, width, height) {
+    function Unit(x, y, game, colony, width, height) {
         var _this = this;
         this.game = game;
         this.colony = colony;
@@ -68,21 +68,27 @@ var Unit = (function () {
         this.blackBoard = new BlackBoard();
         this.blackBoard.me = this;
         this.blackBoard.game = game;
-        this.type = type || this.type;
     }
     Unit.prototype.start = function () {
         this.started = true;
-        if (this.leader !== null)
-            this.leader.group.addUnit(this);
         if (this.name === 'house')
             this.sprite.loadTexture('house');
         else if (this.name === 'farm')
             this.sprite.loadTexture('farm');
+        else if (this.name === 'barracks')
+            this.sprite.loadTexture('barracks');
         else if (this.name === 'colony')
             this.sprite.loadTexture('capitol');
         else if (this.name === 'leader')
-            this.group = new Group(this);
-        if (this.name !== 'house') {
+            this.colony.addGroup(this);
+        else if (this.name === 'peasant') {
+        }
+        else if (this.name === 'soldier') {
+            var list = this.colony.getGroupList();
+            if (list.length > 0)
+                list[0].addUnit(this);
+        }
+        if (this.name !== 'house' && this.name !== 'soldier' && this.name !== 'barracks') {
             var style = { font: "18px Arial", fill: "#1765D1", align: "center" };
             this.text = game.add.text(this.sprite.x, this.sprite.y - this.height / 2 - 20, '', style);
         }
@@ -91,8 +97,13 @@ var Unit = (function () {
         if (!this.started)
             this.start();
         if (this.text !== undefined && this.text !== null) {
-            this.text.text = '' + this.resources;
             this.text.position.set(this.sprite.x, this.sprite.y - this.height / 2 - 20);
+            if (this.name !== 'leader') {
+                this.text.text = '' + this.resources;
+            }
+            else if (this.name === 'leader') {
+                this.text.text = '' + this.group.getNumUnits();
+            }
         }
         //For prototyping, only let humanoids do this section.
         if (this.type === 'humanoid') {
@@ -164,6 +175,7 @@ var Group = (function () {
         this.posCounter = 0;
         this.spacing = 15;
         this.lines = 3;
+        this.unitsPerLine = 15;
         this.leader = leader;
         this.positions = [];
         this.unitList = [];
@@ -181,17 +193,21 @@ var Group = (function () {
         }
         this.reformGroup();
     };
+    Group.prototype.getNumUnits = function () {
+        return this.unitList.length;
+    };
     Group.prototype.reformGroup = function () {
         //TODO Kinda performance heavy to do for every addition/subtraction. Maybe have a timer to wait
         //TODO since an add/remove?
         //TODO Maybe not... got up to 700 units before getting under 50 frames and that's probably due to rendering.
         this.posCounter = 0;
+        this.lines = ~~(this.unitList.length / this.unitsPerLine) + 1;
+        this.positions = [];
         var num = this.unitList.length;
         var spacing = 15; //Spacing between spaces
-        var lines = 3; //# of lines deep.
         for (var i = 0; i < num; i++) {
-            var index = ~~(i / ~~(num / lines));
-            var div = ~~(num / lines);
+            var index = ~~(i / ~~(num / this.lines));
+            var div = ~~(num / this.lines);
             var x = -(index + 1) * spacing;
             var y = i % div * spacing - div / 2 * spacing;
             var point = new Phaser.Point(x, y);

@@ -11,6 +11,7 @@ class Colony extends Unit{
     workerList : Unit[] = [];
     armyList : Unit[] = [];
     buildingList : Unit[] = [];
+    groupList : Group[] = [];
     lastResources : number = 0;
     avgResources : number = 0;
     timer : Phaser.TimerEvent;
@@ -49,6 +50,17 @@ class Colony extends Unit{
         this.freePeasantList.push(unit);
         return unit;
     };
+
+    addGroup(leader:Unit){
+        var group:Group = new Group(leader);
+        leader.group = group;
+        this.groupList.push(group);
+        return group;
+    }
+
+    getGroupList():Group[]{
+        return this.groupList;
+    }
 
     addTaskToQueue(func:any){
         this.taskQueue.add(func);

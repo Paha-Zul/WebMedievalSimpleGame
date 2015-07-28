@@ -20,6 +20,7 @@ var Colony = (function (_super) {
         this.workerList = [];
         this.armyList = [];
         this.buildingList = [];
+        this.groupList = [];
         this.lastResources = 0;
         this.avgResources = 0;
         this.addFreePeasant = function (x, y, game, colony) {
@@ -52,6 +53,15 @@ var Colony = (function (_super) {
             this.armyList[i].update(delta);
         for (i = 0; i < this.buildingList.length; i++)
             this.buildingList[i].update(delta);
+    };
+    Colony.prototype.addGroup = function (leader) {
+        var group = new Group(leader);
+        leader.group = group;
+        this.groupList.push(group);
+        return group;
+    };
+    Colony.prototype.getGroupList = function () {
+        return this.groupList;
     };
     Colony.prototype.addTaskToQueue = function (func) {
         this.taskQueue.add(func);

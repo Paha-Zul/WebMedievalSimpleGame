@@ -42,6 +42,13 @@ class Building extends Unit {
             }
         }if(this.name === 'house' && this.worker === null){
             this.worker = this.colony.addFreePeasant(this.sprite.x, this.sprite.y, this.game, this.colony);
+        }else if(this.name === 'barracks'){
+            this.counter += delta;
+            if(this.counter >= this.refillTime){
+                this.counter = 0;
+                var p = this.colony.addFreePeasant(this.sprite.x, this.sprite.y, this.game, this.colony);
+                p.name = 'soldier';
+            }
         }
 
         //this.resText.text = ''+this.resources;

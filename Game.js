@@ -27,6 +27,9 @@ var stage = 0;
 var unitGroup = null;
 var leaderButton;
 var regularButton;
+var houseButton;
+var farmButton;
+var barracksButton;
 var houseKey, farmKey;
 var building = 'farm';
 var spawnTimer;
@@ -37,6 +40,10 @@ function preload() {
     game.load.image('house', 'img/house.png');
     game.load.image('farm', 'img/farm.png');
     game.load.image('capitol', 'img/capitol.png');
+    game.load.image('barracks', 'img/barracks.png');
+    game.load.image('buildBarracks', 'img/button_barracks.png');
+    game.load.image('buildHouse', 'img/button_house.png');
+    game.load.image('buildFarm', 'img/button_farm.png');
     this.game.stage.backgroundColor = '#DDDDDD';
 }
 function create() {
@@ -44,21 +51,28 @@ function create() {
     unitGroup = game.add.group();
     startExample();
     //Adds an event to the mouse.
-    game.input.onDown.add(placeBuilding, this);
+    game.input.onDown.add(function () {
+        if (!game.input.disabled)
+            placeBuilding();
+    }, this);
     //Some text stuff...
     var text = "- phaser -\n with a sprinkle of \n pixi dust.";
     var style = { font: "20px Arial", fill: "#ff0044", align: "center" };
     foodText = game.add.text(0, 0, text, style);
     colonyText = game.add.text(0, 20, text, style);
     buildingText = game.add.text(0, 40, building, style);
-    game.add.text(0, 60, 'Press H for houses, F for farms. Click to spawn buildings.', style);
     //Adding some buttons...
     leaderButton = game.add.button(game.world.centerX - 125, 0, 'war', pressLeader, this, 2, 1, 0);
     regularButton = game.add.button(game.world.centerX + 25, 0, 'normal', pressRegular, this, 2, 1, 0);
-    houseKey = game.input.keyboard.addKey(Phaser.Keyboard.H);
-    farmKey = game.input.keyboard.addKey(Phaser.Keyboard.F);
-    houseKey.onDown.add(function () { return buildingText.text = building = 'house'; }, this);
-    farmKey.onDown.add(function () { return buildingText.text = building = 'farm'; }, this);
+    houseButton = game.add.button(0, game.world.height - 50, 'buildHouse', function () { return buildingText.text = building = 'house'; }, this, 2, 1, 0);
+    farmButton = game.add.button(60, game.world.height - 50, 'buildFarm', function () { return buildingText.text = building = 'farm'; }, this, 2, 1, 0);
+    barracksButton = game.add.button(120, game.world.height - 50, 'buildBarracks', function () { return buildingText.text = building = 'barracks'; }, this, 2, 1, 0);
+    houseButton.onInputOver.add(function () { return game.input.disabled = true; }, this);
+    houseButton.onInputOut.add(function () { return game.input.disabled = false; }, this);
+    farmButton.onInputOver.add(function () { return game.input.disabled = true; }, this);
+    farmButton.onInputOut.add(function () { return game.input.disabled = false; }, this);
+    barracksButton.onInputOver.add(function () { return game.input.disabled = true; }, this);
+    barracksButton.onInputOut.add(function () { return game.input.disabled = false; }, this);
 }
 function update() {
     var l = colonyList.length;
@@ -66,8 +80,6 @@ function update() {
         colonyList[i].update(game.time.physicsElapsedMS);
     foodText.text = 'resources: ' + colonyList[0].resources + ', rate: ' + colonyList[0].avgResources;
     colonyText.text = 'peasants: ' + colonyList[0].freePeasantList.length;
-    if (leader !== null)
-        test();
 }
 function render() {
 }
@@ -82,7 +94,7 @@ function createColonyAndUnitsLeader() {
     leader.name = 'leader';
     for (var i = 0; i < numUnits; i++) {
         var p = colony.addFreePeasant(game.world.centerX, game.world.centerY, game, colony);
-        p.leader = leader;
+        p.name = 'soldier';
     }
     leader.control = 'manual';
     leader.blackBoard.disToStop = 1;
@@ -98,7 +110,11 @@ function createColonyAndUnitsLeader() {
     leader.blackBoard.waypoints.push(new Phaser.Point(200, 500));
     leader.blackBoard.waypoints.push(new Phaser.Point(300, 500));
     leader.blackBoard.waypoints.push(new Phaser.Point(400, 400));
-    leader.behaviour = new FollowWaypoint(leader.blackBoard);
+    var seq = new Sequence(leader.blackBoard);
+    seq.control.addTask(new FollowWaypoint(leader.blackBoard));
+    seq.control.addTask(new Idle(leader.blackBoard));
+    leader.blackBoard.idleTime = 10000000000;
+    leader.behaviour = seq;
     //spawnTimer = game.time.events.loop(1000, () => colony.addFreePeasant(game.world.centerX, game.world.centerY, game, colony).leader = leader, this);
 }
 function createColonyAndUnitsNormal() {
@@ -134,17 +150,21 @@ function startExample() {
     }
 }
 function placeBuilding() {
-    if (building === 'farm')
-        colonyList[0].buildingList.push(new Building(game.input.activePointer.x, game.input.activePointer.y, game, colonyList[0], 100, 100));
+    if (building === 'farm') {
+        var farm = new Building(game.input.activePointer.x, game.input.activePointer.y, game, colonyList[0], 100, 100);
+        colonyList[0].buildingList.push(farm);
+        farm.name = 'farm';
+    }
     else if (building === 'house') {
         var house = new Building(game.input.activePointer.x, game.input.activePointer.y, game, colonyList[0], 40, 40);
         colonyList[0].buildingList.push(house);
         house.name = 'house';
     }
-}
-function test() {
-    //if(stage === 0)
-    //    leader.walkTowardsPosition(new Phaser.Point(700,game.world.centerY), 5);
+    else if (building === 'barracks') {
+        var barracks = new Building(game.input.activePointer.x, game.input.activePointer.y, game, colonyList[0], 50, 50);
+        colonyList[0].buildingList.push(barracks);
+        barracks.name = 'barracks';
+    }
 }
 function pressLeader() {
     colonyList[0].destroy();

@@ -28,8 +28,11 @@ var leader:Unit = null;
 var stage = 0;
 var unitGroup = null;
 
-var leaderButton;
-var regularButton;
+var leaderButton:Phaser.Button;
+var regularButton:Phaser.Button;
+var houseButton:Phaser.Button;
+var farmButton:Phaser.Button;
+var barracksButton:Phaser.Button;
 
 var houseKey:Phaser.Key, farmKey:Phaser.Key;
 
@@ -44,6 +47,11 @@ function preload () {
     game.load.image('house', 'img/house.png');
     game.load.image('farm', 'img/farm.png');
     game.load.image('capitol', 'img/capitol.png');
+    game.load.image('barracks', 'img/barracks.png');
+
+    game.load.image('buildBarracks', 'img/button_barracks.png');
+    game.load.image('buildHouse', 'img/button_house.png');
+    game.load.image('buildFarm', 'img/button_farm.png');
 
     this.game.stage.backgroundColor = '#DDDDDD'
 }
@@ -54,7 +62,7 @@ function create () {
     startExample();
 
     //Adds an event to the mouse.
-    game.input.onDown.add(placeBuilding , this);
+    game.input.onDown.add(()=> {if(!game.input.disabled) placeBuilding();} , this);
 
     //Some text stuff...
     var text = "- phaser -\n with a sprinkle of \n pixi dust.";
@@ -63,18 +71,21 @@ function create () {
     foodText = game.add.text(0, 0, text, style);
     colonyText = game.add.text(0, 20, text, style);
     buildingText = game.add.text(0, 40, building, style);
-    game.add.text(0, 60, 'Press H for houses, F for farms. Click to spawn buildings.', style);
-
 
     //Adding some buttons...
     leaderButton = game.add.button(game.world.centerX - 125, 0, 'war', pressLeader, this, 2, 1, 0);
     regularButton = game.add.button(game.world.centerX + 25, 0, 'normal', pressRegular, this, 2, 1, 0);
 
-    houseKey = game.input.keyboard.addKey(Phaser.Keyboard.H);
-    farmKey = game.input.keyboard.addKey(Phaser.Keyboard.F);
+    houseButton = game.add.button(0, game.world.height - 50, 'buildHouse', ()=>buildingText.text = building='house', this, 2, 1, 0);
+    farmButton = game.add.button(60, game.world.height - 50, 'buildFarm', ()=>buildingText.text = building='farm', this, 2, 1, 0);
+    barracksButton = game.add.button(120, game.world.height - 50, 'buildBarracks', ()=>buildingText.text = building='barracks', this, 2, 1, 0);
 
-    houseKey.onDown.add(()=>buildingText.text = building='house', this);
-    farmKey.onDown.add(()=>buildingText.text = building='farm', this);
+    houseButton.onInputOver.add(()=>game.input.disabled = true, this);
+    houseButton.onInputOut.add(()=>game.input.disabled = false, this);
+    farmButton.onInputOver.add(()=>game.input.disabled = true, this);
+    farmButton.onInputOut.add(()=>game.input.disabled = false, this);
+    barracksButton.onInputOver.add(()=>game.input.disabled = true, this);
+    barracksButton.onInputOut.add(()=>game.input.disabled = false, this);
 }
 
 function update() {
@@ -84,8 +95,6 @@ function update() {
 
     foodText.text = 'resources: '+colonyList[0].resources+', rate: '+colonyList[0].avgResources;
     colonyText.text = 'peasants: '+colonyList[0].freePeasantList.length;
-
-    if(leader !== null) test();
 }
 
 function render(){
@@ -106,7 +115,7 @@ function createColonyAndUnitsLeader(){
 
     for(var i=0;i<numUnits;i++) {
         var p = colony.addFreePeasant(game.world.centerX, game.world.centerY, game, colony);
-        p.leader = leader;
+        p.name = 'soldier';
     }
 
     leader.control = 'manual';
@@ -124,8 +133,12 @@ function createColonyAndUnitsLeader(){
     leader.blackBoard.waypoints.push(new Phaser.Point(300, 500));
     leader.blackBoard.waypoints.push(new Phaser.Point(400, 400));
 
-    leader.behaviour = new FollowWaypoint(leader.blackBoard);
+    var seq:Sequence = new Sequence(leader.blackBoard);
+    seq.control.addTask(new FollowWaypoint(leader.blackBoard));
+    seq.control.addTask(new Idle(leader.blackBoard));
+    leader.blackBoard.idleTime = 10000000000;
 
+    leader.behaviour = seq;
     //spawnTimer = game.time.events.loop(1000, () => colony.addFreePeasant(game.world.centerX, game.world.centerY, game, colony).leader = leader, this);
 }
 
@@ -172,18 +185,19 @@ function startExample(){
 }
 
 function placeBuilding(){
-    if(building === 'farm')
-        colonyList[0].buildingList.push(new Building(game.input.activePointer.x, game.input.activePointer.y, game, colonyList[0], 100, 100));
-    else if(building === 'house') {
+    if(building === 'farm') {
+        var farm = new Building(game.input.activePointer.x, game.input.activePointer.y, game, colonyList[0], 100, 100)
+        colonyList[0].buildingList.push(farm);
+        farm.name = 'farm';
+    }else if(building === 'house') {
         var house = new Building(game.input.activePointer.x, game.input.activePointer.y, game, colonyList[0], 40, 40);
         colonyList[0].buildingList.push(house);
         house.name = 'house';
+    }else if(building === 'barracks') {
+        var barracks = new Building(game.input.activePointer.x, game.input.activePointer.y, game, colonyList[0], 50, 50);
+        colonyList[0].buildingList.push(barracks);
+        barracks.name = 'barracks';
     }
-}
-
-function test(){
-    //if(stage === 0)
-    //    leader.walkTowardsPosition(new Phaser.Point(700,game.world.centerY), 5);
 }
 
 function pressLeader(){

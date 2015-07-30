@@ -25,6 +25,14 @@ class Capitol extends Unit{
         this.taskQueue = new CircularQueue<any>(100);
     }
 
+    start():void {
+        super.start();
+
+        this.sprite.loadTexture('capitol');
+        this.width = this.sprite.width;
+        this.height = this.sprite.height;
+    }
+
     update(delta){
         super.update(delta);
 
@@ -39,8 +47,9 @@ class Capitol extends Unit{
             this.buildingList[i].update(delta);
     }
 
-    addFreePeasant = (x, y, game, colony) : Unit =>{
-        var unit = new Unit(x, y, game, colony);
+    addFreePeasant = (type:string, x:number, y:number, game:Phaser.Game, colony:Capitol) : Unit =>{
+        var unit = new Peasant(x, y, game, colony);
+        unit.name = type;
         this.freePeasantList.push(unit);
         return unit;
     };
@@ -58,9 +67,9 @@ class Capitol extends Unit{
         return unit;
     };
 
-    addGroup(leader:Unit){
+    addGroup(leader:Peasant){
         var group:Group = new Group(leader);
-        leader.group = group;
+        leader.getBannerMan().group = group;
         this.groupList.push(group);
         return group;
     }

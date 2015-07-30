@@ -16,6 +16,9 @@ class Mine extends Building{
 
         this.refillTime = 2000;
         this.name = 'mine';
+        this.sprite.loadTexture('mine');
+        this.width = this.sprite.width;
+        this.height = this.sprite.height;
     }
 
     update(delta):void {

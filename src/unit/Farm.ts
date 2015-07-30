@@ -14,6 +14,9 @@ class Farm extends Building{
 
         this.refillTime = 1000;
         this.name = 'farm';
+        this.sprite.loadTexture('farm');
+        this.width = this.sprite.width;
+        this.height = this.sprite.height;
     }
 
     update(delta):void {

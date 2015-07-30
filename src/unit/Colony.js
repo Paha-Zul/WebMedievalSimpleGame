@@ -23,8 +23,9 @@ var Capitol = (function (_super) {
         this.groupList = [];
         this.lastResources = 0;
         this.avgResources = 0;
-        this.addFreePeasant = function (x, y, game, colony) {
-            var unit = new Unit(x, y, game, colony);
+        this.addFreePeasant = function (type, x, y, game, colony) {
+            var unit = new Peasant(x, y, game, colony);
+            unit.name = type;
             _this.freePeasantList.push(unit);
             return unit;
         };
@@ -51,6 +52,12 @@ var Capitol = (function (_super) {
         this.name = 'colony';
         this.taskQueue = new CircularQueue(100);
     }
+    Capitol.prototype.start = function () {
+        _super.prototype.start.call(this);
+        this.sprite.loadTexture('capitol');
+        this.width = this.sprite.width;
+        this.height = this.sprite.height;
+    };
     Capitol.prototype.update = function (delta) {
         _super.prototype.update.call(this, delta);
         var i;
@@ -65,7 +72,7 @@ var Capitol = (function (_super) {
     };
     Capitol.prototype.addGroup = function (leader) {
         var group = new Group(leader);
-        leader.group = group;
+        leader.getBannerMan().group = group;
         this.groupList.push(group);
         return group;
     };

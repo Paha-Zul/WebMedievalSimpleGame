@@ -22,34 +22,26 @@ var Unit = (function () {
         this.food = 0;
         this.iron = 0;
         this.posCounter = 0;
-        this.group = null;
         this.flag = false;
-        this.target = null;
-        this.targetPos = null;
-        this.leader = null;
-        this.randIdle = Math.random() * 2000;
-        this.randWalk = Math.random() * 2000;
-        this.randRotation = Math.random() * 360;
-        this.moveSpeed = 2;
         //Walks in a direction.
-        this.walkTowardsRotation = function (rotation, disToStop) {
+        this.walkTowardsRotation = function (rotation, moveSpeed, disToStop) {
             //Get X and Y moving values.
-            var x = Math.cos(rotation) * _this.moveSpeed;
-            var y = Math.sin(rotation) * _this.moveSpeed;
+            var x = Math.cos(rotation) * moveSpeed;
+            var y = Math.sin(rotation) * moveSpeed;
             _this.sprite.x += x;
             _this.sprite.y += y;
             _this.sprite.angle = rotation;
         };
         //Walks towards a position stopping when it gets within the disToStop range.
-        this.walkTowardsPosition = function (position, disToStop, disToTarget, rotToTarget) {
+        this.walkTowardsPosition = function (position, disToStop, moveSpeed, disToTarget, rotToTarget) {
             if (disToTarget === undefined)
                 disToTarget = _this.sprite.position.distance(position);
             if (rotToTarget === undefined)
                 rotToTarget = _this.sprite.position.angle(position, false);
             //If we are still outside the stop range, move!
             if (disToTarget > disToStop) {
-                var x = Math.cos(rotToTarget) * _this.moveSpeed;
-                var y = Math.sin(rotToTarget) * _this.moveSpeed;
+                var x = Math.cos(rotToTarget) * moveSpeed;
+                var y = Math.sin(rotToTarget) * moveSpeed;
                 _this.sprite.x += x;
                 _this.sprite.y += y;
                 _this.sprite.angle = rotToTarget * (180 / Math.PI);
@@ -70,26 +62,6 @@ var Unit = (function () {
     }
     Unit.prototype.start = function () {
         this.started = true;
-        if (this.name === 'house')
-            this.sprite.loadTexture('house');
-        else if (this.name === 'farm')
-            this.sprite.loadTexture('farm');
-        else if (this.name === 'barracks')
-            this.sprite.loadTexture('barracks');
-        else if (this.name === 'colony')
-            this.sprite.loadTexture('capitol');
-        else if (this.name === 'leader')
-            this.colony.addGroup(this);
-        else if (this.name === 'peasant') {
-        }
-        else if (this.name === 'soldier') {
-            var list = this.colony.getGroupList();
-            if (list.length > 0)
-                list[0].addUnit(this);
-        }
-        else if (this.name === 'mine') {
-            this.sprite.loadTexture('mine');
-        }
         if (this.name !== 'house' && this.name !== 'soldier' && this.name !== 'barracks') {
             var style = { font: "18px Arial", fill: "#1765D1", align: "center" };
             this.text = game.add.text(this.sprite.x, this.sprite.y - this.height / 2 - 20, '', style);
@@ -103,7 +75,7 @@ var Unit = (function () {
                 this.text.text = 'F: ' + this.food + " I: " + this.iron;
             }
             else if (this.name === 'leader') {
-                this.text.text = '' + this.group.getNumUnits();
+                this.text.text = 'fixme!';
             }
             else if (this.name === 'mine') {
                 this.text.text = 'I: ' + this.iron;
@@ -149,7 +121,6 @@ var Unit = (function () {
         this.sprite.destroy(true);
         if (this.text !== undefined && this.text !== null)
             this.text.destroy(true);
-        this.leader = null;
         this.behaviour = null;
     };
     Unit.prototype.wander = function (bb) {
@@ -163,6 +134,7 @@ var Unit = (function () {
 })();
 var Group = (function () {
     function Group(leader) {
+        this.leader = null;
         this.posCounter = 0;
         this.spacing = 15;
         this.lines = 3;
@@ -174,6 +146,7 @@ var Group = (function () {
     Group.prototype.addUnit = function (unit) {
         this.unitList.push(unit);
         this.reformGroup();
+        return this;
     };
     Group.prototype.removeUnit = function (unit) {
         for (var i = 0; i < this.unitList.length; i++) {
@@ -183,6 +156,10 @@ var Group = (function () {
             }
         }
         this.reformGroup();
+        return this;
+    };
+    Group.prototype.getLeader = function () {
+        return this.leader;
     };
     Group.prototype.getNumUnits = function () {
         return this.unitList.length;
@@ -203,7 +180,7 @@ var Group = (function () {
             var y = i % div * spacing - div / 2 * spacing;
             var point = new Phaser.Point(x, y);
             this.positions.push(point);
-            this.unitList[i].leader = this.leader;
+            this.unitList[i].getSoldier().leader = this.leader.getBannerMan();
             this.unitList[i].blackBoard.target = this.leader;
             this.unitList[i].blackBoard.targetPosition = point;
             this.unitList[i].behaviour = new FollowPointRelativeToTarget(this.unitList[i].blackBoard);

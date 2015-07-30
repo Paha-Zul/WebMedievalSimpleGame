@@ -16,6 +16,9 @@ class Barracks extends Building{
 
         this.refillTime = 1000;
         this.name = 'barracks';
+        this.sprite.loadTexture('barracks');
+        this.width = this.sprite.width;
+        this.height = this.sprite.height;
     }
 
     update(delta):void {
@@ -24,7 +27,7 @@ class Barracks extends Building{
         this.counter += delta;
         if(this.counter >= this.refillTime && this.colony.food >= 1){
             this.counter = 0;
-            var p = this.colony.addFreePeasant(this.sprite.x, this.sprite.y, this.game, this.colony);
+            var p = this.colony.addFreePeasant('soldier', this.sprite.x, this.sprite.y, this.game, this.colony);
             p.name = 'soldier';
             this.colony.food--;
         }

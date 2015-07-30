@@ -14,7 +14,10 @@ class House extends Building{
         super.start();
 
         this.name = 'barracks';
-        this.worker = this.colony.addFreePeasant(this.sprite.x, this.sprite.y, this.game, this.colony);
+        this.worker = this.colony.addFreePeasant('peasant', this.sprite.x, this.sprite.y, this.game, this.colony);
+        this.sprite.loadTexture('house');
+        this.width = this.sprite.width;
+        this.height = this.sprite.height;
     }
 
     update(delta):void {

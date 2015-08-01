@@ -8,12 +8,15 @@ class Peasant extends Unit{
     private soldier:Soldier = null;
     private bannerMan:BannerMan = null;
 
-    constructor(x:number, y:number, game:Phaser.Game, colony:Capitol, width?:number, height?:number) {
-        super(x, y, game, colony, width, height);
+    constructor(x:number, y:number, game:Phaser.Game, colony:Capitol, sprite:Phaser.Sprite, width?:number, height?:number) {
+        super(x, y, game, colony, sprite, width, height);
     }
 
     start():void {
         super.start();
+
+        this.sprite.loadTexture(makeSquareSprite(10,10));
+        game.physics.arcade.enable(this.sprite);
 
         if(this.name === 'peasant'){
 
@@ -28,6 +31,13 @@ class Peasant extends Unit{
 
     public update(delta:number):void {
         super.update(delta);
+
+        if(this.bannerMan !== null){
+            this.text.text = ''+this.bannerMan.group.getNumUnits();
+            this.bannerMan.update(delta);
+        }else if(this.soldier !== null){
+            this.soldier.update(delta);
+        }
     }
 
     public getSoldier():Soldier{

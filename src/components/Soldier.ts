@@ -13,20 +13,35 @@ class Soldier implements IUpdateable{
     }
 
     start():void{
-        var list = this.capitol.getGroupList();
-        if(list.length > 0) {
-            this.group = list[0].addUnit(this.owner);
-            this.leader = this.group.getLeader().getBannerMan();
-        }
+        this.leader = this.getClosestLeader();
+        if(this.leader !== null) this.group = this.leader.group.addUnit(this.owner);
     }
 
     update(delta:number):void {
-        if(this.group === null){
-            var list = this.capitol.getGroupList();
-            if(list.length > 0) {
-                this.group = list[0].addUnit(this.owner);
-                this.leader = this.group.getLeader().getBannerMan();
-            }
+        if(this.leader === null){
+            this.leader = this.getClosestLeader();
+            if(this.leader !== null) this.group = this.leader.group.addUnit(this.owner);
         }
+    }
+
+    getClosestLeader():BannerMan{
+        var list = this.capitol.getGroupList();
+        if(list.length > 0) {
+            var l = list.length;
+            var closestDist = 99999999999999999;
+            var closestLeader:BannerMan = null;
+            for(var i=0;i<l;i++){
+                var _dis = list[i].getLeader().sprite.position.distance(this.owner.sprite.position);
+                if(_dis <= closestDist){
+                    closestLeader = list[i].getLeader().getBannerMan();
+                    closestDist = _dis;
+                }
+            }
+            //Return the closest.
+            return closestLeader;
+        }
+
+        //list was empty, null.
+        return null;
     }
 }

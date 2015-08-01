@@ -5,10 +5,11 @@
  * A prototyping class. Needs to be cleaned up later but such you know?
  */
 var Unit = (function () {
-    function Unit(x, y, game, colony, width, height) {
+    function Unit(x, y, game, colony, sprite, width, height) {
         var _this = this;
         this.game = game;
         this.colony = colony;
+        this.sprite = sprite;
         this.width = width;
         this.height = height;
         this.name = 'peasant';
@@ -32,30 +33,11 @@ var Unit = (function () {
             _this.sprite.y += y;
             _this.sprite.angle = rotation;
         };
-        //Walks towards a position stopping when it gets within the disToStop range.
-        this.walkTowardsPosition = function (position, disToStop, moveSpeed, disToTarget, rotToTarget) {
-            if (disToTarget === undefined)
-                disToTarget = _this.sprite.position.distance(position);
-            if (rotToTarget === undefined)
-                rotToTarget = _this.sprite.position.angle(position, false);
-            //If we are still outside the stop range, move!
-            if (disToTarget > disToStop) {
-                var x = Math.cos(rotToTarget) * moveSpeed;
-                var y = Math.sin(rotToTarget) * moveSpeed;
-                _this.sprite.x += x;
-                _this.sprite.y += y;
-                _this.sprite.angle = rotToTarget * (180 / Math.PI);
-            }
-            else {
-                _this.sprite.x = position.x;
-                _this.sprite.y = position.y;
-            }
-        };
         this.width = width || 10;
         this.height = height || 10;
-        this.sprite = makeSquareSprite(this.width, this.height);
         this.sprite.x = x;
         this.sprite.y = y;
+        this.sprite.anchor.setTo(0.5, 0.5);
         this.blackBoard = new BlackBoard();
         this.blackBoard.me = this;
         this.blackBoard.game = game;
@@ -64,18 +46,15 @@ var Unit = (function () {
         this.started = true;
         if (this.name !== 'house' && this.name !== 'soldier' && this.name !== 'barracks') {
             var style = { font: "18px Arial", fill: "#1765D1", align: "center" };
-            this.text = game.add.text(this.sprite.x, this.sprite.y - this.height / 2 - 20, '', style);
+            this.text = game.add.text(this.sprite.x, this.sprite.y - this.height / 2 - 20, 'fixme', style);
         }
     };
     Unit.prototype.update = function (delta) {
         if (!this.started)
             this.start();
         if (this.text !== undefined && this.text !== null) {
-            if (this.name === 'colony') {
+            if (this.name === 'capitol') {
                 this.text.text = 'F: ' + this.food + " I: " + this.iron;
-            }
-            else if (this.name === 'leader') {
-                this.text.text = 'fixme!';
             }
             else if (this.name === 'mine') {
                 this.text.text = 'I: ' + this.iron;
@@ -116,6 +95,28 @@ var Unit = (function () {
                 this.behaviour = this.wander(this.blackBoard);
             }
         }
+    };
+    //Walks towards a position stopping when it gets within the disToStop range.
+    Unit.prototype.walkTowardsPosition = function (position, disToStop, moveSpeed, disToTarget, rotToTarget) {
+        if (disToTarget === undefined)
+            disToTarget = this.sprite.position.distance(position);
+        if (rotToTarget === undefined)
+            rotToTarget = this.sprite.position.angle(position, false);
+        //If we are still outside the stop range, move!
+        if (disToTarget > disToStop) {
+            var x = Math.cos(rotToTarget) * moveSpeed;
+            var y = Math.sin(rotToTarget) * moveSpeed;
+            this.sprite.body.velocity.set(x, y);
+            //this.sprite.x += x;
+            //this.sprite.y += y;
+            this.sprite.angle = rotToTarget * (180 / Math.PI);
+        }
+        else {
+            this.sprite.position.set(position.x, position.y);
+            this.sprite.body.velocity.set(0, 0);
+            return true;
+        }
+        return false;
     };
     Unit.prototype.destroy = function () {
         this.sprite.destroy(true);

@@ -16,12 +16,15 @@ class Capitol extends Unit{
     avgResources : number = 0;
     timer : Phaser.TimerEvent;
     taskQueue:CircularQueue<any>;
+    spawnTimer:Phaser.TimerEvent;
 
-    constructor(x, y, public game, width?, height?){
-        super(x, y, game, null, width, height);
+    constructor(x, y, game, sprite:Phaser.Sprite, width?, height?){
+        super(x, y, game, null, sprite, width, height);
+
         this.timer = this.game.time.events.loop(Phaser.Timer.SECOND*1, this.calcRate, this);
-        this.type = 'colony';
-        this.name = 'colony';
+        this.spawnTimer = this.game.time.events.loop(10000, ()=>this.addFreePeasant('leader', this.sprite.x, this.sprite.y, this.game, this), this);
+        this.type = 'building';
+        this.name = 'capitol';
         this.taskQueue = new CircularQueue<any>(100);
     }
 
@@ -48,20 +51,22 @@ class Capitol extends Unit{
     }
 
     addFreePeasant = (type:string, x:number, y:number, game:Phaser.Game, colony:Capitol) : Unit =>{
-        var unit = new Peasant(x, y, game, colony);
+        var unit = new Peasant(x, y, game, colony, peasantGroup.create(0, 0, 'capitol'));
         unit.name = type;
+        unit.type = 'humanoid';
         this.freePeasantList.push(unit);
         return unit;
     };
 
     addBuilding = (type:string, x, y, game, colony, width?, height?) : Building =>{
         var unit:Building = null;
-        if(type === 'house') unit = new House(x, y, game, colony, width, height);
-        if(type === 'farm') unit = new Farm(x, y, game, colony, width, height);
-        if(type === 'barracks') unit = new Barracks(x, y, game, colony, width, height);
-        if(type === 'mine') unit = new Mine(x, y, game, colony, width, height);
+        if(type === 'house') unit = new House(x, y, game, colony, buildingGroup.create(0,0,type), width, height);
+        if(type === 'farm') unit = new Farm(x, y, game, colony, buildingGroup.create(0,0,type), width, height);
+        if(type === 'barracks') unit = new Barracks(x, y, game, colony, buildingGroup.create(0,0,type), width, height);
+        if(type === 'mine') unit = new Mine(x, y, game, colony, buildingGroup.create(0,0,type), width, height);
 
         unit.name = type;
+        unit.type = 'building';
 
         this.buildingList.push(unit);
         return unit;
@@ -108,5 +113,8 @@ class Capitol extends Unit{
         this.buildingList = [];
 
         this.text.destroy();
+
+        this.game.time.events.remove(this.timer);
+        this.game.time.events.remove(this.spawnTimer);
     }
 }

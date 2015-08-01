@@ -1,16 +1,13 @@
 /// <reference path="./../Game.ts"/>
 
-function makeSquareSprite(width, height) : Phaser.Sprite{
+function makeSquareSprite(width, height) : Phaser.BitmapData{
     var bmd = game.add.bitmapData(width, height);
 
     bmd.ctx.beginPath();
     bmd.ctx.rect(0, 0, width, height);
     bmd.ctx.fillStyle = '#000000';
     bmd.ctx.fill();
-    var sprite = game.add.sprite(game.world.centerX, game.world.centerY, bmd);
-    sprite.anchor.setTo(0.5, 0.5);
-
-    return sprite;
+    return bmd;
 }
 
 function takeResource(entity){

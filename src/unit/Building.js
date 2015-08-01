@@ -11,9 +11,9 @@ var __extends = this.__extends || function (d, b) {
  */
 var Building = (function (_super) {
     __extends(Building, _super);
-    function Building(x, y, game, colony, width, height) {
+    function Building(x, y, game, colony, sprite, width, height) {
         var _this = this;
-        _super.call(this, x, y, game, colony, width || 30, height || 30);
+        _super.call(this, x, y, game, colony, sprite, width || 30, height || 30);
         this.counter = 0;
         this.refillTime = 1000;
         this.worker = null;

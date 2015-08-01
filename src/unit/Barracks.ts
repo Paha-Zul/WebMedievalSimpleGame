@@ -6,8 +6,8 @@
 
 class Barracks extends Building{
 
-    constructor(x:number, y:number, game:Phaser.Game, colony:Capitol, width?:number, height?:number) {
-        super(x, y, game, colony, width, height);
+    constructor(x:number, y:number, game:Phaser.Game, colony:Capitol, sprite:Phaser.Sprite, width?:number, height?:number) {
+        super(x, y, game, colony, sprite, width, height);
     }
 
 

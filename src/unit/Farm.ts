@@ -5,8 +5,8 @@
 ///<reference path='../Game.ts'/>
 
 class Farm extends Building{
-    constructor(x, y, game, colony, width?, height?) {
-        super(x, y, game, colony, width, height);
+    constructor(x:number, y:number, game:Phaser.Game, colony:Capitol, sprite:Phaser.Sprite, width:number, height:number) {
+        super(x, y, game, colony, sprite, width, height);
     }
 
     start():void {

@@ -5,9 +5,7 @@ function makeSquareSprite(width, height) {
     bmd.ctx.rect(0, 0, width, height);
     bmd.ctx.fillStyle = '#000000';
     bmd.ctx.fill();
-    var sprite = game.add.sprite(game.world.centerX, game.world.centerY, bmd);
-    sprite.anchor.setTo(0.5, 0.5);
-    return sprite;
+    return bmd;
 }
 function takeResource(entity) {
     var resources = 0;

@@ -12,10 +12,9 @@ var __extends = this.__extends || function (d, b) {
  */
 var Capitol = (function (_super) {
     __extends(Capitol, _super);
-    function Capitol(x, y, game, width, height) {
+    function Capitol(x, y, game, sprite, width, height) {
         var _this = this;
-        _super.call(this, x, y, game, null, width, height);
-        this.game = game;
+        _super.call(this, x, y, game, null, sprite, width, height);
         this.freePeasantList = [];
         this.workerList = [];
         this.armyList = [];
@@ -24,22 +23,24 @@ var Capitol = (function (_super) {
         this.lastResources = 0;
         this.avgResources = 0;
         this.addFreePeasant = function (type, x, y, game, colony) {
-            var unit = new Peasant(x, y, game, colony);
+            var unit = new Peasant(x, y, game, colony, peasantGroup.create(0, 0, 'capitol'));
             unit.name = type;
+            unit.type = 'humanoid';
             _this.freePeasantList.push(unit);
             return unit;
         };
         this.addBuilding = function (type, x, y, game, colony, width, height) {
             var unit = null;
             if (type === 'house')
-                unit = new House(x, y, game, colony, width, height);
+                unit = new House(x, y, game, colony, buildingGroup.create(0, 0, type), width, height);
             if (type === 'farm')
-                unit = new Farm(x, y, game, colony, width, height);
+                unit = new Farm(x, y, game, colony, buildingGroup.create(0, 0, type), width, height);
             if (type === 'barracks')
-                unit = new Barracks(x, y, game, colony, width, height);
+                unit = new Barracks(x, y, game, colony, buildingGroup.create(0, 0, type), width, height);
             if (type === 'mine')
-                unit = new Mine(x, y, game, colony, width, height);
+                unit = new Mine(x, y, game, colony, buildingGroup.create(0, 0, type), width, height);
             unit.name = type;
+            unit.type = 'building';
             _this.buildingList.push(unit);
             return unit;
         };
@@ -48,8 +49,9 @@ var Capitol = (function (_super) {
             _this.lastResources = _this.food;
         };
         this.timer = this.game.time.events.loop(Phaser.Timer.SECOND * 1, this.calcRate, this);
-        this.type = 'colony';
-        this.name = 'colony';
+        this.spawnTimer = this.game.time.events.loop(10000, function () { return _this.addFreePeasant('leader', _this.sprite.x, _this.sprite.y, _this.game, _this); }, this);
+        this.type = 'building';
+        this.name = 'capitol';
         this.taskQueue = new CircularQueue(100);
     }
     Capitol.prototype.start = function () {
@@ -100,7 +102,9 @@ var Capitol = (function (_super) {
         this.armyList = [];
         this.buildingList = [];
         this.text.destroy();
+        this.game.time.events.remove(this.timer);
+        this.game.time.events.remove(this.spawnTimer);
     };
     return Capitol;
 })(Unit);
-//# sourceMappingURL=Colony.js.map
+//# sourceMappingURL=Capitol.js.map

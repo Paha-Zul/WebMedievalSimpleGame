@@ -12,7 +12,6 @@ class Unit{
     active : boolean = true;
     started : boolean = false;
     behaviour : Task = null;
-    sprite : Phaser.Sprite;
     idleCounter : number = 0;
     walkCounter : number = 0;
     food : number = 0;
@@ -22,12 +21,12 @@ class Unit{
     text:Phaser.Text;
     blackBoard:BlackBoard;
 
-    constructor(x:number, y:number, public game : Phaser.Game, public colony:Capitol, public width?:number, public height?:number){
+    constructor(x:number, y:number, public game:Phaser.Game, public colony:Capitol, public sprite:Phaser.Sprite, public width:number, public height:number){
         this.width = width || 10;
         this.height = height || 10;
-        this.sprite = makeSquareSprite(this.width, this.height);
         this.sprite.x = x;
         this.sprite.y = y;
+        this.sprite.anchor.setTo(0.5, 0.5);
         this.blackBoard = new BlackBoard();
         this.blackBoard.me = this;
         this.blackBoard.game = game;
@@ -38,7 +37,7 @@ class Unit{
 
         if(this.name !== 'house' && this.name !== 'soldier' && this.name !== 'barracks'){
             var style = { font: "18px Arial", fill: "#1765D1", align: "center" };
-            this.text = game.add.text(this.sprite.x, this.sprite.y - this.height/2 - 20, '', style);
+            this.text = game.add.text(this.sprite.x, this.sprite.y - this.height/2 - 20, 'fixme', style);
         }
     }
 
@@ -46,10 +45,8 @@ class Unit{
         if(!this.started) this.start();
 
         if(this.text !== undefined && this.text !== null) {
-            if(this.name === 'colony') {
+            if(this.name === 'capitol') {
                 this.text.text = 'F: ' + this.food+" I: "+this.iron;
-            }else if(this.name === 'leader') {
-                this.text.text = 'fixme!';
             }else if(this.name === 'mine') {
                 this.text.text = 'I: ' + this.iron;
             }else if(this.name === 'peasant'){
@@ -93,7 +90,7 @@ class Unit{
     }
 
     //Walks in a direction.
-    walkTowardsRotation = (rotation:number, moveSpeed:number, disToStop?) =>{
+    public walkTowardsRotation = (rotation:number, moveSpeed:number, disToStop?) =>{
         //Get X and Y moving values.
         var x = Math.cos(rotation) * moveSpeed;
         var y = Math.sin(rotation) * moveSpeed;
@@ -105,7 +102,7 @@ class Unit{
     };
 
     //Walks towards a position stopping when it gets within the disToStop range.
-    walkTowardsPosition = (position:Phaser.Point, disToStop:number, moveSpeed:number, disToTarget?, rotToTarget?) =>{
+    public walkTowardsPosition(position:Phaser.Point, disToStop:number, moveSpeed:number, disToTarget?, rotToTarget?):boolean{
         if(disToTarget === undefined) //Set the disToTarget if it wasn't passed
             disToTarget = this.sprite.position.distance(position);
         if(rotToTarget === undefined) //Set the rotToTarget if it wasn't passed.
@@ -116,14 +113,18 @@ class Unit{
             var x = Math.cos(rotToTarget) * moveSpeed;
             var y = Math.sin(rotToTarget) * moveSpeed;
 
-            this.sprite.x += x;
-            this.sprite.y += y;
+            this.sprite.body.velocity.set(x, y);
+            //this.sprite.x += x;
+            //this.sprite.y += y;
             this.sprite.angle = rotToTarget*(180/Math.PI);
         }else{
-            this.sprite.x = position.x;
-            this.sprite.y = position.y;
+            this.sprite.position.set(position.x, position.y);
+            this.sprite.body.velocity.set(0, 0);
+            return true;
         }
-    };
+
+        return false;
+    }
 
     destroy():void{
         this.sprite.destroy(true);
@@ -195,6 +196,7 @@ class Group{
         var num = this.unitList.length;
         var spacing = 15; //Spacing between spaces
 
+        //calculate all the new positions...
         for(var i=0;i<num;i++){
             var index = ~~(i/~~(num/this.lines));
             var div = ~~(num/this.lines);

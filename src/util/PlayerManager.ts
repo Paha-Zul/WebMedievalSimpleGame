@@ -2,7 +2,7 @@
 ///<reference path="../Game.ts"/>
 
 class PlayerManager{
-    static players:Player[] = [];
+    public static players:Player[] = [];
     private static playerID:number = 0;
 
     static addPlayer(name:string, controller:string, capitol:Capitol):void{

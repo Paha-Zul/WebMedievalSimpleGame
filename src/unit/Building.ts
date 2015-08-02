@@ -9,10 +9,10 @@ class Building extends Unit {
     refillTime:number = 1000;
     worker:Unit = null;
 
-    constructor(x:number, y:number, game:Phaser.Game, colony:Capitol, sprite:Phaser.Sprite, width:number, height:number) {
-        super(x, y, game, colony, sprite, width || 30, height || 30);
+    constructor(x:number, y:number, game:Phaser.Game, playerName:string, sprite:Phaser.Sprite, width:number, height:number) {
+        super(x, y, game, playerName, sprite, width || 30, height || 30);
 
-        this.type = 'buildingType';
+        this.type = 'building';
         this.name = 'farm';
         this.food = 0;
         this.iron = 0;

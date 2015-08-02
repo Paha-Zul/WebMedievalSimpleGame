@@ -20,8 +20,10 @@ class Unit{
     flag : boolean = false;
     text:Phaser.Text;
     blackBoard:BlackBoard;
+    capitol:Capitol;
+    toBeDestroyed:boolean = false;
 
-    constructor(x:number, y:number, public game:Phaser.Game, public colony:Capitol, public sprite:Phaser.Sprite, public width:number, public height:number){
+    constructor(public x:number, public y:number, public game:Phaser.Game, public playerName:string, public sprite:Phaser.Sprite, public width?:number, public height?:number){
         this.width = width || 10;
         this.height = height || 10;
         this.sprite.x = x;
@@ -29,7 +31,9 @@ class Unit{
         this.sprite.anchor.setTo(0.5, 0.5);
         this.blackBoard = new BlackBoard();
         this.blackBoard.me = this;
+        this.blackBoard.myPlayer = PlayerManager.getPlayer(this.playerName);
         this.blackBoard.game = game;
+        this.capitol = this.blackBoard.myPlayer.capitol;
     }
 
     start():void{
@@ -58,33 +62,27 @@ class Unit{
             this.text.position.set(this.sprite.x - this.text.width/2, this.sprite.y - this.height / 2 - 20);
         }
 
-        //For prototyping, only let humanoids do this section.
-        if(this.type === 'humanoid') {
-            //this.behaviourStuff(delta);
-            this.otherBehaviourStuff(delta);
-        }
+        this.updateBehaviours(delta);
     }
 
-    otherBehaviourStuff(delta){
+    updateBehaviours(delta){
         //If we have a behaviour, execute it.
         if(this.behaviour !== null){
-            if(!this.behaviour.getControl().started) this.behaviour.getControl().safeStart();
-            this.behaviour.update(delta);
-            if(this.behaviour.getControl().finished){
+            if(!this.behaviour.getControl().started) this.behaviour.getControl().safeStart(); //Start the behaviour
+            this.behaviour.update(delta); //Update it.
+            if(this.behaviour.getControl().finished){ //If finished, null it out.
                 this.behaviour = null;
             }
         }else{
-            var beh = null;
+            if(this.name === 'peasant') {
+                var beh:any = this.capitol.getTaskFromQueue();
 
-            //Try and get a beh from the colony. This will be a function.
-            if(this.name === 'peasant')
-                var beh:any = this.colony.getTaskFromQueue();
-
-            //If we actually got one, execute the function which will return a behaviour.
-            if(beh !== null)
-                this.behaviour = beh(this.blackBoard);
-            else{
-                this.behaviour = this.wander(this.blackBoard);
+                //If we actually got one, execute the function which will return a behaviour.
+                if (beh !== null)
+                    this.behaviour = beh(this.blackBoard);
+                else {
+                    this.behaviour = this.wander(this.blackBoard);
+                }
             }
         }
     }
@@ -109,7 +107,7 @@ class Unit{
             rotToTarget = this.sprite.position.angle(position, false);
 
         //If we are still outside the stop range, move!
-        if(disToTarget > disToStop) {
+        if(disToTarget >= disToStop) {
             var x = Math.cos(rotToTarget) * moveSpeed;
             var y = Math.sin(rotToTarget) * moveSpeed;
 
@@ -127,6 +125,10 @@ class Unit{
     }
 
     destroy():void{
+        this.toBeDestroyed = true;
+    }
+
+    public finalDestroy(){
         this.sprite.destroy(true);
         if(this.text !== undefined && this.text !== null) this.text.destroy(true);
         this.behaviour = null;
@@ -177,12 +179,42 @@ class Group{
         return this;
     }
 
+    /**
+     * Kills an amount of this group. Will remove and destroy the units
+     * @param amount
+     */
+    killAmount(amount:number){
+        if(amount >= this.unitList.length)
+            this.killGroup();
+        else{
+            //Loop until we remove the right amount.
+            var counter = 0;
+            for(var i=this.unitList.length-1;counter<=amount;i--) {
+                this.unitList[i].destroy(); //Destroy the unit.
+                this.unitList.splice(i,1); //Splice it out!
+                counter++; //Increment counter.
+            }
+        }
+    }
+
+    private killGroup(){
+        for(var i=0;i<this.unitList.length;i++)
+            this.unitList[i].destroy();
+        this.unitList = [];
+        this.leader.destroy();
+        this.leader = null;
+    }
+
     getLeader():Peasant{
         return this.leader;
     }
 
     getNumUnits():number{
         return this.unitList.length;
+    }
+
+    destroy(){
+        this.killGroup();
     }
 
     private reformGroup(){

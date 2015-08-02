@@ -17,7 +17,7 @@ class GetColony extends LeafTask{
     update(delta) {
         super.update(delta);
 
-        this.bb.target = this.bb.me.colony;
+        this.bb.target = this.bb.me.capitol;
         this.bb.targetPosition = this.bb.target.sprite.position;
         this.getControl().finishWithSuccess();
     }

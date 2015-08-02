@@ -5,10 +5,10 @@
 function transfer(unit, disToTarget, disToStop) {
     //If target null and flag false, pick a random buildingType from the colony.
     if (unit.target === null && unit.flag === false) {
-        unit.target = unit.colony.buildingList[~~(Math.random() * unit.colony.buildingList.length)];
+        unit.target = unit.playerName.buildingList[~~(Math.random() * unit.playerName.buildingList.length)];
     }
     else if (unit.target === null && unit.flag === true) {
-        unit.target = unit.colony;
+        unit.target = unit.playerName;
     }
     if (disToTarget !== undefined) {
         //If we are inside the range to stop, null the target and flip the flag.

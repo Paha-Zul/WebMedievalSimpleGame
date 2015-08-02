@@ -27,14 +27,15 @@
 /// <reference path="tasks/actions/GiveResource.ts"/>
 /// <reference path="tasks/actions/RandomLocation.ts"/>
 /// <reference path="tasks/actions/Idle.ts"/>
+/// <reference path="tasks/actions/FindNearestEnemyUnit.ts"/>
+/// <reference path="tasks/actions/AttackUnit.ts"/>
+
 /// <reference path="tasks/composite/ParentTask.ts"/>
 /// <reference path="tasks/composite/Sequence.ts"/>
 /// <reference path="tasks/control/TaskController.ts"/>
 /// <reference path="tasks/control/ParentTaskController.ts"/>
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update, render : render});
-var colonyList:Capitol[] = [];
-
 var foodText, colonyText, buildingText;
 var leader:Unit = null;
 var stage = 0;
@@ -144,12 +145,13 @@ function create () {
 }
 
 function update() {
-    var l = colonyList.length;
-    for(var i=0;i<l;i++)
-        colonyList[i].update(game.time.physicsElapsedMS);
+    var player:Player = PlayerManager.getPlayer("player1");
 
-    foodText.text = 'food: '+colonyList[0].food+', rate: '+colonyList[0].avgResources;
-    colonyText.text = 'peasants: '+colonyList[0].freePeasantList.length;
+    for(var p in PlayerManager.players)
+        PlayerManager.getPlayer(p).capitol.update(game.time.physicsElapsedMS)
+
+    foodText.text = 'food: '+player.capitol.food+', rate: '+player.capitol.avgResources;
+    colonyText.text = 'peasants: '+player.capitol.freePeasantList.length;
 
     if (up.isDown)
         game.camera.y -= 4;
@@ -189,33 +191,40 @@ function update() {
 }
 
 function render(){
-    for(var i=0;i<colonyList[0].freePeasantList.length;i++){
-        game.debug.body(colonyList[0].freePeasantList[i].sprite);
+    //for(var i=0;i<colonyList[0].freePeasantList.length;i++){
+    //    game.debug.body(colonyList[0].freePeasantList[i].sprite);
+    //}
+
+    for(var p in PlayerManager.players) {
+        var player:Player = PlayerManager.getPlayer(p);
+        var l = player.capitol.freePeasantList.length;
+        for (var i = 0; i < l; i++){
+            game.debug.body(player.capitol.freePeasantList[i].sprite);
+        }
     }
 }
 
-function createColonyAndUnitsLeader(){
+function createColonyAndUnitsLeader(playerName:string){
     var numUnits = 30;
+    var player = PlayerManager.getPlayer(playerName);
 
     //Create a colony.
-    var capitol = new Capitol(game.world.centerX, game.world.centerY, game, buildingGroup.create(0,0,'capitol'), 100, 100);
-    colonyList[0] = capitol;
+    var capitol = new Capitol(game.world.centerX, game.world.centerY, game, playerName, buildingGroup.create(0,0,'capitol'), 100, 100);
     PlayerManager.getPlayer("player1").capitol = capitol;
 
     //Create a leader
-    leader = capitol.addFreePeasant('leader', game.world.centerX, game.world.centerY, game, capitol);
+    leader = capitol.addFreePeasant('leader', game.world.centerX, game.world.centerY, game);
     leader.blackBoard.moveSpeed = 1.5;
 
     for(var i=0;i<numUnits;i++)
-        capitol.addFreePeasant('soldier', game.world.centerX, game.world.centerY, game, capitol);
+        capitol.addFreePeasant('soldier', game.world.centerX, game.world.centerY, game);
 
-    leader.colony.food = 100000;
-    leader.colony.iron = 100000;
+    leader.capitol.food = 100000;
+    leader.capitol.iron = 100000;
 }
 
 function createColonyAndUnitsNormal(){
-    var capitol = new Capitol(game.world.centerX, game.world.centerY, game, buildingGroup.create(0,0,'capitol'), 100, 100);
-    colonyList[0] = capitol;
+    var capitol = new Capitol(game.world.centerX, game.world.centerY, game, 'player1', buildingGroup.create(0,0,'capitol'), 100, 100);
     PlayerManager.getPlayer("player1").capitol = capitol;
 }
 
@@ -224,9 +233,9 @@ function startExample(start:Phaser.Point, playerName:string){
      * Incredibly ugly prototype code here. Quick and dirty...
      */
 
-    var capitol = new Capitol(start.x, start.y, game, buildingGroup.create(0,0,'capitol'), 100, 100);
+    var capitol = new Capitol(start.x, start.y, game, playerName, buildingGroup.create(0,0,'capitol'), 100, 100);
     var player:Player = PlayerManager.getPlayer(playerName);
-    colonyList[player.id] = player.capitol = capitol;
+    player.capitol = capitol;
 
     var x = capitol.sprite.x - 300, y = capitol.sprite.y - 100;
     var width = 40, height = 40;
@@ -271,17 +280,17 @@ function placeBuilding(){
         var x = (game.input.worldX) * (1 / game.world.scale.x);
         var y = (game.input.worldY) * (1 / game.world.scale.y);
         console.log('x/y: ' + x + '/' + y + ', camera x/y: ' + game.camera.x + '/' + game.camera.y + ' input x/y: ' + game.input.mousePointer.x + '/' + game.input.mousePointer.y);
-        colonyList[0].addBuilding(buildingType, x, y, game, colonyList[0], 100, 100);
+        PlayerManager.getPlayer("player1").capitol.addBuilding(buildingType, x, y, game, PlayerManager.getPlayer("player1").capitol, 100, 100);
     }
 }
 
 function pressLeader(){
-    colonyList[0].destroy();
-    createColonyAndUnitsLeader();
+    PlayerManager.getPlayer("player1").capitol.destroy();
+    createColonyAndUnitsLeader("player1");
 }
 
 function pressRegular(){
-    colonyList[0].destroy();
+    PlayerManager.getPlayer("player1").capitol.destroy();
     createColonyAndUnitsNormal();
 }
 

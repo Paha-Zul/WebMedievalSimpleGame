@@ -13,6 +13,7 @@ class BlackBoard{
     moveSpeed:number=2;
     idleTime:number=500;
 
+    myPlayer:Player;
     me:Unit;
     game:Phaser.Game;
 

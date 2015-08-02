@@ -5,10 +5,12 @@
  * A prototyping class. Needs to be cleaned up later but such you know?
  */
 var Unit = (function () {
-    function Unit(x, y, game, colony, sprite, width, height) {
+    function Unit(x, y, game, playerName, sprite, width, height) {
         var _this = this;
+        this.x = x;
+        this.y = y;
         this.game = game;
-        this.colony = colony;
+        this.playerName = playerName;
         this.sprite = sprite;
         this.width = width;
         this.height = height;
@@ -24,6 +26,7 @@ var Unit = (function () {
         this.iron = 0;
         this.posCounter = 0;
         this.flag = false;
+        this.toBeDestroyed = false;
         //Walks in a direction.
         this.walkTowardsRotation = function (rotation, moveSpeed, disToStop) {
             //Get X and Y moving values.
@@ -40,7 +43,9 @@ var Unit = (function () {
         this.sprite.anchor.setTo(0.5, 0.5);
         this.blackBoard = new BlackBoard();
         this.blackBoard.me = this;
+        this.blackBoard.myPlayer = PlayerManager.getPlayer(this.playerName);
         this.blackBoard.game = game;
+        this.capitol = this.blackBoard.myPlayer.capitol;
     }
     Unit.prototype.start = function () {
         this.started = true;
@@ -67,32 +72,27 @@ var Unit = (function () {
             }
             this.text.position.set(this.sprite.x - this.text.width / 2, this.sprite.y - this.height / 2 - 20);
         }
-        //For prototyping, only let humanoids do this section.
-        if (this.type === 'humanoid') {
-            //this.behaviourStuff(delta);
-            this.otherBehaviourStuff(delta);
-        }
+        this.updateBehaviours(delta);
     };
-    Unit.prototype.otherBehaviourStuff = function (delta) {
+    Unit.prototype.updateBehaviours = function (delta) {
         //If we have a behaviour, execute it.
         if (this.behaviour !== null) {
             if (!this.behaviour.getControl().started)
-                this.behaviour.getControl().safeStart();
-            this.behaviour.update(delta);
+                this.behaviour.getControl().safeStart(); //Start the behaviour
+            this.behaviour.update(delta); //Update it.
             if (this.behaviour.getControl().finished) {
                 this.behaviour = null;
             }
         }
         else {
-            var beh = null;
-            //Try and get a beh from the colony. This will be a function.
-            if (this.name === 'peasant')
-                var beh = this.colony.getTaskFromQueue();
-            //If we actually got one, execute the function which will return a behaviour.
-            if (beh !== null)
-                this.behaviour = beh(this.blackBoard);
-            else {
-                this.behaviour = this.wander(this.blackBoard);
+            if (this.name === 'peasant') {
+                var beh = this.capitol.getTaskFromQueue();
+                //If we actually got one, execute the function which will return a behaviour.
+                if (beh !== null)
+                    this.behaviour = beh(this.blackBoard);
+                else {
+                    this.behaviour = this.wander(this.blackBoard);
+                }
             }
         }
     };
@@ -103,7 +103,7 @@ var Unit = (function () {
         if (rotToTarget === undefined)
             rotToTarget = this.sprite.position.angle(position, false);
         //If we are still outside the stop range, move!
-        if (disToTarget > disToStop) {
+        if (disToTarget >= disToStop) {
             var x = Math.cos(rotToTarget) * moveSpeed;
             var y = Math.sin(rotToTarget) * moveSpeed;
             this.sprite.body.velocity.set(x, y);
@@ -119,6 +119,9 @@ var Unit = (function () {
         return false;
     };
     Unit.prototype.destroy = function () {
+        this.toBeDestroyed = true;
+    };
+    Unit.prototype.finalDestroy = function () {
         this.sprite.destroy(true);
         if (this.text !== undefined && this.text !== null)
             this.text.destroy(true);
@@ -159,11 +162,38 @@ var Group = (function () {
         this.reformGroup();
         return this;
     };
+    /**
+     * Kills an amount of this group. Will remove and destroy the units
+     * @param amount
+     */
+    Group.prototype.killAmount = function (amount) {
+        if (amount >= this.unitList.length)
+            this.killGroup();
+        else {
+            //Loop until we remove the right amount.
+            var counter = 0;
+            for (var i = this.unitList.length - 1; counter <= amount; i--) {
+                this.unitList[i].destroy(); //Destroy the unit.
+                this.unitList.splice(i, 1); //Splice it out!
+                counter++; //Increment counter.
+            }
+        }
+    };
+    Group.prototype.killGroup = function () {
+        for (var i = 0; i < this.unitList.length; i++)
+            this.unitList[i].destroy();
+        this.unitList = [];
+        this.leader.destroy();
+        this.leader = null;
+    };
     Group.prototype.getLeader = function () {
         return this.leader;
     };
     Group.prototype.getNumUnits = function () {
         return this.unitList.length;
+    };
+    Group.prototype.destroy = function () {
+        this.killGroup();
     };
     Group.prototype.reformGroup = function () {
         //TODO Kinda performance heavy to do for every addition/subtraction. Maybe have a timer to wait

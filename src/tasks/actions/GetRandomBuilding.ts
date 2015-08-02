@@ -17,7 +17,7 @@ class GetRandomBuilding extends LeafTask{
     update(delta) {
         super.update(delta);
 
-        this.bb.target = this.bb.me.colony.buildingList[~~(Math.random()*this.bb.me.colony.buildingList.length)]
+        this.bb.target = this.bb.me.capitol.buildingList[~~(Math.random()*this.bb.me.capitol.buildingList.length)]
         this.bb.targetPosition = this.bb.target.sprite.position;
         this.getControl().finishWithSuccess()
     }

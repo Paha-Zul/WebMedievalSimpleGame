@@ -1,4 +1,4 @@
-/// <reference path="./../Game.ts"/>
+ /// <reference path="./../Game.ts"/>
 
 /**
  * Created by Paha on 7/23/2015.
@@ -18,14 +18,15 @@ class Capitol extends Unit{
     taskQueue:CircularQueue<any>;
     spawnTimer:Phaser.TimerEvent;
 
-    constructor(x, y, game, sprite:Phaser.Sprite, width?, height?){
-        super(x, y, game, null, sprite, width, height);
+    constructor(x:number, y:number, game:Phaser.Game, playerName:string, sprite:Phaser.Sprite, width?:number, height?:number){
+        super(x, y, game, playerName, sprite, width, height);
 
         this.timer = this.game.time.events.loop(Phaser.Timer.SECOND*1, this.calcRate, this);
-        this.spawnTimer = this.game.time.events.loop(10000, ()=>this.addFreePeasant('leader', this.sprite.x, this.sprite.y, this.game, this), this);
+        this.spawnTimer = this.game.time.events.loop(10000, ()=>this.addFreePeasant('leader', this.sprite.x, this.sprite.y, this.game), this);
         this.type = 'building';
         this.name = 'capitol';
         this.taskQueue = new CircularQueue<any>(100);
+        PlayerManager.getPlayer(playerName).capitol = this;
     }
 
     start():void {
@@ -38,20 +39,49 @@ class Capitol extends Unit{
 
     update(delta){
         super.update(delta);
+        var unit:Unit = null;
 
         var i;
-        for(i=0;i<this.freePeasantList.length;i++)
-            this.freePeasantList[i].update(delta);
-        for(i=0;i<this.workerList.length;i++)
-            this.workerList[i].update(delta);
-        for(i=0;i<this.armyList.length;i++)
-            this.armyList[i].update(delta);
-        for(i=0;i<this.buildingList.length;i++)
-            this.buildingList[i].update(delta);
+        for(i=0;i<this.freePeasantList.length;i++) {
+            unit = this.freePeasantList[i];
+            if(unit.toBeDestroyed){
+                unit.finalDestroy();
+                this.freePeasantList.splice(i, 1);
+                i--;
+            }else
+                this.freePeasantList[i].update(delta);
+        }
+        for(i=0;i<this.workerList.length;i++) {
+            unit = this.workerList[i];
+            if(unit.toBeDestroyed){
+                unit.finalDestroy();
+                this.workerList.splice(i, 1);
+                i--;
+            }else
+                this.workerList[i].update(delta);
+        }
+        for(i=0;i<this.armyList.length;i++) {
+            unit = this.armyList[i];
+            if(unit.toBeDestroyed){
+                unit.finalDestroy();
+                this.armyList.splice(i, 1);
+                i--;
+            }else
+                this.armyList[i].update(delta);
+        }
+        for(i=0;i<this.buildingList.length;i++) {
+            unit = this.buildingList[i];
+            if(unit.toBeDestroyed){
+                unit.finalDestroy();
+                this.buildingList.splice(i, 1);
+                i--;
+            }else
+                this.buildingList[i].update(delta);
+        }
     }
 
-    addFreePeasant = (type:string, x:number, y:number, game:Phaser.Game, colony:Capitol) : Unit =>{
-        var unit = new Peasant(x, y, game, colony, peasantGroup.create(0, 0, 'capitol'));
+    addFreePeasant = (type:string, x:number, y:number, game:Phaser.Game) : Unit =>{
+        var unit = new Peasant(x, y, game, this.playerName, peasantGroup.create(0, 0, 'capitol'));
         unit.name = type;
         unit.type = 'humanoid';
         this.freePeasantList.push(unit);
@@ -60,10 +90,10 @@ class Capitol extends Unit{
 
     addBuilding = (type:string, x, y, game, colony, width?, height?) : Building =>{
         var unit:Building = null;
-        if(type === 'house') unit = new House(x, y, game, colony, buildingGroup.create(0,0,type), width, height);
-        if(type === 'farm') unit = new Farm(x, y, game, colony, buildingGroup.create(0,0,type), width, height);
-        if(type === 'barracks') unit = new Barracks(x, y, game, colony, buildingGroup.create(0,0,type), width, height);
-        if(type === 'mine') unit = new Mine(x, y, game, colony, buildingGroup.create(0,0,type), width, height);
+        if(type === 'house') unit = new House(x, y, game, this.playerName, buildingGroup.create(0,0,type), width, height);
+        if(type === 'farm') unit = new Farm(x, y, game, this.playerName, buildingGroup.create(0,0,type), width, height);
+        if(type === 'barracks') unit = new Barracks(x, y, game, this.playerName, buildingGroup.create(0,0,type), width, height);
+        if(type === 'mine') unit = new Mine(x, y, game, this.playerName, buildingGroup.create(0,0,type), width, height);
 
         unit.name = type;
         unit.type = 'building';

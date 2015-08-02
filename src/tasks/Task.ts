@@ -8,8 +8,14 @@
 
 
 class Task{
+    public name:string = '';
+
     constructor(public bb:BlackBoard){
 
+    }
+
+    check():boolean{
+        return true;
     }
 
     start():void{

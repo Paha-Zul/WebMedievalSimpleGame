@@ -8,12 +8,15 @@ class Peasant extends Unit{
     private soldier:Soldier = null;
     private bannerMan:BannerMan = null;
 
-    constructor(x:number, y:number, game:Phaser.Game, colony:Capitol, sprite:Phaser.Sprite, width?:number, height?:number) {
-        super(x, y, game, colony, sprite, width, height);
+    constructor(x:number, y:number, game:Phaser.Game, playerName:string, sprite:Phaser.Sprite, width?:number, height?:number) {
+        super(x, y, game, playerName, sprite, width, height);
+
+        this.type ='peasant';
     }
 
     start():void {
         super.start();
+        this.type ='peasant';
 
         this.sprite.loadTexture(makeSquareSprite(10,10));
         game.physics.arcade.enable(this.sprite);
@@ -21,10 +24,10 @@ class Peasant extends Unit{
         if(this.name === 'peasant'){
 
         }else if(this.name === 'soldier'){
-            this.soldier = new Soldier(this, this.colony);
+            this.soldier = new Soldier(this);
             this.soldier.start();
         }else if(this.name === 'leader'){
-            this.bannerMan = new BannerMan(this, this.colony);
+            this.bannerMan = new BannerMan(this);
             this.bannerMan.start();
         }
     }

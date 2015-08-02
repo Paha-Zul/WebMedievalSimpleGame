@@ -7,9 +7,10 @@
 class Soldier implements IUpdateable{
     group:Group = null;
     leader:BannerMan = null;
+    capitol:Capitol = null;
 
-    constructor(public owner:Peasant, public capitol:Capitol){
-
+    constructor(public owner:Peasant){
+        this.capitol = owner.capitol;
     }
 
     start():void{
@@ -31,6 +32,9 @@ class Soldier implements IUpdateable{
             var closestDist = 99999999999999999;
             var closestLeader:BannerMan = null;
             for(var i=0;i<l;i++){
+                //If the group is null or the leader is null or the leader is destroyed... continue.
+                if(list[i] == null || list[i].getLeader() === null || list[i].getLeader().toBeDestroyed) continue;
+
                 var _dis = list[i].getLeader().sprite.position.distance(this.owner.sprite.position);
                 if(_dis <= closestDist){
                     closestLeader = list[i].getLeader().getBannerMan();

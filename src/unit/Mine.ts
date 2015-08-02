@@ -6,8 +6,8 @@
 
 class Mine extends Building{
 
-    constructor(x:number, y:number, game:Phaser.Game, colony:Capitol, sprite:Phaser.Sprite, width:number, height:number) {
-        super(x, y, game, colony, sprite, width, height);
+    constructor(x:number, y:number, game:Phaser.Game, playerName:string, sprite:Phaser.Sprite, width:number, height:number) {
+        super(x, y, game, playerName, sprite, width, height);
     }
 
 
@@ -32,7 +32,7 @@ class Mine extends Building{
                 this.iron = 1; //Reset
 
                 //We add a new task to the colony queue.
-                this.colony.addTaskToQueue(this.getResourceTask);
+                this.capitol.addTaskToQueue(this.getResourceTask);
             }
         }
     }

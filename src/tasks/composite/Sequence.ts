@@ -18,8 +18,10 @@ class Sequence extends ParentTask{
     update(delta) {
         super.update(delta);
 
+        //If the currTask is null, something went wrong. Return with failure.
         if(this.control.currTask === null){
             this.control.finishWithFailure();
+        //Otherwise, update it!
         }else {
             if(!this.control.currTask.getControl().started) this.control.currTask.getControl().safeStart(); //If not started, start.
             if(this.control.currTask.getControl().finished){
@@ -42,5 +44,9 @@ class Sequence extends ParentTask{
         //Otherwise, finish this task with success.
         else
             this.getControl().finishWithSuccess();
+
+        //If the check didn't pass, finish with failure.
+        if(!this.control.currTask.check())
+            this.getControl().finishWithFailure();
     }
 }

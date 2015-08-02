@@ -142,7 +142,7 @@ var Group = (function () {
         this.posCounter = 0;
         this.spacing = 15;
         this.lines = 3;
-        this.unitsPerLine = 15;
+        this.unitsPerLine = 8;
         this.leader = leader;
         this.positions = [];
         this.unitList = [];
@@ -183,7 +183,8 @@ var Group = (function () {
         for (var i = 0; i < this.unitList.length; i++)
             this.unitList[i].destroy();
         this.unitList = [];
-        this.leader.destroy();
+        if (this.leader !== null)
+            this.leader.destroy();
         this.leader = null;
     };
     Group.prototype.getLeader = function () {

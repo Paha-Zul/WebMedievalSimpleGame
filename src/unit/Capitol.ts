@@ -81,7 +81,7 @@ class Capitol extends Unit{
     }
 
     addFreePeasant = (type:string, x:number, y:number, game:Phaser.Game) : Unit =>{
-        var unit = new Peasant(x, y, game, this.playerName, peasantGroup.create(0, 0, 'capitol'));
+        var unit = new Peasant(x, y, game, this.playerName, peasantGroup.create(0, 0, ''));
         unit.name = type;
         unit.type = 'humanoid';
         this.freePeasantList.push(unit);

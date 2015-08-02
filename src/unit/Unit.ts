@@ -152,7 +152,7 @@ class Group{
     private posCounter:number = 0;
     private spacing:number = 15;
     private lines:number = 3;
-    private unitsPerLine:number = 15;
+    private unitsPerLine:number = 8;
 
 
     constructor(leader:Peasant){
@@ -201,7 +201,7 @@ class Group{
         for(var i=0;i<this.unitList.length;i++)
             this.unitList[i].destroy();
         this.unitList = [];
-        this.leader.destroy();
+        if(this.leader !== null) this.leader.destroy();
         this.leader = null;
     }
 

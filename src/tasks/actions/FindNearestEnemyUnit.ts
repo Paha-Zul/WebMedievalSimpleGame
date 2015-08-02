@@ -46,11 +46,12 @@ class FindNearestEnemyUnit extends LeafTask{
 
         //Assign the target and succeed/fail based on if null or not.
         this.bb.target = closestUnit;
-        this.bb.targetPosition = closestUnit.sprite.position;
         if(this.bb.target === null)
             this.control.finishWithFailure();
-        else
+        else {
+            this.bb.targetPosition = closestUnit.sprite.position;
             this.control.finishWithSuccess();
+        }
     }
 
     end():void {

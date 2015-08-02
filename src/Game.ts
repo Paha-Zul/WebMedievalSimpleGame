@@ -32,6 +32,12 @@
 
 /// <reference path="tasks/composite/ParentTask.ts"/>
 /// <reference path="tasks/composite/Sequence.ts"/>
+/// <reference path="tasks/composite/Parallel.ts"/>
+
+/// <reference path="tasks/decorators/TaskDecorator.ts"/>
+/// <reference path="tasks/decorators/AlwaysTrue.ts"/>
+/// <reference path="tasks/decorators/Repeat.ts"/>
+
 /// <reference path="tasks/control/TaskController.ts"/>
 /// <reference path="tasks/control/ParentTaskController.ts"/>
 
@@ -84,7 +90,6 @@ function preload () {
 function create () {
     game.physics.startSystem(Phaser.Physics.ARCADE);
     game.world.setBounds(0,0,2000,2000);
-    game.camera.setPosition(600,700);
 
     PlayerManager.addPlayer("player1", "human", null);
     PlayerManager.addPlayer("player2", "ai", null);
@@ -95,8 +100,9 @@ function create () {
 
     unitGroup = game.add.group();
 
-    startExample(new Phaser.Point(400,400), 'player1');
-    startExample(new Phaser.Point(1200,1200), 'player2');
+    startExample(new Phaser.Point(800,800), 'player1');
+    startExample(new Phaser.Point(1500,1500), 'player2');
+    game.camera.position.setTo(800,800);
 
     //Adds an event to the mouse.
     game.input.onDown.add(()=> {if(!game.input.disabled) placeBuilding();} , this);
@@ -195,13 +201,13 @@ function render(){
     //    game.debug.body(colonyList[0].freePeasantList[i].sprite);
     //}
 
-    for(var p in PlayerManager.players) {
-        var player:Player = PlayerManager.getPlayer(p);
-        var l = player.capitol.freePeasantList.length;
-        for (var i = 0; i < l; i++){
-            game.debug.body(player.capitol.freePeasantList[i].sprite);
-        }
-    }
+    //for(var p in PlayerManager.players) {
+    //    var player:Player = PlayerManager.getPlayer(p);
+    //    var l = player.capitol.freePeasantList.length;
+    //    for (var i = 0; i < l; i++){
+    //        game.debug.body(player.capitol.freePeasantList[i].sprite);
+    //    }
+    //}
 }
 
 function createColonyAndUnitsLeader(playerName:string){
@@ -233,6 +239,12 @@ function startExample(start:Phaser.Point, playerName:string){
      * Incredibly ugly prototype code here. Quick and dirty...
      */
 
+    var numPeasants = 0;
+    var numFarms = 8;
+    var numMines = 5;
+    var numHouses = 10;
+    var numBarracks = 2;
+
     var capitol = new Capitol(start.x, start.y, game, playerName, buildingGroup.create(0,0,'capitol'), 100, 100);
     var player:Player = PlayerManager.getPlayer(playerName);
     player.capitol = capitol;
@@ -241,14 +253,21 @@ function startExample(start:Phaser.Point, playerName:string){
     var width = 40, height = 40;
 
     //Make some houses
-    for(var i=0;i<10;i++)
+    for(var i=0;i<numHouses;i++)
         capitol.addBuilding('house', x, i*40 + y, game, capitol, width, height);
 
     x = capitol.sprite.x - 350;
 
     //Make some more houses
-    for(var i=0;i<10;i++)
+    for(var i=0;i<numHouses;i++)
         capitol.addBuilding('house', x, i*40 + y, game, capitol, width, height);
+
+    x = capitol.sprite.x - 200;
+    y = capitol.sprite.y - 100;
+
+    //Make some barracks
+    for(var i=0;i<numBarracks;i++)
+        capitol.addBuilding('barracks', x, i*65 + y, game, capitol)
 
     x = capitol.sprite.x + 300;
     y = capitol.sprite.y - 200;
@@ -256,9 +275,9 @@ function startExample(start:Phaser.Point, playerName:string){
     height = 100;
 
     //Make some farms
-    for(var i=0;i<8;i++){
+    for(var i=0;i<numFarms;i++){
         capitol.addBuilding('farm', x, y, game, capitol, width, height);
-        if(i<4){
+        if(i<numFarms/2){
             y+=height;
         }else{
             x-=width;
@@ -269,7 +288,7 @@ function startExample(start:Phaser.Point, playerName:string){
     y = capitol.sprite.y - 200;
 
     //Make some mines
-    for(var i=0;i<5;i++){
+    for(var i=0;i<numMines;i++){
         capitol.addBuilding('mine', x, y, game, capitol, 75, 75);
         x+=90;
     }

@@ -20,6 +20,7 @@ class BannerMan implements IUpdateable{
     start():void{
         this.capitol.addGroup(this.owner);
 
+        this.owner.blackBoard.moveSpeed = 1;
         this.moveInCircle();
     }
 
@@ -59,11 +60,37 @@ class BannerMan implements IUpdateable{
     }
 
     attackTarget(){
+        //  Sequence
+        //      Parallel
+        //          Repeat
+        //              Sequence
+        //                  find target
+        //                  idle
+        //          move to target
+        //      AttackTarget
+
+        this.owner.blackBoard.idleTime = 3000;
+
         var seq:Sequence = new Sequence(this.owner.blackBoard);
 
-        seq.control.addTask(new FindNearestEnemyUnit(this.owner.blackBoard));
-        seq.control.addTask(new MoveTo(this.owner.blackBoard));
-        seq.control.addTask(new AttackUnit(this.owner.blackBoard));
+        //Parallel find target and move to it.
+        var parallel:Parallel = new Parallel(this.owner.blackBoard);
+        var repeat:Repeat = new Repeat(this.owner.blackBoard);
+        var getTargetSeq:Sequence = new Sequence(this.owner.blackBoard);
+        var findTarget:FindNearestEnemyUnit = new FindNearestEnemyUnit(this.owner.blackBoard);
+        var idle:Idle = new Idle(this.owner.blackBoard);
+        var moveTo:MoveTo = new MoveTo(this.owner.blackBoard);
+
+        var attackTarget:AttackUnit = new AttackUnit(this.owner.blackBoard);
+
+        seq.control.addTask(parallel);
+        parallel.control.addTask(repeat);
+        parallel.setTriggerTask(moveTo);
+        repeat.setTask(getTargetSeq);
+        getTargetSeq.control.addTask(findTarget);
+        getTargetSeq.control.addTask(idle);
+        parallel.control.addTask(moveTo);
+        seq.control.addTask(attackTarget);
 
         this.owner.behaviour = seq;
     }

@@ -23,7 +23,7 @@ var Capitol = (function (_super) {
         this.lastResources = 0;
         this.avgResources = 0;
         this.addFreePeasant = function (type, x, y, game) {
-            var unit = new Peasant(x, y, game, _this.playerName, peasantGroup.create(0, 0, 'capitol'));
+            var unit = new Peasant(x, y, game, _this.playerName, peasantGroup.create(0, 0, ''));
             unit.name = type;
             unit.type = 'humanoid';
             _this.freePeasantList.push(unit);

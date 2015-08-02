@@ -34,4 +34,10 @@ class TaskController{
 
     }
 
+    reset():void{
+        this.started = false;
+        this.finished = false;
+        this.failed = false;
+    }
+
 }

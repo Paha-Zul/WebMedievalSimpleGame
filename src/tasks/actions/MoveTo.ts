@@ -16,7 +16,8 @@ class MoveTo extends LeafTask{
     update(delta){
         super.update(delta);
 
-        //TODO Let's move this function back to the unit and call it from there so we can reuse code.
+        if(this.bb.targetPosition === undefined || this.bb.targetPosition === null)
+            return;
 
         if(this.bb.me.walkTowardsPosition(this.bb.targetPosition, this.bb.disToStop, this.bb.moveSpeed*50))
             this.control.finishWithSuccess();

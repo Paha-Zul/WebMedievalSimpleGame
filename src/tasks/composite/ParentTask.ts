@@ -15,16 +15,16 @@ class ParentTask extends Task{
         this.control = new ParentTaskController(this);
     }
 
-    start() {
+    start():void {
         super.start();
         this.index = 0;
     }
 
-    update(delta) {
+    update(delta):void {
         super.update(delta);
     }
 
-    end() {
+    end():void {
         return super.end();
     }
 
@@ -32,10 +32,10 @@ class ParentTask extends Task{
         return this.control;
     }
 
-    protected childFailed(){
+    protected childFailed():void{
     }
 
-    protected childSucceeded(){
+    protected childSucceeded():void{
 
     }
 }

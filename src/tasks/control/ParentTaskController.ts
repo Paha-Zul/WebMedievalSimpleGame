@@ -19,4 +19,10 @@ class ParentTaskController extends TaskController{
     addTask(task:Task){
         this.tasks.push(task);
     }
+
+
+    reset():void {
+        super.reset();
+        this.tasks.forEach(task => task.getControl().reset());
+    }
 }

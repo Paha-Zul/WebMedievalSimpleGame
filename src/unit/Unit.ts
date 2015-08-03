@@ -200,6 +200,8 @@ class Group{
                 this.unitList.splice(i,1); //Splice it out!
                 counter++; //Increment counter.
             }
+
+            //TODO Do we need to reform the group here? Extra spots at the end of the formation aren't really a bad thing..., they get reformed when another unit joins anyways.
         }
     }
 

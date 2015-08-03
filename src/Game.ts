@@ -47,13 +47,11 @@
 /// <reference path="tasks/control/ParentTaskController.ts"/>
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update, render : render});
-var foodText, colonyText, buildingText;
+var foodText:Phaser.Text, colonyText:Phaser.Text, buildingText:Phaser.Text;
 var leader:Unit = null;
 var stage = 0;
 var unitGroup = null;
 
-var leaderButton:Phaser.Button;
-var regularButton:Phaser.Button;
 var houseButton:Phaser.Button;
 var farmButton:Phaser.Button;
 var barracksButton:Phaser.Button;
@@ -110,9 +108,9 @@ function create () {
 
     unitGroup = game.add.group();
 
-    startExample(new Phaser.Point(800,800), 'player1', 1);
-    startExample(new Phaser.Point(1500,1500), 'player2', 1);
-    startExample(new Phaser.Point(1800,800), 'player3', 1);
+    startExample(new Phaser.Point(800,800), 'player1', 2);
+    startExample(new Phaser.Point(1500,1500), 'player2', 2);
+    startExample(new Phaser.Point(1800,800), 'player3', 2);
     game.camera.x = 400;
     game.camera.y = 450;
 
@@ -126,10 +124,6 @@ function create () {
     foodText = game.add.text(0, 0, text, style);
     colonyText = game.add.text(0, 20, text, style);
     buildingText = game.add.text(0, 40, buildingType, style);
-
-    //Adding some buttons...
-    leaderButton = game.add.button(game.world.centerX - 125, 0, 'war', pressLeader, this, 2, 1, 0);
-    regularButton = game.add.button(game.world.centerX + 25, 0, 'normal', pressRegular, this, 2, 1, 0);
 
     houseButton = game.add.button(0, game.world.height - 50, 'buildHouse', ()=>setBuildingType('house'), this, 2, 1, 0);
     farmButton = game.add.button(60, game.world.height - 50, 'buildFarm', ()=>setBuildingType('farm'), this, 2, 1, 0);
@@ -172,9 +166,6 @@ function update() {
     for(var p in PlayerManager.players)
         PlayerManager.getPlayer(p).capitol.update(game.time.physicsElapsedMS)
 
-    foodText.text = 'food: '+player.capitol.food+', rate: '+player.capitol.avgResources;
-    colonyText.text = 'peasants: '+player.capitol.freePeasantList.length;
-
     if (up.isDown)
         game.camera.y -= 4;
     else if (down.isDown)
@@ -205,11 +196,13 @@ function update() {
     keepButton.position.set(posX + 200, posY);
     cancelButton.position.set(posX + 250, posY);
 
-    posX = (game.camera.x + game.camera.width/2)*(1/game.world.scale.x);
+    posX = (game.camera.x)*(1/game.world.scale.x);
     posY = (game.camera.y)*(1/game.world.scale.x);
 
-    leaderButton.position.set(posX - 125, posY);
-    regularButton.position.set(posX + 25, posY);
+    foodText.text = 'food: '+player.capitol.food+', rate: '+player.capitol.avgResources;
+    foodText.position.set(posX, posY);
+    colonyText.text = 'peasants: '+player.capitol.freePeasantList.length;
+    colonyText.position.set(posX, posY+25);
 
     if(preview !== null)
         preview.position.set(game.input.worldX*(1/game.world.scale.x), game.input.worldY*(1/game.world.scale.y));
@@ -248,11 +241,6 @@ function createColonyAndUnitsLeader(playerName:string){
     leader.capitol.iron = 100000;
 }
 
-function createColonyAndUnitsNormal(){
-    var capitol = new Capitol(game.world.centerX, game.world.centerY, game, 'player1', buildingGroup.create(0,0,'capitol'), 100, 100);
-    PlayerManager.getPlayer("player1").capitol = capitol;
-}
-
 function startExample(start:Phaser.Point, playerName:string, multiplier?:number){
     /*
      * Incredibly ugly prototype code here. Quick and dirty...
@@ -271,25 +259,33 @@ function startExample(start:Phaser.Point, playerName:string, multiplier?:number)
     player.capitol = capitol;
 
     for(var k=0;k<multiplier;k++) {
-        var x = capitol.sprite.x - 300, y = capitol.sprite.y - 100;
+        var x = capitol.sprite.x, y = capitol.sprite.y;
         var width = 40, height = 40;
+
+        capitol.addBuilding('keep', x + 100, y);
+        capitol.addBuilding('keep', x - 100, y);
+
+        x = capitol.sprite.x - 300;
+        y = capitol.sprite.y - 100;
+        width = 40;
+        height = 40;
 
         //Make some houses
         for (var i = 0; i < numHouses; i++)
-            capitol.addBuilding('house', x, i * 40 + y, game, capitol, width, height);
+            capitol.addBuilding('house', x, i * 40 + y, width, height);
 
         x = capitol.sprite.x - 350;
 
         //Make some more houses
         for (var i = 0; i < numHouses; i++)
-            capitol.addBuilding('house', x, i * 40 + y, game, capitol, width, height);
+            capitol.addBuilding('house', x, i * 40 + y, width, height);
 
         x = capitol.sprite.x - 200;
         y = capitol.sprite.y - 100;
 
         //Make some barracks
         for (var i = 0; i < numBarracks; i++)
-            capitol.addBuilding('barracks', x, i * 65 + y, game, capitol)
+            capitol.addBuilding('barracks', x, i * 65 + y)
 
         x = capitol.sprite.x + 300;
         y = capitol.sprite.y - 200;
@@ -298,7 +294,7 @@ function startExample(start:Phaser.Point, playerName:string, multiplier?:number)
 
         //Make some farms
         for (var i = 0; i < numFarms; i++) {
-            capitol.addBuilding('farm', x, y, game, capitol, width, height);
+            capitol.addBuilding('farm', x, y, width, height);
             if (i < numFarms / 2) {
                 y += height;
             } else {
@@ -311,7 +307,7 @@ function startExample(start:Phaser.Point, playerName:string, multiplier?:number)
 
         //Make some mines
         for (var i = 0; i < numMines; i++) {
-            capitol.addBuilding('mine', x, y, game, capitol, 75, 75);
+            capitol.addBuilding('mine', x, y, 75, 75);
             x += 90;
         }
     }
@@ -322,18 +318,8 @@ function placeBuilding(){
         var x = (game.input.worldX) * (1 / game.world.scale.x);
         var y = (game.input.worldY) * (1 / game.world.scale.y);
         console.log('x/y: ' + x + '/' + y + ', camera x/y: ' + game.camera.x + '/' + game.camera.y + ' input x/y: ' + game.input.mousePointer.x + '/' + game.input.mousePointer.y);
-        PlayerManager.getPlayer("player1").capitol.addBuilding(buildingType, x, y, game, PlayerManager.getPlayer("player1").capitol, 100, 100);
+        PlayerManager.getPlayer("player1").capitol.addBuilding(buildingType, x, y, 100, 100);
     }
-}
-
-function pressLeader(){
-    PlayerManager.getPlayer("player1").capitol.destroy();
-    createColonyAndUnitsLeader("player1");
-}
-
-function pressRegular(){
-    PlayerManager.getPlayer("player1").capitol.destroy();
-    createColonyAndUnitsNormal();
 }
 
 function setBuildingType(type:string){

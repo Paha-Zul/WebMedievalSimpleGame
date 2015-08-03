@@ -22,23 +22,6 @@ var Capitol = (function (_super) {
         this.groupList = [];
         this.lastResources = 0;
         this.avgResources = 0;
-        this.addBuilding = function (type, x, y, game, colony, width, height) {
-            var unit = null;
-            if (type === 'house')
-                unit = new House(x, y, game, _this.playerName, buildingGroup.create(0, 0, type), width, height);
-            if (type === 'farm')
-                unit = new Farm(x, y, game, _this.playerName, buildingGroup.create(0, 0, type), width, height);
-            if (type === 'barracks')
-                unit = new Barracks(x, y, game, _this.playerName, buildingGroup.create(0, 0, type), width, height);
-            if (type === 'mine')
-                unit = new Mine(x, y, game, _this.playerName, buildingGroup.create(0, 0, type), width, height);
-            if (type === 'keep')
-                unit = new Keep(x, y, game, _this.playerName, buildingGroup.create(0, 0, ''), width, height);
-            unit.name = type;
-            unit.type = 'building';
-            _this.buildingList.push(unit);
-            return unit;
-        };
         this.calcRate = function () {
             _this.avgResources = _this.food - _this.lastResources;
             _this.lastResources = _this.food;
@@ -107,6 +90,23 @@ var Capitol = (function (_super) {
         this.freePeasantList.push(unit);
         return unit;
     };
+    Capitol.prototype.addBuilding = function (type, x, y, width, height) {
+        var unit = null;
+        if (type === 'house')
+            unit = new House(x, y, this.game, this.playerName, buildingGroup.create(0, 0, type), width, height);
+        if (type === 'farm')
+            unit = new Farm(x, y, this.game, this.playerName, buildingGroup.create(0, 0, type), width, height);
+        if (type === 'barracks')
+            unit = new Barracks(x, y, this.game, this.playerName, buildingGroup.create(0, 0, type), width, height);
+        if (type === 'mine')
+            unit = new Mine(x, y, this.game, this.playerName, buildingGroup.create(0, 0, type), width, height);
+        if (type === 'keep')
+            unit = new Keep(x, y, this.game, this.playerName, buildingGroup.create(0, 0, ''), width, height);
+        unit.name = type;
+        unit.type = 'building';
+        this.buildingList.push(unit);
+        return unit;
+    };
     Capitol.prototype.addGroup = function (leader) {
         var group = new Group(leader);
         leader.getBannerMan().group = group;
@@ -145,7 +145,6 @@ var Capitol = (function (_super) {
         this.buildingList = [];
         this.text.destroy();
         this.game.time.events.remove(this.timer);
-        this.game.time.events.remove(this.spawnTimer);
     };
     return Capitol;
 })(Unit);

@@ -15,6 +15,8 @@ class Keep extends Building{
     start():void {
         super.start();
         this.sprite.loadTexture('capitol');
+        this.currRetaliationStrength = this.maxRetaliationStrength = 75;
+        this.retaliationStrengthTime = 500;
     }
 
     update(delta):void {
@@ -25,6 +27,7 @@ class Keep extends Building{
 
         if((this.worker === null || this.worker.toBeDestroyed) && this.capitol.food >= 1) {
             this.worker = this.capitol.addFreePeasant('leader', this.sprite.x, this.sprite.y);
+            this.bannerMan = null; //We have to null this so we can acquire a new one below!
             this.capitol.food--;
         }else if(this.worker !== null && !this.worker.toBeDestroyed && this.bannerMan == null){
             this.bannerMan = (<Peasant>this.worker).getBannerMan();
@@ -32,7 +35,8 @@ class Keep extends Building{
         }
     }
 
-    finalDestroy():void {
+    destroy():void {
         super.destroy();
+        this.worker.destroy();
     }
 }

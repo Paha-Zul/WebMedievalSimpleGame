@@ -5,6 +5,8 @@
 ///<reference path='../Game.ts'/>
 
 class Farm extends Building{
+    counter:number=0;
+
     constructor(x:number, y:number, game:Phaser.Game, playerName:string, sprite:Phaser.Sprite, width:number, height:number) {
         super(x, y, game, playerName, sprite, width, height);
     }

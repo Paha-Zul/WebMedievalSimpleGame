@@ -20,10 +20,16 @@ class AttackUnit extends LeafTask{
         super.update(delta);
 
         var myGroup:Group = (<Peasant>this.bb.me).getBannerMan().group;
+        var myStrength = myGroup.getNumUnits();
 
         if(this.bb.target.type === 'building'){
-            this.bb.target.destroy();
-            myGroup.killAmount(5);
+            var building = (<Building>this.bb.target); //Get the building.
+            var retaliation = building.currRetaliationStrength; //Get the retaliation strength
+            building.currRetaliationStrength -= myStrength; //Subtract the attack damage of the group from the building's retaliation strength.
+            if(building.currRetaliationStrength <= 0) //If it's 0 or less, destroy the building.
+                building.destroy();
+
+            myGroup.killAmount(retaliation);    //Hurt the group...
         }else if(this.bb.target.type === 'peasant'){
             var enemyGroup:Group = null;
             if(this.bb.target.name === 'soldier'){
@@ -38,7 +44,6 @@ class AttackUnit extends LeafTask{
             //If the group we were trying to get is not null...
             if(enemyGroup !== null && !enemyGroup.destroyed){
                 var enemyStrength = enemyGroup.getNumUnits();
-                var myStrength = myGroup.getNumUnits();
 
                 //If my group's target is the other group's leader and their target is not my leader (I am targeting them but them not me?), bonus damage for me!
                 if(myGroup.getLeader().blackBoard.target === enemyGroup.getLeader() && myGroup.getLeader() !== enemyGroup.getLeader().blackBoard.target){

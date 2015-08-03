@@ -5,9 +5,13 @@
  * An extension of the super prototype class.
  */
 class Building extends Unit {
-    counter:number = 0;
+    nextRetIncrease:number = 0;
     refillTime:number = 1000;
     worker:Unit = null;
+    maxRetaliationStrength:number = 5;
+    currRetaliationStrength:number = 5;
+    retaliationStrengthRate:number = 1;
+    retaliationStrengthTime:number = 1000;
 
     constructor(x:number, y:number, game:Phaser.Game, playerName:string, sprite:Phaser.Sprite, width:number, height:number) {
         super(x, y, game, playerName, sprite, width || 30, height || 30);
@@ -26,6 +30,13 @@ class Building extends Unit {
     update(delta):void{
         super.update(delta);
 
+        if(this.currRetaliationStrength < this.maxRetaliationStrength && this.game.time.now >= this.nextRetIncrease){
+            this.currRetaliationStrength += this.retaliationStrengthRate;
+            if(this.currRetaliationStrength >= this.maxRetaliationStrength)
+                this.currRetaliationStrength = this.maxRetaliationStrength;
+
+            this.nextRetIncrease = game.time.now + this.retaliationStrengthTime;
+        }
     }
 
     getResourceTask = (bb:BlackBoard):Task => {

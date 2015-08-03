@@ -86,20 +86,20 @@ class Capitol extends Unit{
         return unit;
     }
 
-    addBuilding = (type:string, x, y, game, colony, width?, height?) : Building =>{
+    addBuilding(type:string, x:number, y:number, width?:number, height?:number):Building{
         var unit:Building = null;
-        if(type === 'house') unit = new House(x, y, game, this.playerName, buildingGroup.create(0,0,type), width, height);
-        if(type === 'farm') unit = new Farm(x, y, game, this.playerName, buildingGroup.create(0,0,type), width, height);
-        if(type === 'barracks') unit = new Barracks(x, y, game, this.playerName, buildingGroup.create(0,0,type), width, height);
-        if(type === 'mine') unit = new Mine(x, y, game, this.playerName, buildingGroup.create(0,0,type), width, height);
-        if(type === 'keep') unit = new Keep(x, y, game, this.playerName, buildingGroup.create(0,0,''), width, height);
+        if(type === 'house') unit = new House(x, y, this.game, this.playerName, buildingGroup.create(0,0,type), width, height);
+        if(type === 'farm') unit = new Farm(x, y, this.game, this.playerName, buildingGroup.create(0,0,type), width, height);
+        if(type === 'barracks') unit = new Barracks(x, y, this.game, this.playerName, buildingGroup.create(0,0,type), width, height);
+        if(type === 'mine') unit = new Mine(x, y, this.game, this.playerName, buildingGroup.create(0,0,type), width, height);
+        if(type === 'keep') unit = new Keep(x, y, this.game, this.playerName, buildingGroup.create(0,0,''), width, height);
 
         unit.name = type;
         unit.type = 'building';
 
         this.buildingList.push(unit);
         return unit;
-    };
+    }
 
     addGroup(leader:Peasant){
         var group:Group = new Group(leader);
@@ -152,6 +152,5 @@ class Capitol extends Unit{
         this.text.destroy();
 
         this.game.time.events.remove(this.timer);
-        this.game.time.events.remove(this.spawnTimer);
     }
 }

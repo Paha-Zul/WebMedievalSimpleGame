@@ -14,9 +14,13 @@ var Building = (function (_super) {
     function Building(x, y, game, playerName, sprite, width, height) {
         var _this = this;
         _super.call(this, x, y, game, playerName, sprite, width || 30, height || 30);
-        this.counter = 0;
+        this.nextRetIncrease = 0;
         this.refillTime = 1000;
         this.worker = null;
+        this.maxRetaliationStrength = 5;
+        this.currRetaliationStrength = 5;
+        this.retaliationStrengthRate = 1;
+        this.retaliationStrengthTime = 1000;
         this.getResourceTask = function (bb) {
             bb.target = _this;
             bb.targetPosition = _this.sprite.position;
@@ -39,6 +43,12 @@ var Building = (function (_super) {
     };
     Building.prototype.update = function (delta) {
         _super.prototype.update.call(this, delta);
+        if (this.currRetaliationStrength < this.maxRetaliationStrength && this.game.time.now >= this.nextRetIncrease) {
+            this.currRetaliationStrength += this.retaliationStrengthRate;
+            if (this.currRetaliationStrength >= this.maxRetaliationStrength)
+                this.currRetaliationStrength = this.maxRetaliationStrength;
+            this.nextRetIncrease = game.time.now + this.retaliationStrengthTime;
+        }
     };
     return Building;
 })(Unit);

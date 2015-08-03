@@ -29,6 +29,8 @@
 /// <reference path="tasks/actions/Idle.ts"/>
 /// <reference path="tasks/actions/FindNearestEnemyUnit.ts"/>
 /// <reference path="tasks/actions/AttackUnit.ts"/>
+/// <reference path="tasks/actions/FindNearestGroup.ts"/>
+/// <reference path="tasks/actions/JoinGroup.ts"/>
 
 /// <reference path="tasks/composite/ParentTask.ts"/>
 /// <reference path="tasks/composite/Sequence.ts"/>
@@ -59,7 +61,7 @@ var up:Phaser.Key, down:Phaser.Key, left:Phaser.Key, right:Phaser.Key;
 
 var houseKey:Phaser.Key, farmKey:Phaser.Key;
 
-var buildingType:string = 'farm';
+var buildingType:string = '';
 
 var spawnTimer:Phaser.TimerEvent;
 
@@ -84,15 +86,19 @@ function preload () {
     game.load.image('buildMine', 'img/button_mine.png');
     game.load.image('buildCancel', 'img/button_cancel.png');
 
-    this.game.stage.backgroundColor = '#DDDDDD'
+    this.game.stage.backgroundColor = '#DDDDDD';
+    game.stage.disableVisibilityChange = true; //Apparently turns off pausing while in the background...
 }
 
 function create () {
+    Phaser.CANVAS
+
     game.physics.startSystem(Phaser.Physics.ARCADE);
     game.world.setBounds(0,0,2000,2000);
 
     PlayerManager.addPlayer("player1", "human", null);
     PlayerManager.addPlayer("player2", "ai", null);
+    PlayerManager.addPlayer("player3", "ai", null);
 
     buildingGroup = game.add.group();
     peasantGroup = game.add.group();
@@ -100,9 +106,11 @@ function create () {
 
     unitGroup = game.add.group();
 
-    startExample(new Phaser.Point(800,800), 'player1');
-    startExample(new Phaser.Point(1500,1500), 'player2');
-    game.camera.position.setTo(800,800);
+    startExample(new Phaser.Point(800,800), 'player1', 1);
+    startExample(new Phaser.Point(1500,1500), 'player2', 1);
+    startExample(new Phaser.Point(1800,800), 'player3', 1);
+    game.camera.x = 400;
+    game.camera.y = 450;
 
     //Adds an event to the mouse.
     game.input.onDown.add(()=> {if(!game.input.disabled) placeBuilding();} , this);
@@ -171,10 +179,12 @@ function update() {
     if(game.input.mouse.wheelDelta !== 0) {
         var mult = 0.1;
         var val = game.input.mouse.wheelDelta * mult;
+        var cx = game.camera.x + game.camera.width/2;
+        var cy = game.camera.y + game.camera.height/2;
         game.world.scale.x += val;
         game.world.scale.y += val;
         game.input.mouse.wheelDelta = 0;
-        game.camera.setPosition(game.camera.x + game.camera.x*val, game.camera.y + game.camera.y*val);
+        game.camera.setPosition(game.camera.x + game.camera.x*val*2, game.camera.y + game.camera.y*val*2);
     }
 
     var posX = game.camera.x*(1/game.world.scale.x);
@@ -234,10 +244,12 @@ function createColonyAndUnitsNormal(){
     PlayerManager.getPlayer("player1").capitol = capitol;
 }
 
-function startExample(start:Phaser.Point, playerName:string){
+function startExample(start:Phaser.Point, playerName:string, multiplier?:number){
     /*
      * Incredibly ugly prototype code here. Quick and dirty...
      */
+
+    multiplier = multiplier || 1;
 
     var numPeasants = 0;
     var numFarms = 8;
@@ -249,48 +261,50 @@ function startExample(start:Phaser.Point, playerName:string){
     var player:Player = PlayerManager.getPlayer(playerName);
     player.capitol = capitol;
 
-    var x = capitol.sprite.x - 300, y = capitol.sprite.y - 100;
-    var width = 40, height = 40;
+    for(var k=0;k<multiplier;k++) {
+        var x = capitol.sprite.x - 300, y = capitol.sprite.y - 100;
+        var width = 40, height = 40;
 
-    //Make some houses
-    for(var i=0;i<numHouses;i++)
-        capitol.addBuilding('house', x, i*40 + y, game, capitol, width, height);
+        //Make some houses
+        for (var i = 0; i < numHouses; i++)
+            capitol.addBuilding('house', x, i * 40 + y, game, capitol, width, height);
 
-    x = capitol.sprite.x - 350;
+        x = capitol.sprite.x - 350;
 
-    //Make some more houses
-    for(var i=0;i<numHouses;i++)
-        capitol.addBuilding('house', x, i*40 + y, game, capitol, width, height);
+        //Make some more houses
+        for (var i = 0; i < numHouses; i++)
+            capitol.addBuilding('house', x, i * 40 + y, game, capitol, width, height);
 
-    x = capitol.sprite.x - 200;
-    y = capitol.sprite.y - 100;
+        x = capitol.sprite.x - 200;
+        y = capitol.sprite.y - 100;
 
-    //Make some barracks
-    for(var i=0;i<numBarracks;i++)
-        capitol.addBuilding('barracks', x, i*65 + y, game, capitol)
+        //Make some barracks
+        for (var i = 0; i < numBarracks; i++)
+            capitol.addBuilding('barracks', x, i * 65 + y, game, capitol)
 
-    x = capitol.sprite.x + 300;
-    y = capitol.sprite.y - 200;
-    width = 100;
-    height = 100;
+        x = capitol.sprite.x + 300;
+        y = capitol.sprite.y - 200;
+        width = 100;
+        height = 100;
 
-    //Make some farms
-    for(var i=0;i<numFarms;i++){
-        capitol.addBuilding('farm', x, y, game, capitol, width, height);
-        if(i<numFarms/2){
-            y+=height;
-        }else{
-            x-=width;
+        //Make some farms
+        for (var i = 0; i < numFarms; i++) {
+            capitol.addBuilding('farm', x, y, game, capitol, width, height);
+            if (i < numFarms / 2) {
+                y += height;
+            } else {
+                x -= width;
+            }
         }
-    }
 
-    x = capitol.sprite.x - 200;
-    y = capitol.sprite.y - 200;
+        x = capitol.sprite.x - 200;
+        y = capitol.sprite.y - 200;
 
-    //Make some mines
-    for(var i=0;i<numMines;i++){
-        capitol.addBuilding('mine', x, y, game, capitol, 75, 75);
-        x+=90;
+        //Make some mines
+        for (var i = 0; i < numMines; i++) {
+            capitol.addBuilding('mine', x, y, game, capitol, 75, 75);
+            x += 90;
+        }
     }
 }
 

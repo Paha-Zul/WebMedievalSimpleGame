@@ -15,4 +15,7 @@ function takeResource(entity) {
     }
     return resources;
 }
+function RGBtoHEX(r, g, b) {
+    return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+}
 //# sourceMappingURL=Helper.js.map

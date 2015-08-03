@@ -23,4 +23,10 @@ class House extends Building{
     update(delta):void {
         super.update(delta);
     }
+
+
+    destroy():void {
+        super.destroy();
+        this.worker.destroy();
+    }
 }

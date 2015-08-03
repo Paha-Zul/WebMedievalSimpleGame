@@ -24,6 +24,8 @@ class FindNearestEnemyUnit extends LeafTask{
             var list = player.capitol.freePeasantList;
             var l = list.length;
             for(var i=0;i<l;i++){
+                var unit:Unit = list[i];
+                if(unit.name === 'soldier' || unit.name === 'peasant') continue; //Don't target soldiers or peasants for now, just bannermans
                 //Calc the distance. If the closest unit is null or the target being checked is closer, assign the new unit/distance.
                 _dst = this.bb.me.sprite.position.distance(list[i].sprite.position);
                 if(closestUnit === null || _dst <= closestDst){
@@ -35,8 +37,9 @@ class FindNearestEnemyUnit extends LeafTask{
             list = player.capitol.buildingList;
             l = list.length;
             for(var i=0;i<l;i++){
+                var unit:Unit = list[i];
                 //Calc the distance. If the closest unit is null or the target being checked is closer, assign the new unit/distance.
-                _dst = this.bb.me.sprite.position.distance(list[i].sprite.position);
+                _dst = this.bb.me.sprite.position.distance(unit.sprite.position);
                 if(closestUnit === null || _dst <= closestDst){
                     closestUnit = list[i];
                     closestDst = _dst;

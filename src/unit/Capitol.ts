@@ -22,7 +22,7 @@ class Capitol extends Unit{
         super(x, y, game, playerName, sprite, width, height);
 
         this.timer = this.game.time.events.loop(Phaser.Timer.SECOND*1, this.calcRate, this);
-        this.spawnTimer = this.game.time.events.loop(10000, ()=>this.addFreePeasant('leader', this.sprite.x, this.sprite.y, this.game), this);
+        this.spawnTimer = this.game.time.events.loop(10000, ()=>{if(this.food > 0){this.addFreePeasant('leader', this.sprite.x, this.sprite.y, this.game); this.food--}}, this);
         this.type = 'building';
         this.name = 'capitol';
         this.taskQueue = new CircularQueue<any>(100);
@@ -107,6 +107,14 @@ class Capitol extends Unit{
         leader.getBannerMan().group = group;
         this.groupList.push(group);
         return group;
+    }
+
+    removeGroup(group:Group){
+        for(var i=0;i<=this.groupList.length;i++)
+            if(this.groupList[i] === group){
+                this.groupList.splice(i, 1);
+                break;
+            }
     }
 
     getGroupList():Group[]{

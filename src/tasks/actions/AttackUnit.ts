@@ -25,34 +25,34 @@ class AttackUnit extends LeafTask{
             this.bb.target.destroy();
             myGroup.killAmount(5);
         }else if(this.bb.target.type === 'peasant'){
-            var group:Group = null;
+            var enemyGroup:Group = null;
             if(this.bb.target.name === 'soldier'){
-                group = (<Peasant>this.bb.target).getSoldier().group;
+                enemyGroup = (<Peasant>this.bb.target).getSoldier().group;
             }else if(this.bb.target.name === 'leader'){
-                group = (<Peasant>this.bb.target).getBannerMan().group;
+                enemyGroup = (<Peasant>this.bb.target).getBannerMan().group;
             }else if(this.bb.target.name === 'peasant'){
                 myGroup.killAmount(1);
                 this.bb.target.destroy();
             }
 
             //If the group we were trying to get is not null...
-            if(group !== null){
-                var enemyStrength = group.getNumUnits();
+            if(enemyGroup !== null && !enemyGroup.destroyed){
+                var enemyStrength = enemyGroup.getNumUnits();
                 var myStrength = myGroup.getNumUnits();
 
-                //If the enemy is stronger, hurt them and kill me.
-                if(enemyStrength > myStrength) {
-                    group.killAmount(myStrength);
-                    myGroup.destroy();
-
-                //Otherwise, hurt me and kill them.
-                }else{
-                    myGroup.killAmount(enemyStrength);
-                    group.destroy();
+                //If my group's target is the other group's leader and their target is not my leader (I am targeting them but them not me?), bonus damage for me!
+                if(myGroup.getLeader().blackBoard.target === enemyGroup.getLeader() && myGroup.getLeader() !== enemyGroup.getLeader().blackBoard.target){
+                    myStrength*=1.5;
+                    enemyStrength*=0.75;
+                    console.log('my bonus!');
                 }
+
+                enemyGroup.killAmount(myStrength);
+                myGroup.killAmount(enemyStrength);
             }
         }
 
+        this.bb.target = null;
         this.control.finishWithSuccess();
     }
 

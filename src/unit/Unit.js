@@ -27,6 +27,7 @@ var Unit = (function () {
         this.posCounter = 0;
         this.flag = false;
         this.toBeDestroyed = false;
+        this.player = null;
         //Walks in a direction.
         this.walkTowardsRotation = function (rotation, moveSpeed, disToStop) {
             //Get X and Y moving values.
@@ -43,14 +44,14 @@ var Unit = (function () {
         this.sprite.anchor.setTo(0.5, 0.5);
         this.blackBoard = new BlackBoard();
         this.blackBoard.me = this;
-        this.blackBoard.myPlayer = PlayerManager.getPlayer(this.playerName);
+        this.blackBoard.myPlayer = this.player = PlayerManager.getPlayer(this.playerName);
         this.blackBoard.game = game;
         this.capitol = this.blackBoard.myPlayer.capitol;
     }
     Unit.prototype.start = function () {
         this.started = true;
         if (this.name !== 'house' && this.name !== 'soldier' && this.name !== 'barracks') {
-            var style = { font: "18px Arial", fill: "#1765D1", align: "center" };
+            var style = { font: "18px Arial", fill: '' + this.player.color, align: "center" };
             this.text = game.add.text(this.sprite.x, this.sprite.y - this.height / 2 - 20, 'fixme', style);
         }
     };
@@ -86,10 +87,11 @@ var Unit = (function () {
         }
         else {
             if (this.name === 'peasant') {
-                var beh = this.capitol.getTaskFromQueue();
+                //Try to get a task from the capitol...
+                var task = this.capitol.getTaskFromQueue();
                 //If we actually got one, execute the function which will return a behaviour.
-                if (beh !== null)
-                    this.behaviour = beh(this.blackBoard);
+                if (task !== null)
+                    this.behaviour = task(this.blackBoard);
                 else {
                     this.behaviour = this.wander(this.blackBoard);
                 }
@@ -112,7 +114,7 @@ var Unit = (function () {
             this.sprite.angle = rotToTarget * (180 / Math.PI);
         }
         else {
-            this.sprite.position.set(position.x, position.y);
+            //this.sprite.position.set(position.x, position.y);
             this.sprite.body.velocity.set(0, 0);
             return true;
         }
@@ -143,9 +145,11 @@ var Group = (function () {
         this.spacing = 15;
         this.lines = 3;
         this.unitsPerLine = 8;
+        this.destroyed = false;
         this.leader = leader;
         this.positions = [];
         this.unitList = [];
+        this.maxGroupSize = Math.random() * 75 + 25; //25 - 100
     }
     Group.prototype.addUnit = function (unit) {
         this.unitList.push(unit);
@@ -168,7 +172,7 @@ var Group = (function () {
      */
     Group.prototype.killAmount = function (amount) {
         if (amount >= this.unitList.length)
-            this.killGroup();
+            this.destroy();
         else {
             //Loop until we remove the right amount.
             var counter = 0;
@@ -193,8 +197,13 @@ var Group = (function () {
     Group.prototype.getNumUnits = function () {
         return this.unitList.length;
     };
+    Group.prototype.isFull = function () {
+        return this.getNumUnits() >= this.maxGroupSize;
+    };
     Group.prototype.destroy = function () {
+        this.leader.capitol.removeGroup(this); //Remove the group from the capitol.
         this.killGroup();
+        this.destroyed = true;
     };
     Group.prototype.reformGroup = function () {
         //TODO Kinda performance heavy to do for every addition/subtraction. Maybe have a timer to wait
@@ -212,9 +221,11 @@ var Group = (function () {
             var y = i % div * spacing - div / 2 * spacing;
             var point = new Phaser.Point(x, y);
             this.positions.push(point);
+            //Set the soldiers leader and the soldier's leader as the target, and give them a task!
             this.unitList[i].getSoldier().leader = this.leader.getBannerMan();
             this.unitList[i].blackBoard.target = this.leader;
             this.unitList[i].blackBoard.targetPosition = point;
+            this.unitList[i].blackBoard.disToStop = 2;
             this.unitList[i].behaviour = new FollowPointRelativeToTarget(this.unitList[i].blackBoard);
         }
     };

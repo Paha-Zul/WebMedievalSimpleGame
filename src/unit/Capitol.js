@@ -49,7 +49,12 @@ var Capitol = (function (_super) {
             _this.lastResources = _this.food;
         };
         this.timer = this.game.time.events.loop(Phaser.Timer.SECOND * 1, this.calcRate, this);
-        this.spawnTimer = this.game.time.events.loop(10000, function () { return _this.addFreePeasant('leader', _this.sprite.x, _this.sprite.y, _this.game); }, this);
+        this.spawnTimer = this.game.time.events.loop(10000, function () {
+            if (_this.food > 0) {
+                _this.addFreePeasant('leader', _this.sprite.x, _this.sprite.y, _this.game);
+                _this.food--;
+            }
+        }, this);
         this.type = 'building';
         this.name = 'capitol';
         this.taskQueue = new CircularQueue(100);
@@ -111,6 +116,13 @@ var Capitol = (function (_super) {
         leader.getBannerMan().group = group;
         this.groupList.push(group);
         return group;
+    };
+    Capitol.prototype.removeGroup = function (group) {
+        for (var i = 0; i <= this.groupList.length; i++)
+            if (this.groupList[i] === group) {
+                this.groupList.splice(i, 1);
+                break;
+            }
     };
     Capitol.prototype.getGroupList = function () {
         return this.groupList;

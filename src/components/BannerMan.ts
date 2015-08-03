@@ -12,6 +12,7 @@
 class BannerMan implements IUpdateable{
     group:Group = null;
     capitol:Capitol = null;
+    private sizeToAttack = 10;
 
     constructor(public owner:Peasant){
         this.capitol = owner.capitol;
@@ -25,14 +26,28 @@ class BannerMan implements IUpdateable{
     }
 
     update(delta:number):void {
+        //If we have too little numbers and we are still attacking, null the behaviour so we can retreat.
+        if(this.group.getNumUnits() < this.sizeToAttack && this.owner.behaviour !== null && this.owner.behaviour.name === 'attack')
+            this.owner.behaviour = null;
+
+        //If our behaviour is null, simply wander.
         if(this.owner.behaviour === null) {
             this.moveInCircle();
         }
 
-        if(this.group.getNumUnits() >= 20 && this.owner.behaviour.name === 'patrol'){
+        //If we have enough people to attack and we're patrolling, issue an attack order!
+        if(this.group.getNumUnits() >= this.sizeToAttack && this.owner.behaviour.name === 'patrol'){
             this.owner.behaviour.getControl().safeEnd();
             this.attackTarget();
         }
+
+        //Scale the speed based on the size of the group!
+        var speed = 20/this.group.getNumUnits();
+        speed = speed <= 1 ? speed : 1;
+        this.owner.blackBoard.moveSpeed = 1.5*speed;
+
+        //Add a bonus to the idle time (which is used for repicking targets) for larger groups.
+        this.owner.blackBoard.idleTime = 3000 + this.group.getNumUnits()*75;
     }
 
     moveInCircle(){
@@ -92,6 +107,7 @@ class BannerMan implements IUpdateable{
         parallel.control.addTask(moveTo);
         seq.control.addTask(attackTarget);
 
+        seq.name = 'attack';
         this.owner.behaviour = seq;
     }
 }

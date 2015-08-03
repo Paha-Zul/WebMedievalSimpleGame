@@ -22,6 +22,7 @@ class Unit{
     blackBoard:BlackBoard;
     capitol:Capitol;
     toBeDestroyed:boolean = false;
+    player:Player = null;
 
     constructor(public x:number, public y:number, public game:Phaser.Game, public playerName:string, public sprite:Phaser.Sprite, public width?:number, public height?:number){
         this.width = width || 10;
@@ -31,7 +32,7 @@ class Unit{
         this.sprite.anchor.setTo(0.5, 0.5);
         this.blackBoard = new BlackBoard();
         this.blackBoard.me = this;
-        this.blackBoard.myPlayer = PlayerManager.getPlayer(this.playerName);
+        this.blackBoard.myPlayer = this.player = PlayerManager.getPlayer(this.playerName);
         this.blackBoard.game = game;
         this.capitol = this.blackBoard.myPlayer.capitol;
     }
@@ -40,7 +41,7 @@ class Unit{
         this.started = true;
 
         if(this.name !== 'house' && this.name !== 'soldier' && this.name !== 'barracks'){
-            var style = { font: "18px Arial", fill: "#1765D1", align: "center" };
+            var style = { font: "18px Arial", fill: ''+this.player.color, align: "center" };
             this.text = game.add.text(this.sprite.x, this.sprite.y - this.height/2 - 20, 'fixme', style);
         }
     }
@@ -75,11 +76,14 @@ class Unit{
             }
         }else{
             if(this.name === 'peasant') {
-                var beh:any = this.capitol.getTaskFromQueue();
+                //Try to get a task from the capitol...
+                var task:any = this.capitol.getTaskFromQueue();
 
                 //If we actually got one, execute the function which will return a behaviour.
-                if (beh !== null)
-                    this.behaviour = beh(this.blackBoard);
+                if (task !== null)
+                    this.behaviour = task(this.blackBoard);
+
+                //Otherwise, just wander...
                 else {
                     this.behaviour = this.wander(this.blackBoard);
                 }
@@ -116,7 +120,7 @@ class Unit{
             //this.sprite.y += y;
             this.sprite.angle = rotToTarget*(180/Math.PI);
         }else{
-            this.sprite.position.set(position.x, position.y);
+            //this.sprite.position.set(position.x, position.y);
             this.sprite.body.velocity.set(0, 0);
             return true;
         }
@@ -153,12 +157,14 @@ class Group{
     private spacing:number = 15;
     private lines:number = 3;
     private unitsPerLine:number = 8;
-
+    private maxGroupSize;
+    destroyed:boolean = false;
 
     constructor(leader:Peasant){
         this.leader = leader;
         this.positions = [];
         this.unitList = [];
+        this.maxGroupSize = Math.random()*75 + 25; //25 - 100
     }
 
     addUnit(unit:Peasant):Group{
@@ -185,7 +191,7 @@ class Group{
      */
     killAmount(amount:number){
         if(amount >= this.unitList.length)
-            this.killGroup();
+            this.destroy();
         else{
             //Loop until we remove the right amount.
             var counter = 0;
@@ -213,8 +219,14 @@ class Group{
         return this.unitList.length;
     }
 
+    isFull():boolean{
+        return this.getNumUnits() >= this.maxGroupSize;
+    }
+
     destroy(){
+        this.leader.capitol.removeGroup(this); //Remove the group from the capitol.
         this.killGroup();
+        this.destroyed = true;
     }
 
     private reformGroup(){
@@ -236,9 +248,12 @@ class Group{
             var y = i%div*spacing - div/2*spacing;
             var point = new Phaser.Point(x, y);
             this.positions.push(point);
+
+            //Set the soldiers leader and the soldier's leader as the target, and give them a task!
             this.unitList[i].getSoldier().leader = this.leader.getBannerMan();
             this.unitList[i].blackBoard.target = this.leader;
             this.unitList[i].blackBoard.targetPosition = point;
+            this.unitList[i].blackBoard.disToStop = 2;
             this.unitList[i].behaviour = new FollowPointRelativeToTarget(this.unitList[i].blackBoard);
         }
     }

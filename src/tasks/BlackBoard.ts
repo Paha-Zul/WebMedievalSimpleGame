@@ -8,6 +8,7 @@
 class BlackBoard{
     target:Unit;
     targetPosition:Phaser.Point;
+    targetGroup:Group;
     waypoints:Phaser.Point[] = [];
     disToStop:number=2;
     moveSpeed:number=2;

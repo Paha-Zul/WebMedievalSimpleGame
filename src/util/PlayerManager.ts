@@ -16,7 +16,9 @@ class PlayerManager{
 }
 
 class Player{
-    constructor(public name:String, public controller:String, public capitol:Capitol, public id:number){
+    public color;
 
+    constructor(public name:String, public controller:String, public capitol:Capitol, public id:number){
+        this.color = RGBtoHEX(~~(Math.random()*255), ~~(Math.random()*255), ~~(Math.random()*255));
     }
 }

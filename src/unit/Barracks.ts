@@ -5,6 +5,7 @@
 /// <reference path="./../Game.ts"/>
 
 class Barracks extends Building{
+    nextSpawn:number = 0;
 
     constructor(x:number, y:number, game:Phaser.Game, playerName:string, sprite:Phaser.Sprite, width:number, height:number) {
         super(x, y, game, playerName, sprite, width, height);
@@ -24,11 +25,9 @@ class Barracks extends Building{
     update(delta):void {
         super.update(delta);
 
-        this.counter += delta;
-        if(this.counter >= this.refillTime && this.capitol.food >= 1){
-            this.counter = 0;
-            var p = this.capitol.addFreePeasant('soldier', this.sprite.x, this.sprite.y, this.game);
-            p.name = 'soldier';
+        if(this.game.time.now >= this.nextSpawn && this.capitol.food >= 1){
+            this.nextSpawn = this.game.time.now += this.refillTime;
+            this.capitol.addFreePeasant('soldier', this.sprite.x, this.sprite.y, this.game);
             this.capitol.food--;
         }
     }

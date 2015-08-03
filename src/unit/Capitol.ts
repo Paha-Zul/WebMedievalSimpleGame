@@ -16,13 +16,11 @@ class Capitol extends Unit{
     avgResources : number = 0;
     timer : Phaser.TimerEvent;
     taskQueue:CircularQueue<any>;
-    spawnTimer:Phaser.TimerEvent;
 
     constructor(x:number, y:number, game:Phaser.Game, playerName:string, sprite:Phaser.Sprite, width?:number, height?:number){
         super(x, y, game, playerName, sprite, width, height);
 
         this.timer = this.game.time.events.loop(Phaser.Timer.SECOND*1, this.calcRate, this);
-        this.spawnTimer = this.game.time.events.loop(10000, ()=>{if(this.food > 0){this.addFreePeasant('leader', this.sprite.x, this.sprite.y, this.game); this.food--}}, this);
         this.type = 'building';
         this.name = 'capitol';
         this.taskQueue = new CircularQueue<any>(100);
@@ -80,13 +78,13 @@ class Capitol extends Unit{
         }
     }
 
-    addFreePeasant = (type:string, x:number, y:number, game:Phaser.Game) : Unit =>{
-        var unit = new Peasant(x, y, game, this.playerName, peasantGroup.create(0, 0, ''));
+    addFreePeasant(type:string, x:number, y:number):Unit{
+        var unit = new Peasant(x, y, this.game, this.playerName, peasantGroup.create(0, 0, ''));
         unit.name = type;
         unit.type = 'humanoid';
         this.freePeasantList.push(unit);
         return unit;
-    };
+    }
 
     addBuilding = (type:string, x, y, game, colony, width?, height?) : Building =>{
         var unit:Building = null;
@@ -94,6 +92,7 @@ class Capitol extends Unit{
         if(type === 'farm') unit = new Farm(x, y, game, this.playerName, buildingGroup.create(0,0,type), width, height);
         if(type === 'barracks') unit = new Barracks(x, y, game, this.playerName, buildingGroup.create(0,0,type), width, height);
         if(type === 'mine') unit = new Mine(x, y, game, this.playerName, buildingGroup.create(0,0,type), width, height);
+        if(type === 'keep') unit = new Keep(x, y, game, this.playerName, buildingGroup.create(0,0,''), width, height);
 
         unit.name = type;
         unit.type = 'building';

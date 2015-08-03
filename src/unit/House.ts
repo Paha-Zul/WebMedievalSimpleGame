@@ -14,7 +14,7 @@ class House extends Building{
         super.start();
 
         this.name = 'barracks';
-        this.worker = this.capitol.addFreePeasant('peasant', this.sprite.x, this.sprite.y, this.game);
+        this.worker = this.capitol.addFreePeasant('peasant', this.sprite.x, this.sprite.y);
         this.sprite.loadTexture('house');
         this.width = this.sprite.width;
         this.height = this.sprite.height;

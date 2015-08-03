@@ -50,7 +50,7 @@ var Unit = (function () {
     }
     Unit.prototype.start = function () {
         this.started = true;
-        if (this.name !== 'house' && this.name !== 'soldier' && this.name !== 'barracks') {
+        if (this.name !== 'house' && this.name !== 'soldier' && this.name !== 'barracks' && this.name !== 'keep') {
             var style = { font: "18px Arial", fill: '' + this.player.color, align: "center" };
             this.text = game.add.text(this.sprite.x, this.sprite.y - this.height / 2 - 20, 'fixme', style);
         }

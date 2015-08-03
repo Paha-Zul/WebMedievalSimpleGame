@@ -12,7 +12,8 @@
 class BannerMan implements IUpdateable{
     group:Group = null;
     capitol:Capitol = null;
-    private sizeToAttack = 10;
+    sizeToAttack = 10;
+    keep:Keep = null;
 
     constructor(public owner:Peasant){
         this.capitol = owner.capitol;
@@ -22,21 +23,22 @@ class BannerMan implements IUpdateable{
         this.capitol.addGroup(this.owner);
 
         this.owner.blackBoard.moveSpeed = 1;
-        this.moveInCircle();
     }
 
     update(delta:number):void {
+        if(this.keep === null) return;
+
         //If we have too little numbers and we are still attacking, null the behaviour so we can retreat.
         if(this.group.getNumUnits() < this.sizeToAttack && this.owner.behaviour !== null && this.owner.behaviour.name === 'attack')
             this.owner.behaviour = null;
 
         //If our behaviour is null, simply wander.
         if(this.owner.behaviour === null) {
-            this.moveInCircle();
+            this.owner.behaviour = this.waitForTroops();
         }
 
         //If we have enough people to attack and we're patrolling, issue an attack order!
-        if(this.group.getNumUnits() >= this.sizeToAttack && this.owner.behaviour.name === 'patrol'){
+        if(this.group.getNumUnits() >= this.sizeToAttack && this.owner.behaviour.name === 'wait'){
             this.owner.behaviour.getControl().safeEnd();
             this.attackTarget();
         }
@@ -48,6 +50,17 @@ class BannerMan implements IUpdateable{
 
         //Add a bonus to the idle time (which is used for repicking targets) for larger groups.
         this.owner.blackBoard.idleTime = 3000 + this.group.getNumUnits()*75;
+    }
+
+    waitForTroops():Task{
+        this.owner.blackBoard.targetPosition = new Phaser.Point(this.keep.sprite.x, this.keep.sprite.y + 100);
+
+        var seq:Sequence = new Sequence(this.owner.blackBoard);
+        seq.control.addTask(new MoveTo(this.owner.blackBoard));
+        seq.control.addTask(new WaitForGroupSize(this.owner.blackBoard));
+
+        seq.name = 'wait';
+        return seq;
     }
 
     moveInCircle(){

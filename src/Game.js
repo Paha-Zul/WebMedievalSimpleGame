@@ -7,6 +7,7 @@
 /// <reference path="./unit/Barracks.ts"/>
 /// <reference path="./unit/Mine.ts"/>
 /// <reference path="./unit/Peasant.ts"/>
+/// <reference path="./unit/Keep.ts"/>
 /// <reference path="./components/Soldier.ts"/>
 /// <reference path="./components/BannerMan.ts"/>
 /// <reference path="./IUpdateable.ts"/>
@@ -28,6 +29,7 @@
 /// <reference path="tasks/actions/AttackUnit.ts"/>
 /// <reference path="tasks/actions/FindNearestGroup.ts"/>
 /// <reference path="tasks/actions/JoinGroup.ts"/>
+/// <reference path="tasks/actions/WaitForGroupSize.ts"/>
 /// <reference path="tasks/composite/ParentTask.ts"/>
 /// <reference path="tasks/composite/Sequence.ts"/>
 /// <reference path="tasks/composite/Parallel.ts"/>
@@ -47,6 +49,7 @@ var houseButton;
 var farmButton;
 var barracksButton;
 var mineButton;
+var keepButton;
 var cancelButton;
 var up, down, left, right;
 var houseKey, farmKey;
@@ -105,6 +108,8 @@ function create() {
     farmButton = game.add.button(60, game.world.height - 50, 'buildFarm', function () { return setBuildingType('farm'); }, this, 2, 1, 0);
     barracksButton = game.add.button(120, game.world.height - 50, 'buildBarracks', function () { return setBuildingType('barracks'); }, this, 2, 1, 0);
     mineButton = game.add.button(180, game.world.height - 50, 'buildMine', function () { return setBuildingType('mine'); }, this, 2, 1, 0);
+    //TODO The keep button image is a palceholder...
+    keepButton = game.add.button(180, game.world.height - 50, 'buildHouse', function () { return setBuildingType('keep'); }, this, 2, 1, 0);
     cancelButton = game.add.button(180, game.world.height - 50, 'buildCancel', function () { return setBuildingType(''); }, this, 2, 1, 0);
     buttonGroup.add(houseButton);
     buttonGroup.add(farmButton);
@@ -119,8 +124,10 @@ function create() {
     barracksButton.onInputOut.add(function () { return game.input.disabled = false; }, this);
     mineButton.onInputOver.add(function () { return game.input.disabled = true; }, this);
     mineButton.onInputOut.add(function () { return game.input.disabled = false; }, this);
-    cancelButton.onInputOut.add(function () { return game.input.disabled = false; }, this);
+    keepButton.onInputOver.add(function () { return game.input.disabled = true; }, this);
+    keepButton.onInputOut.add(function () { return game.input.disabled = false; }, this);
     cancelButton.onInputOver.add(function () { return game.input.disabled = true; }, this);
+    cancelButton.onInputOut.add(function () { return game.input.disabled = false; }, this);
     up = game.input.keyboard.addKey(Phaser.Keyboard.W);
     down = game.input.keyboard.addKey(Phaser.Keyboard.S);
     left = game.input.keyboard.addKey(Phaser.Keyboard.A);
@@ -157,7 +164,8 @@ function update() {
     farmButton.position.set(posX + 50, posY);
     barracksButton.position.set(posX + 100, posY);
     mineButton.position.set(posX + 150, posY);
-    cancelButton.position.set(posX + 200, posY);
+    keepButton.position.set(posX + 200, posY);
+    cancelButton.position.set(posX + 250, posY);
     posX = (game.camera.x + game.camera.width / 2) * (1 / game.world.scale.x);
     posY = (game.camera.y) * (1 / game.world.scale.x);
     leaderButton.position.set(posX - 125, posY);
@@ -184,10 +192,10 @@ function createColonyAndUnitsLeader(playerName) {
     var capitol = new Capitol(game.world.centerX, game.world.centerY, game, playerName, buildingGroup.create(0, 0, 'capitol'), 100, 100);
     PlayerManager.getPlayer("player1").capitol = capitol;
     //Create a leader
-    leader = capitol.addFreePeasant('leader', game.world.centerX, game.world.centerY, game);
+    leader = capitol.addFreePeasant('leader', game.world.centerX, game.world.centerY);
     leader.blackBoard.moveSpeed = 1.5;
     for (var i = 0; i < numUnits; i++)
-        capitol.addFreePeasant('soldier', game.world.centerX, game.world.centerY, game);
+        capitol.addFreePeasant('soldier', game.world.centerX, game.world.centerY);
     leader.capitol.food = 100000;
     leader.capitol.iron = 100000;
 }

@@ -22,13 +22,6 @@ var Capitol = (function (_super) {
         this.groupList = [];
         this.lastResources = 0;
         this.avgResources = 0;
-        this.addFreePeasant = function (type, x, y, game) {
-            var unit = new Peasant(x, y, game, _this.playerName, peasantGroup.create(0, 0, ''));
-            unit.name = type;
-            unit.type = 'humanoid';
-            _this.freePeasantList.push(unit);
-            return unit;
-        };
         this.addBuilding = function (type, x, y, game, colony, width, height) {
             var unit = null;
             if (type === 'house')
@@ -39,6 +32,8 @@ var Capitol = (function (_super) {
                 unit = new Barracks(x, y, game, _this.playerName, buildingGroup.create(0, 0, type), width, height);
             if (type === 'mine')
                 unit = new Mine(x, y, game, _this.playerName, buildingGroup.create(0, 0, type), width, height);
+            if (type === 'keep')
+                unit = new Keep(x, y, game, _this.playerName, buildingGroup.create(0, 0, ''), width, height);
             unit.name = type;
             unit.type = 'building';
             _this.buildingList.push(unit);
@@ -49,12 +44,6 @@ var Capitol = (function (_super) {
             _this.lastResources = _this.food;
         };
         this.timer = this.game.time.events.loop(Phaser.Timer.SECOND * 1, this.calcRate, this);
-        this.spawnTimer = this.game.time.events.loop(10000, function () {
-            if (_this.food > 0) {
-                _this.addFreePeasant('leader', _this.sprite.x, _this.sprite.y, _this.game);
-                _this.food--;
-            }
-        }, this);
         this.type = 'building';
         this.name = 'capitol';
         this.taskQueue = new CircularQueue(100);
@@ -110,6 +99,13 @@ var Capitol = (function (_super) {
             else
                 this.buildingList[i].update(delta);
         }
+    };
+    Capitol.prototype.addFreePeasant = function (type, x, y) {
+        var unit = new Peasant(x, y, this.game, this.playerName, peasantGroup.create(0, 0, ''));
+        unit.name = type;
+        unit.type = 'humanoid';
+        this.freePeasantList.push(unit);
+        return unit;
     };
     Capitol.prototype.addGroup = function (leader) {
         var group = new Group(leader);

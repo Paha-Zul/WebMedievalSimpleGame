@@ -12,7 +12,8 @@
 /// <reference path="./components/Soldier.ts"/>
 /// <reference path="./components/BannerMan.ts"/>
 
-/// <reference path="./IUpdateable.ts"/>
+/// <reference path="./interfaces/IUpdateable.ts"/>
+/// <reference path="./interfaces/IPickupable.ts"/>
 
 /// <reference path="./util/Helper.ts"/>
 /// <reference path="./util/Behaviours.ts"/>
@@ -34,6 +35,7 @@
 /// <reference path="tasks/actions/FindNearestGroup.ts"/>
 /// <reference path="tasks/actions/JoinGroup.ts"/>
 /// <reference path="tasks/actions/WaitForGroupSize.ts"/>
+/// <reference path="tasks/actions/GetClosestDropoff.ts"/>
 
 /// <reference path="tasks/composite/ParentTask.ts"/>
 /// <reference path="tasks/composite/Sequence.ts"/>
@@ -319,7 +321,6 @@ function placeBuilding(){
     if(buildingType !== '') {
         var x = (game.input.worldX) * (1 / game.world.scale.x);
         var y = (game.input.worldY) * (1 / game.world.scale.y);
-        console.log('x/y: ' + x + '/' + y + ', camera x/y: ' + game.camera.x + '/' + game.camera.y + ' input x/y: ' + game.input.mousePointer.x + '/' + game.input.mousePointer.y);
         PlayerManager.getPlayer("player1").capitol.addBuilding(buildingType, x, y, 100, 100);
     }
 }

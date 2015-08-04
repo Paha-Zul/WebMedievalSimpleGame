@@ -21,15 +21,30 @@ var Building = (function (_super) {
         this.currRetaliationStrength = 5;
         this.retaliationStrengthRate = 1;
         this.retaliationStrengthTime = 1000;
-        this.getResourceTask = function (bb) {
+        this.deliverToColony = function (bb) {
             bb.target = _this;
             bb.targetPosition = _this.sprite.position;
             var seq = new Sequence(bb);
+            var takeResource = new TakeResource(bb);
             seq.control.addTask(new MoveTo(bb));
-            seq.control.addTask(new TakeResource(bb));
+            seq.control.addTask(takeResource);
             seq.control.addTask(new GetColony(bb));
             seq.control.addTask(new MoveTo(bb));
             seq.control.addTask(new GiveResource(bb));
+            takeResource.getControl().finishCallback = function () { return _this.requestedPickup = false; };
+            return seq;
+        };
+        this.deliverToDropoff = function (bb) {
+            bb.target = _this;
+            bb.targetPosition = _this.sprite.position;
+            var seq = new Sequence(bb);
+            var takeResource = new TakeResource(bb);
+            seq.control.addTask(new MoveTo(bb));
+            seq.control.addTask(takeResource);
+            seq.control.addTask(new GetClosestDropoff(bb));
+            seq.control.addTask(new MoveTo(bb));
+            seq.control.addTask(new GiveResource(bb));
+            takeResource.getControl().finishCallback = function () { return _this.requestedPickup = false; };
             return seq;
         };
         this.type = 'building';

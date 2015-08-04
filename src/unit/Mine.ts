@@ -33,7 +33,7 @@ class Mine extends Building{
                 this.iron = 1; //Reset
 
                 //We add a new task to the colony queue.
-                this.capitol.addTaskToQueue(this.getResourceTask);
+                this.capitol.addTaskToQueue(this.deliverToDropoff);
             }
         }
     }

@@ -40,17 +40,39 @@ class Building extends Unit {
         }
     }
 
-    getResourceTask = (bb:BlackBoard):Task => {
+    deliverToColony = (bb:BlackBoard):Task => {
         bb.target = this;
         bb.targetPosition = this.sprite.position;
 
         var seq:Sequence = new Sequence(bb);
+        var takeResource = new TakeResource(bb);
+
         seq.control.addTask(new MoveTo(bb));
-        seq.control.addTask(new TakeResource(bb));
+        seq.control.addTask(takeResource);
         seq.control.addTask(new GetColony(bb));
         seq.control.addTask(new MoveTo(bb));
         seq.control.addTask(new GiveResource(bb));
 
+        takeResource.getControl().finishCallback = () => this.requestedPickup = false;
+
         return seq;
-    }
+    };
+
+    deliverToDropoff = (bb:BlackBoard):Task => {
+        bb.target = this;
+        bb.targetPosition = this.sprite.position;
+
+        var seq:Sequence = new Sequence(bb);
+        var takeResource = new TakeResource(bb);
+
+        seq.control.addTask(new MoveTo(bb));
+        seq.control.addTask(takeResource);
+        seq.control.addTask(new GetClosestDropoff(bb));
+        seq.control.addTask(new MoveTo(bb));
+        seq.control.addTask(new GiveResource(bb));
+
+        takeResource.getControl().finishCallback = () => this.requestedPickup = false;
+
+        return seq;
+    };
 }

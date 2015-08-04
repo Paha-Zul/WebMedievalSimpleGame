@@ -6,6 +6,7 @@
 
 class Farm extends Building{
     counter:number=0;
+    requestedPickup:boolean = false;
 
     constructor(x:number, y:number, game:Phaser.Game, playerName:string, sprite:Phaser.Sprite, width:number, height:number) {
         super(x, y, game, playerName, sprite, width, height);
@@ -31,7 +32,10 @@ class Farm extends Building{
             this.food += 1; //Reset
 
             //We add a new task to the colony queue.
-            this.capitol.addTaskToQueue(this.getResourceTask);
+            if(!this.requestedPickup) {
+                this.requestedPickup = true;
+                this.capitol.addTaskToQueue(this.deliverToDropoff);
+            }
         }
     }
 }

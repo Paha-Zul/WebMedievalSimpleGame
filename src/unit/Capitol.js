@@ -20,6 +20,7 @@ var Capitol = (function (_super) {
         this.armyList = [];
         this.buildingList = [];
         this.groupList = [];
+        this.dropoffList = [];
         this.lastResources = 0;
         this.avgResources = 0;
         this.calcRate = function () {
@@ -37,6 +38,7 @@ var Capitol = (function (_super) {
         this.sprite.loadTexture('capitol');
         this.width = this.sprite.width;
         this.height = this.sprite.height;
+        this.addToDropoffList(this);
     };
     Capitol.prototype.update = function (delta) {
         _super.prototype.update.call(this, delta);
@@ -86,7 +88,7 @@ var Capitol = (function (_super) {
     Capitol.prototype.addFreePeasant = function (type, x, y) {
         var sprite = peasantGroup.getFirstDead();
         if (sprite === undefined || sprite === null)
-            sprite = buildingGroup.create(0, 0, '');
+            sprite = peasantGroup.create(0, 0, '');
         else
             sprite.reset(0, 0);
         var unit = new Peasant(x, y, this.game, this.playerName, sprite);
@@ -124,6 +126,17 @@ var Capitol = (function (_super) {
         leader.getBannerMan().group = group;
         this.groupList.push(group);
         return group;
+    };
+    Capitol.prototype.addToDropoffList = function (unit) {
+        this.dropoffList.push(unit);
+    };
+    Capitol.prototype.removeFromDropoffList = function (unit) {
+        for (var i = 0; i < this.dropoffList.length; i++) {
+            if (this.dropoffList[i] === unit) {
+                this.dropoffList.splice(i, 1);
+                break;
+            }
+        }
     };
     Capitol.prototype.removeGroup = function (group) {
         for (var i = 0; i <= this.groupList.length; i++)

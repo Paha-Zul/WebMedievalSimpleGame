@@ -24,6 +24,7 @@ class BannerMan implements IUpdateable{
 
     start():void{
         this.capitol.addGroup(this.owner);
+        this.sizeToAttack = this.group.maxGroupSize/4;
 
         this.owner.blackBoard.moveSpeed = 1;
         this.flag = flagGroup.getFirstDead();

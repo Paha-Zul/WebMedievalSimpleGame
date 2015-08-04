@@ -12,6 +12,7 @@ class Capitol extends Unit{
     armyList : Unit[] = [];
     buildingList : Unit[] = [];
     groupList : Group[] = [];
+    dropoffList : Unit[] = [];
     lastResources : number = 0;
     avgResources : number = 0;
     timer : Phaser.TimerEvent;
@@ -33,6 +34,7 @@ class Capitol extends Unit{
         this.sprite.loadTexture('capitol');
         this.width = this.sprite.width;
         this.height = this.sprite.height;
+        this.addToDropoffList(this);
     }
 
     update(delta){
@@ -80,7 +82,7 @@ class Capitol extends Unit{
 
     addFreePeasant(type:string, x:number, y:number):Unit{
         var sprite:Phaser.Sprite = peasantGroup.getFirstDead();
-        if(sprite === undefined || sprite === null) sprite = buildingGroup.create(0,0,'');
+        if(sprite === undefined || sprite === null) sprite = peasantGroup.create(0,0,'');
         else sprite.reset(0,0);
 
         var unit = new Peasant(x, y, this.game, this.playerName, sprite);
@@ -119,6 +121,19 @@ class Capitol extends Unit{
         leader.getBannerMan().group = group;
         this.groupList.push(group);
         return group;
+    }
+
+    addToDropoffList(unit:Unit):void{
+        this.dropoffList.push(unit);
+    }
+
+    removeFromDropoffList(unit:Unit):void{
+        for(var i=0;i<this.dropoffList.length;i++){
+            if(this.dropoffList[i] === unit){
+                this.dropoffList.splice(i, 1);
+                break;
+            }
+        }
     }
 
     removeGroup(group:Group){

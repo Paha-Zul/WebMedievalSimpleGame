@@ -15,7 +15,7 @@ class Barracks extends Building{
     start():void {
         super.start();
 
-        this.refillTime = 990 + Math.random()*20;
+        this.refillTime = 2950 + Math.random()*100;
         this.name = 'barracks';
         this.sprite.loadTexture('barracks');
         this.width = this.sprite.width;

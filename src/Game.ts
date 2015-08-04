@@ -109,9 +109,9 @@ function create () {
     flagGroup = game.add.group();
     buttonGroup = game.add.group();
 
-    startExample(new Phaser.Point(500,500), 'player1', 3);
-    startExample(new Phaser.Point(1100,1700), 'player2', 3);
-    startExample(new Phaser.Point(1900,500), 'player3', 3);
+    startExample(new Phaser.Point(500,500), 'player1', 1);
+    startExample(new Phaser.Point(1100,1700), 'player2', 1);
+    startExample(new Phaser.Point(1900,500), 'player3', 1);
     game.camera.x = PlayerManager.getPlayer('player1').capitol.x - game.camera.width/2;
     game.camera.y = PlayerManager.getPlayer('player1').capitol.y - game.camera.height/2;
 

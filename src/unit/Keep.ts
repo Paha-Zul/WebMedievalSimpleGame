@@ -6,6 +6,8 @@
 
 class Keep extends Building{
     bannerMan:BannerMan = null;
+    nextSpawnTime:number = 0;
+    respawnTime:number = 10000;
 
     constructor(x:number, y:number, game:Phaser.Game, playerName:string, sprite:Phaser.Sprite, width?:number, height?:number) {
         super(x, y, game, playerName, sprite, width, height);
@@ -25,10 +27,17 @@ class Keep extends Building{
         //TODO This needs to be fixed. The worker needs to be casted to a bannerman and immediately assigned the keep.
         //TODO The problem is that the bannerman isn't immediately available...
 
-        if((this.worker === null || this.worker.toBeDestroyed) && this.capitol.food >= 1) {
-            this.worker = this.capitol.addFreePeasant('leader', this.sprite.x, this.sprite.y);
-            this.bannerMan = null; //We have to null this so we can acquire a new one below!
-            this.capitol.food--;
+        //If the worker is null/destroyed and the next spawn time is -1... set the next spawn time.
+        if((this.worker === null || this.worker.toBeDestroyed) && this.nextSpawnTime === -1){
+            this.nextSpawnTime = this.game.time.now + this.respawnTime;
+
+        }else if((this.worker === null || this.worker.toBeDestroyed) && this.nextSpawnTime !== -1) {
+            if(this.game.time.now >= this.nextSpawnTime && this.capitol.food >= 1) {
+                this.worker = this.capitol.addFreePeasant('leader', this.sprite.x, this.sprite.y);
+                this.bannerMan = null; //We have to null this so we can acquire a new one below!
+                this.capitol.food--;
+                this.nextSpawnTime = -1;
+            }
         }else if(this.worker !== null && !this.worker.toBeDestroyed && this.bannerMan == null){
             this.bannerMan = (<Peasant>this.worker).getBannerMan();
             this.bannerMan.keep = this;

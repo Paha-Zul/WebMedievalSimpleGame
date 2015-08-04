@@ -215,7 +215,7 @@ var Group = (function () {
         return this.unitList.length;
     };
     Group.prototype.isFull = function () {
-        return this.getNumUnits() >= this.maxGroupSize || this.leader === null || this.leader.getBannerMan().isRetreating;
+        return this.getNumUnits() >= this.maxGroupSize || this.leader === null || this.leader.toBeDestroyed || this.leader.getBannerMan().isRetreating;
     };
     Group.prototype.destroy = function () {
         this.leader.capitol.removeGroup(this); //Remove the group from the capitol.

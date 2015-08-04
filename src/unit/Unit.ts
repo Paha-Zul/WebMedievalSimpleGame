@@ -240,7 +240,7 @@ class Group{
     }
 
     isFull():boolean{
-        return this.getNumUnits() >= this.maxGroupSize || this.leader === null || this.leader.getBannerMan().isRetreating;
+        return this.getNumUnits() >= this.maxGroupSize || this.leader === null || this.leader.toBeDestroyed || this.leader.getBannerMan().isRetreating;
     }
 
     destroy(){

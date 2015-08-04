@@ -115,13 +115,12 @@ class Unit{
             var x = Math.cos(rotToTarget) * moveSpeed;
             var y = Math.sin(rotToTarget) * moveSpeed;
 
-            this.sprite.body.velocity.set(x, y);
-            //this.sprite.x += x;
-            //this.sprite.y += y;
+            this.sprite.x += x;
+            this.sprite.y += y;
             this.sprite.angle = rotToTarget*(180/Math.PI);
         }else{
             //this.sprite.position.set(position.x, position.y);
-            this.sprite.body.velocity.set(0, 0);
+            //this.sprite.body.velocity.set(0, 0);
             return true;
         }
 
@@ -133,7 +132,7 @@ class Unit{
     }
 
     public finalDestroy(){
-        this.sprite.destroy(true);
+        this.sprite.kill();
         if(this.text !== undefined && this.text !== null) this.text.destroy(true);
         this.behaviour = null;
     }
@@ -181,7 +180,7 @@ class Group{
                 break;
             }
         }
-        this.reformGroup();
+        //this.reformGroup();
         return this;
     }
 
@@ -208,7 +207,9 @@ class Group{
     private killGroup(){
         for(var i=0;i<this.unitList.length;i++)
             this.unitList[i].destroy();
+
         this.unitList = [];
+        this.positions = [];
         if(this.leader !== null) this.leader.destroy();
         this.leader = null;
     }

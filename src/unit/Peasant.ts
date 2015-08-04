@@ -19,7 +19,6 @@ class Peasant extends Unit{
         this.type ='peasant';
 
         this.sprite.loadTexture(makeSquareSprite(10,10));
-        game.physics.arcade.enable(this.sprite);
 
         if(this.name === 'peasant'){
 
@@ -53,5 +52,7 @@ class Peasant extends Unit{
 
     destroy():void {
         super.destroy();
+        this.bannerMan = null;
+        this.soldier = null;
     }
 }

@@ -47,6 +47,7 @@
 /// <reference path="tasks/control/ParentTaskController.ts"/>
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update, render : render});
+
 var foodText:Phaser.Text, colonyText:Phaser.Text, buildingText:Phaser.Text;
 var leader:Unit = null;
 var stage = 0;
@@ -108,11 +109,11 @@ function create () {
 
     unitGroup = game.add.group();
 
-    startExample(new Phaser.Point(800,800), 'player1', 2);
-    startExample(new Phaser.Point(1500,1500), 'player2', 2);
-    startExample(new Phaser.Point(1800,800), 'player3', 2);
-    game.camera.x = 400;
-    game.camera.y = 450;
+    startExample(new Phaser.Point(500,500), 'player1', 3);
+    startExample(new Phaser.Point(1100,1700), 'player2', 3);
+    startExample(new Phaser.Point(1900,500), 'player3', 3);
+    game.camera.x = PlayerManager.getPlayer('player1').capitol.x - game.camera.width/2;
+    game.camera.y = PlayerManager.getPlayer('player1').capitol.y - game.camera.height/2;
 
     //Adds an event to the mouse.
     game.input.onDown.add(()=> {if(!game.input.disabled) placeBuilding();} , this);
@@ -158,6 +159,8 @@ function create () {
     right = game.input.keyboard.addKey(Phaser.Keyboard.D);
 
     cursors = game.input.keyboard.createCursorKeys();
+
+    //game.add.plugin(Phaser.Plugin.Debug);
 }
 
 function update() {
@@ -258,12 +261,14 @@ function startExample(start:Phaser.Point, playerName:string, multiplier?:number)
     var player:Player = PlayerManager.getPlayer(playerName);
     player.capitol = capitol;
 
-    for(var k=0;k<multiplier;k++) {
-        var x = capitol.sprite.x, y = capitol.sprite.y;
-        var width = 40, height = 40;
+    var x = capitol.sprite.x, y = capitol.sprite.y;
+    var width = 40, height = 40;
 
-        capitol.addBuilding('keep', x + 100, y);
-        capitol.addBuilding('keep', x - 100, y);
+    capitol.addBuilding('keep', x + 100, y);
+    capitol.addBuilding('keep', x - 100, y);
+    capitol.addBuilding('keep', x, y + 100);
+
+    for(var k=0;k<multiplier;k++) {
 
         x = capitol.sprite.x - 300;
         y = capitol.sprite.y - 100;

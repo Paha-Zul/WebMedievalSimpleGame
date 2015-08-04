@@ -83,11 +83,11 @@ function create() {
     peasantGroup = game.add.group();
     buttonGroup = game.add.group();
     unitGroup = game.add.group();
-    startExample(new Phaser.Point(800, 800), 'player1', 2);
-    startExample(new Phaser.Point(1500, 1500), 'player2', 2);
-    startExample(new Phaser.Point(1800, 800), 'player3', 2);
-    game.camera.x = 400;
-    game.camera.y = 450;
+    startExample(new Phaser.Point(500, 500), 'player1', 3);
+    startExample(new Phaser.Point(1100, 1700), 'player2', 3);
+    startExample(new Phaser.Point(1900, 500), 'player3', 3);
+    game.camera.x = PlayerManager.getPlayer('player1').capitol.x - game.camera.width / 2;
+    game.camera.y = PlayerManager.getPlayer('player1').capitol.y - game.camera.height / 2;
     //Adds an event to the mouse.
     game.input.onDown.add(function () {
         if (!game.input.disabled)
@@ -128,6 +128,7 @@ function create() {
     left = game.input.keyboard.addKey(Phaser.Keyboard.A);
     right = game.input.keyboard.addKey(Phaser.Keyboard.D);
     cursors = game.input.keyboard.createCursorKeys();
+    //game.add.plugin(Phaser.Plugin.Debug);
 }
 function update() {
     var player = PlayerManager.getPlayer("player1");
@@ -207,11 +208,12 @@ function startExample(start, playerName, multiplier) {
     var capitol = new Capitol(start.x, start.y, game, playerName, buildingGroup.create(0, 0, 'capitol'), 100, 100);
     var player = PlayerManager.getPlayer(playerName);
     player.capitol = capitol;
+    var x = capitol.sprite.x, y = capitol.sprite.y;
+    var width = 40, height = 40;
+    capitol.addBuilding('keep', x + 100, y);
+    capitol.addBuilding('keep', x - 100, y);
+    capitol.addBuilding('keep', x, y + 100);
     for (var k = 0; k < multiplier; k++) {
-        var x = capitol.sprite.x, y = capitol.sprite.y;
-        var width = 40, height = 40;
-        capitol.addBuilding('keep', x + 100, y);
-        capitol.addBuilding('keep', x - 100, y);
         x = capitol.sprite.x - 300;
         y = capitol.sprite.y - 100;
         width = 40;

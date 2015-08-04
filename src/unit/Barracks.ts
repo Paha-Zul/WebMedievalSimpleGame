@@ -15,7 +15,7 @@ class Barracks extends Building{
     start():void {
         super.start();
 
-        this.refillTime = 1000;
+        this.refillTime = 990 + Math.random()*20;
         this.name = 'barracks';
         this.sprite.loadTexture('barracks');
         this.width = this.sprite.width;
@@ -26,7 +26,8 @@ class Barracks extends Building{
         super.update(delta);
 
         if(this.game.time.now >= this.nextSpawn && this.capitol.food >= 1){
-            this.nextSpawn = this.game.time.now += this.refillTime;
+            this.nextSpawn = this.game.time.now + this.refillTime;
+            console.log('adding '+this.refillTime+', time.now: '+this.game.time.now+', next time: '+this.nextSpawn);
             this.capitol.addFreePeasant('soldier', this.sprite.x, this.sprite.y);
             this.capitol.food--;
         }

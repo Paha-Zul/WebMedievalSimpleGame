@@ -50,7 +50,7 @@ class FollowPointRelativeToTarget extends LeafTask{
 
             sprite.x += x;
             sprite.y += y;
-            sprite.angle = rotToTarget*(180/Math.PI);
+            sprite.angle = this.bb.target.sprite.angle;
 
             return false;
         }else{

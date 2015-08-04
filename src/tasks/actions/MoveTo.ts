@@ -19,7 +19,7 @@ class MoveTo extends LeafTask{
         if(this.bb.targetPosition === undefined || this.bb.targetPosition === null)
             return;
 
-        if(this.bb.me.walkTowardsPosition(this.bb.targetPosition, this.bb.disToStop, this.bb.moveSpeed*50))
+        if(this.bb.me.walkTowardsPosition(this.bb.targetPosition, this.bb.disToStop, this.bb.moveSpeed))
             this.control.finishWithSuccess();
 
     }

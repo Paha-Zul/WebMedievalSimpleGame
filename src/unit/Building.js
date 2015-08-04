@@ -37,6 +37,7 @@ var Building = (function (_super) {
         this.food = 0;
         this.iron = 0;
         this.blackBoard.moveSpeed = 0;
+        this.sprite.angle = 0;
     }
     Building.prototype.start = function () {
         _super.prototype.start.call(this);
@@ -47,7 +48,7 @@ var Building = (function (_super) {
             this.currRetaliationStrength += this.retaliationStrengthRate;
             if (this.currRetaliationStrength >= this.maxRetaliationStrength)
                 this.currRetaliationStrength = this.maxRetaliationStrength;
-            this.nextRetIncrease = game.time.now + this.retaliationStrengthTime;
+            this.nextRetIncrease = this.game.time.now + this.retaliationStrengthTime;
         }
     };
     return Building;

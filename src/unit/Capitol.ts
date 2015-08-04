@@ -79,23 +79,36 @@ class Capitol extends Unit{
     }
 
     addFreePeasant(type:string, x:number, y:number):Unit{
-        var unit = new Peasant(x, y, this.game, this.playerName, peasantGroup.create(0, 0, ''));
+        var sprite:Phaser.Sprite = peasantGroup.getFirstDead();
+        if(sprite === undefined || sprite === null) sprite = buildingGroup.create(0,0,'');
+        else sprite.reset(0,0);
+
+        var unit = new Peasant(x, y, this.game, this.playerName, sprite);
         unit.name = type;
         unit.type = 'humanoid';
+        unit.sprite.autoCull = true;
+
         this.freePeasantList.push(unit);
         return unit;
     }
 
     addBuilding(type:string, x:number, y:number, width?:number, height?:number):Building{
         var unit:Building = null;
-        if(type === 'house') unit = new House(x, y, this.game, this.playerName, buildingGroup.create(0,0,type), width, height);
-        if(type === 'farm') unit = new Farm(x, y, this.game, this.playerName, buildingGroup.create(0,0,type), width, height);
-        if(type === 'barracks') unit = new Barracks(x, y, this.game, this.playerName, buildingGroup.create(0,0,type), width, height);
-        if(type === 'mine') unit = new Mine(x, y, this.game, this.playerName, buildingGroup.create(0,0,type), width, height);
-        if(type === 'keep') unit = new Keep(x, y, this.game, this.playerName, buildingGroup.create(0,0,''), width, height);
+        var sprite:Phaser.Sprite = buildingGroup.getFirstDead();
+        if(sprite === undefined || sprite === null)
+            sprite = buildingGroup.create(0,0,'');
+        else
+            sprite.reset(0,0);
+
+        if(type === 'house') unit = new House(x, y, this.game, this.playerName, sprite, width, height);
+        if(type === 'farm') unit = new Farm(x, y, this.game, this.playerName, sprite, width, height);
+        if(type === 'barracks') unit = new Barracks(x, y, this.game, this.playerName, sprite, width, height);
+        if(type === 'mine') unit = new Mine(x, y, this.game, this.playerName, sprite, width, height);
+        if(type === 'keep') unit = new Keep(x, y, this.game, this.playerName, sprite, width, height);
 
         unit.name = type;
         unit.type = 'building';
+        unit.sprite.autoCull = true;
 
         this.buildingList.push(unit);
         return unit;

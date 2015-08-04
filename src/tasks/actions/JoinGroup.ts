@@ -23,9 +23,15 @@ class JoinGroup extends LeafTask{
     update(delta):void {
         super.update(delta);
 
-        var soldier:Soldier = (<Peasant>this.bb.me).getSoldier();
-        soldier.group = this.bb.targetGroup.addUnit(soldier.owner);
-        this.control.finishWithSuccess();
+        if(!this.check())
+            this.control.finishWithFailure();
+
+        else {
+
+            var soldier:Soldier = (<Peasant>this.bb.me).getSoldier();
+            soldier.group = this.bb.targetGroup.addUnit(soldier.owner);
+            this.control.finishWithSuccess();
+        }
     }
 
     end():void {

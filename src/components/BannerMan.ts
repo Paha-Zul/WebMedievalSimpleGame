@@ -32,7 +32,7 @@ class BannerMan implements IUpdateable{
         if(this.group.getNumUnits() < this.sizeToAttack && this.owner.behaviour !== null && this.owner.behaviour.name === 'attack')
             this.owner.behaviour = null;
 
-        //If our behaviour is null, simply wander.
+        //Wait for troops
         if(this.owner.behaviour === null) {
             this.owner.behaviour = this.waitForTroops();
         }

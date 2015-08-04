@@ -21,6 +21,7 @@ class Building extends Unit {
         this.food = 0;
         this.iron = 0;
         this.blackBoard.moveSpeed = 0;
+        this.sprite.angle = 0;
     }
 
     start():void {
@@ -35,7 +36,7 @@ class Building extends Unit {
             if(this.currRetaliationStrength >= this.maxRetaliationStrength)
                 this.currRetaliationStrength = this.maxRetaliationStrength;
 
-            this.nextRetIncrease = game.time.now + this.retaliationStrengthTime;
+            this.nextRetIncrease = this.game.time.now + this.retaliationStrengthTime;
         }
     }
 

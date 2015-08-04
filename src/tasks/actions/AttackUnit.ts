@@ -19,6 +19,11 @@ class AttackUnit extends LeafTask{
     update(delta):void {
         super.update(delta);
 
+        if(this.bb.target.toBeDestroyed){
+            this.control.finishWithFailure();
+            return;
+        }
+
         var myGroup:Group = (<Peasant>this.bb.me).getBannerMan().group;
         var myStrength = myGroup.getNumUnits();
 

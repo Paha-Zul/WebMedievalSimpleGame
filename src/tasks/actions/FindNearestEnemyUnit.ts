@@ -25,7 +25,7 @@ class FindNearestEnemyUnit extends LeafTask{
             var l = list.length;
             for(var i=0;i<l;i++){
                 var unit:Unit = list[i];
-                if(unit.name === 'soldier' || unit.name === 'peasant') continue; //Don't target soldiers or peasants for now, just bannermans
+                if(unit.name === 'soldier' || unit.name === 'peasant' || unit.toBeDestroyed) continue; //Don't target soldiers or peasants for now, just bannermans
                 //Calc the distance. If the closest unit is null or the target being checked is closer, assign the new unit/distance.
                 _dst = this.bb.me.sprite.position.distance(list[i].sprite.position);
                 if(closestUnit === null || _dst <= closestDst){
@@ -38,6 +38,7 @@ class FindNearestEnemyUnit extends LeafTask{
             l = list.length;
             for(var i=0;i<l;i++){
                 var unit:Unit = list[i];
+                if(unit.toBeDestroyed) continue;
                 //Calc the distance. If the closest unit is null or the target being checked is closer, assign the new unit/distance.
                 _dst = this.bb.me.sprite.position.distance(unit.sprite.position);
                 if(closestUnit === null || _dst <= closestDst){

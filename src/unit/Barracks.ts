@@ -27,7 +27,6 @@ class Barracks extends Building{
 
         if(this.game.time.now >= this.nextSpawn && this.capitol.food >= 1){
             this.nextSpawn = this.game.time.now + this.refillTime;
-            console.log('adding '+this.refillTime+', time.now: '+this.game.time.now+', next time: '+this.nextSpawn);
             this.capitol.addFreePeasant('soldier', this.sprite.x, this.sprite.y);
             this.capitol.food--;
         }

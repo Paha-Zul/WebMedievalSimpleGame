@@ -14,6 +14,9 @@ class BannerMan implements IUpdateable{
     capitol:Capitol = null;
     sizeToAttack = 10;
     keep:Keep = null;
+    flag:Phaser.Sprite;
+    nextRemoveTime:number = -1;
+    isRetreating:boolean = false;
 
     constructor(public owner:Peasant){
         this.capitol = owner.capitol;
@@ -23,6 +26,17 @@ class BannerMan implements IUpdateable{
         this.capitol.addGroup(this.owner);
 
         this.owner.blackBoard.moveSpeed = 1;
+        this.flag = flagGroup.getFirstDead();
+        if(this.flag === undefined || this.flag === null)
+            this.flag = flagGroup.create(this.owner.x, this.owner.y, 'flag');
+        else
+            this.flag.reset(0,0);
+
+        //Let's tint the color to our team shall we?
+        var color:string = this.owner.player.color;
+        color = '0x'+color.substring(1) ; //We gotta convert from string to number. So chop off the '#' and add '0x'
+        this.flag.tint = parseInt(color); //Parse the number!
+        this.owner.text.tint = 0x000000; //Set the tint of the text to black!
     }
 
     update(delta:number):void {
@@ -30,16 +44,15 @@ class BannerMan implements IUpdateable{
 
         //If we have too little numbers and we are still attacking, null the behaviour so we can retreat.
         if(this.group.getNumUnits() < this.sizeToAttack && this.owner.behaviour !== null && this.owner.behaviour.name === 'attack')
-            this.owner.behaviour = null;
+            this.owner.behaviour.getControl().finishWithFailure();
 
         //Wait for troops
-        if(this.owner.behaviour === null) {
-            this.owner.behaviour = this.waitForTroops();
+        if(this.owner.behaviour === null && this.group.getNumUnits() < this.sizeToAttack) {
+            this.owner.behaviour = this.retreat();
         }
 
         //If we have enough people to attack and we're patrolling, issue an attack order!
-        if(this.group.getNumUnits() >= this.sizeToAttack && this.owner.behaviour.name === 'wait'){
-            this.owner.behaviour.getControl().safeEnd();
+        if(this.group.getNumUnits() >= this.sizeToAttack && this.owner.behaviour === null){
             this.attackTarget();
         }
 
@@ -50,16 +63,55 @@ class BannerMan implements IUpdateable{
 
         //Add a bonus to the idle time (which is used for repicking targets) for larger groups.
         this.owner.blackBoard.idleTime = 3000 + this.group.getNumUnits()*75;
+
+        //Set the position for the flag!
+        var x = this.owner.sprite.x - this.flag.width, y = this.owner.sprite.y - this.flag.height;
+        this.flag.position.set(x, y);
+
+        //Set the text value.
+        this.owner.text.text = ''+this.group.getNumUnits()+'/'+this.group.maxGroupSize;
+        this.owner.text.position.setTo(x + this.flag.width/2 - this.owner.text.width/2, y + this.flag.height/2 - this.owner.text.height/1.5);
+
+        this.removeExtraUnits();
     }
 
-    waitForTroops():Task{
+    removeExtraUnits(){
+        //If we are over the limit and we haven't started the time limit, start it!
+        if(this.group.getNumUnits() > this.group.maxGroupSize && this.nextRemoveTime === -1){
+            this.nextRemoveTime = this.owner.game.time.now + 5000; //Remove in 5 seconds!.
+
+        //Otherwise if we are counting...
+        }else if(this.nextRemoveTime !== -1){
+            //If at some point the group size goes under the max (lots of units die...), cancel it.
+            if(this.group.maxGroupSize <= this.group.maxGroupSize) {
+                this.nextRemoveTime = -1;
+
+            //If the time limit is met and it is still valid, remove the max size - the group size.
+            }if(this.owner.game.time.now >= this.nextRemoveTime){
+                this.group.removeAmount(-(this.group.maxGroupSize - this.group.getNumUnits()));
+                this.nextRemoveTime = -1;
+            }
+        }
+    }
+
+    /**
+     * Retreats back to the keep that this bannerman is assigned to.
+     * @returns {Sequence} The retreating sequence.
+     */
+    retreat():Task{
+        this.isRetreating = true;
         this.owner.blackBoard.targetPosition = new Phaser.Point(this.keep.sprite.x, this.keep.sprite.y + 100);
 
         var seq:Sequence = new Sequence(this.owner.blackBoard);
-        seq.control.addTask(new MoveTo(this.owner.blackBoard));
+        var moveTo:MoveTo = new MoveTo(this.owner.blackBoard);
+
+        seq.control.addTask(moveTo);
         seq.control.addTask(new WaitForGroupSize(this.owner.blackBoard));
 
-        seq.name = 'wait';
+        //When the moveTo completes, we are no longer retreating.
+        moveTo.getControl().finishCallback = () => this.isRetreating = false;
+
+        seq.name = 'retreat';
         return seq;
     }
 
@@ -122,5 +174,9 @@ class BannerMan implements IUpdateable{
 
         seq.name = 'attack';
         this.owner.behaviour = seq;
+    }
+
+    destroy(){
+        this.flag.destroy(true);
     }
 }

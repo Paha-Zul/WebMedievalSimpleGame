@@ -71,7 +71,8 @@ var Unit = (function () {
             else {
                 this.text.text = 'F: ' + this.food;
             }
-            this.text.position.set(this.sprite.x - this.text.width / 2, this.sprite.y - this.height / 2 - 20);
+            if (this.name !== 'leader')
+                this.text.position.set(this.sprite.x - this.text.width / 2, this.sprite.y - this.height / 2 - 20);
         }
         this.updateBehaviours(delta);
     };
@@ -144,11 +145,12 @@ var Group = (function () {
         this.spacing = 15;
         this.lines = 3;
         this.unitsPerLine = 8;
+        this.maxGroupSize = 0;
         this.destroyed = false;
         this.leader = leader;
         this.positions = [];
         this.unitList = [];
-        this.maxGroupSize = Math.random() * 75 + 25; //25 - 100
+        this.maxGroupSize = ~~(Math.random() * 75 + 25); //25 - 100
     }
     Group.prototype.addUnit = function (unit) {
         this.unitList.push(unit);
@@ -164,6 +166,21 @@ var Group = (function () {
         }
         //this.reformGroup();
         return this;
+    };
+    /**
+     * Removes an amount from this group without killing them, essentially freeing them.
+     * @param amount The amount to free.
+     */
+    Group.prototype.removeAmount = function (amount) {
+        //Loop until we remove the right amount.
+        var counter = 0;
+        for (var i = this.unitList.length - 1; counter <= amount; i--) {
+            this.unitList[i].getSoldier().group = null; //Destroy the unit.
+            this.unitList[i].getSoldier().leader = null; //Destroy the unit.
+            this.unitList[i].behaviour.getControl().finishWithFailure(); //They need to stop following us.
+            this.unitList.splice(i, 1); //Splice it out!
+            counter++; //Increment counter.
+        }
     };
     /**
      * Kills an amount of this group. Will remove and destroy the units
@@ -198,7 +215,7 @@ var Group = (function () {
         return this.unitList.length;
     };
     Group.prototype.isFull = function () {
-        return this.getNumUnits() >= this.maxGroupSize;
+        return this.getNumUnits() >= this.maxGroupSize || this.leader === null || this.leader.getBannerMan().isRetreating;
     };
     Group.prototype.destroy = function () {
         this.leader.capitol.removeGroup(this); //Remove the group from the capitol.

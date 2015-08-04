@@ -16,6 +16,11 @@ class MoveTo extends LeafTask{
     update(delta){
         super.update(delta);
 
+        if(this.control.failCheck !== null && this.control.failCheck()) {
+            this.control.finishWithFailure();
+            return;
+        }
+
         if(this.bb.targetPosition === undefined || this.bb.targetPosition === null)
             return;
 

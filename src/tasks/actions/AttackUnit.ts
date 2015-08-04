@@ -53,7 +53,7 @@ class AttackUnit extends LeafTask{
                 //If my group's target is the other group's leader and their target is not my leader (I am targeting them but them not me?), bonus damage for me!
                 if(myGroup.getLeader().blackBoard.target === enemyGroup.getLeader() && myGroup.getLeader() !== enemyGroup.getLeader().blackBoard.target){
                     myStrength*=1.5;
-                    enemyStrength*=0.75;
+                    enemyStrength*=0.5;
                     console.log('my bonus!');
                 }
 

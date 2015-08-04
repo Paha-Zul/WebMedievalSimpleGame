@@ -51,7 +51,6 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create
 var foodText:Phaser.Text, colonyText:Phaser.Text, buildingText:Phaser.Text;
 var leader:Unit = null;
 var stage = 0;
-var unitGroup = null;
 
 var houseButton:Phaser.Button;
 var farmButton:Phaser.Button;
@@ -72,7 +71,7 @@ var cursors:Phaser.CursorKeys;
 
 var preview:Phaser.Sprite = null;
 
-var buildingGroup:Phaser.Group, peasantGroup:Phaser.Group, buttonGroup:Phaser.Group;
+var buildingGroup:Phaser.Group, peasantGroup:Phaser.Group, buttonGroup:Phaser.Group, flagGroup:Phaser.Group;
 
 function preload () {
     game.load.image('normal', 'img/normal_button.png');
@@ -82,20 +81,22 @@ function preload () {
     game.load.image('capitol', 'img/capitol.png');
     game.load.image('barracks', 'img/barracks.png');
     game.load.image('mine', 'img/mine.png');
+    game.load.image('keep', 'img/capitol.png');
+
+    game.load.image('flag', 'img/flag.png');
 
     game.load.image('buildBarracks', 'img/button_barracks.png');
     game.load.image('buildHouse', 'img/button_house.png');
     game.load.image('buildFarm', 'img/button_farm.png');
     game.load.image('buildMine', 'img/button_mine.png');
     game.load.image('buildCancel', 'img/button_cancel.png');
+    game.load.image('buildKeep', 'img/button_keep.png');
 
     this.game.stage.backgroundColor = '#DDDDDD';
     game.stage.disableVisibilityChange = true; //Apparently turns off pausing while in the background...
 }
 
 function create () {
-    Phaser.CANVAS
-
     game.physics.startSystem(Phaser.Physics.ARCADE);
     game.world.setBounds(0,0,2000,2000);
 
@@ -105,9 +106,8 @@ function create () {
 
     buildingGroup = game.add.group();
     peasantGroup = game.add.group();
+    flagGroup = game.add.group();
     buttonGroup = game.add.group();
-
-    unitGroup = game.add.group();
 
     startExample(new Phaser.Point(500,500), 'player1', 3);
     startExample(new Phaser.Point(1100,1700), 'player2', 3);
@@ -130,8 +130,7 @@ function create () {
     farmButton = game.add.button(60, game.world.height - 50, 'buildFarm', ()=>setBuildingType('farm'), this, 2, 1, 0);
     barracksButton = game.add.button(120, game.world.height - 50, 'buildBarracks', ()=>setBuildingType('barracks'), this, 2, 1, 0);
     mineButton = game.add.button(180, game.world.height - 50, 'buildMine', ()=>setBuildingType('mine'), this, 2, 1, 0);
-    //TODO The keep button image is a palceholder...
-    keepButton = game.add.button(180, game.world.height - 50, 'buildHouse', ()=>setBuildingType('keep'), this, 2, 1, 0);
+    keepButton = game.add.button(180, game.world.height - 50, 'buildKeep', ()=>setBuildingType('keep'), this, 2, 1, 0);
     cancelButton = game.add.button(180, game.world.height - 50, 'buildCancel', ()=>setBuildingType(''), this, 2, 1, 0);
 
     buttonGroup.add(houseButton);
@@ -181,8 +180,6 @@ function update() {
     if(game.input.mouse.wheelDelta !== 0) {
         var mult = 0.1;
         var val = game.input.mouse.wheelDelta * mult;
-        var cx = game.camera.x + game.camera.width/2;
-        var cy = game.camera.y + game.camera.height/2;
         game.world.scale.x += val;
         game.world.scale.y += val;
         game.input.mouse.wheelDelta = 0;

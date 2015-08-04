@@ -33,10 +33,19 @@ class Soldier implements IUpdateable{
         this.owner.blackBoard.disToStop = 200;
 
         var seq:Sequence = new Sequence(this.owner.blackBoard);
+        var move:MoveTo = new MoveTo(this.owner.blackBoard);
+
+        //Fail the move task if the group is full or destroyed.
+        move.getControl().failCheck = () => {return this.owner.blackBoard.targetGroup.isFull() || this.owner.blackBoard.targetGroup.destroyed};
+
         seq.control.addTask(new FindNearestGroup(this.owner.blackBoard));
-        seq.control.addTask(new MoveTo(this.owner.blackBoard));
+        seq.control.addTask(move);
         seq.control.addTask(new JoinGroup(this.owner.blackBoard));
 
         return seq;
+    }
+
+    destroy(){
+
     }
 }

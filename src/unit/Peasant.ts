@@ -35,7 +35,6 @@ class Peasant extends Unit{
         super.update(delta);
 
         if(this.bannerMan !== null){
-            this.text.text = ''+this.bannerMan.group.getNumUnits();
             this.bannerMan.update(delta);
         }else if(this.soldier !== null){
             this.soldier.update(delta);
@@ -52,6 +51,8 @@ class Peasant extends Unit{
 
     destroy():void {
         super.destroy();
+        if(this.bannerMan !== null) this.bannerMan.destroy();
+        if(this.soldier !== null) this.soldier.destroy();
         this.bannerMan = null;
         this.soldier = null;
     }

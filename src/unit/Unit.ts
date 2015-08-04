@@ -60,7 +60,8 @@ class Unit{
                 this.text.text = 'F: ' + this.food;
             }
 
-            this.text.position.set(this.sprite.x - this.text.width/2, this.sprite.y - this.height / 2 - 20);
+            if(this.name !== 'leader')
+                this.text.position.set(this.sprite.x - this.text.width/2, this.sprite.y - this.height / 2 - 20);
         }
 
         this.updateBehaviours(delta);
@@ -156,14 +157,14 @@ class Group{
     private spacing:number = 15;
     private lines:number = 3;
     private unitsPerLine:number = 8;
-    private maxGroupSize;
+    maxGroupSize:number = 0;
     destroyed:boolean = false;
 
     constructor(leader:Peasant){
         this.leader = leader;
         this.positions = [];
         this.unitList = [];
-        this.maxGroupSize = Math.random()*75 + 25; //25 - 100
+        this.maxGroupSize = ~~(Math.random()*75 + 25); //25 - 100
     }
 
     addUnit(unit:Peasant):Group{
@@ -182,6 +183,22 @@ class Group{
         }
         //this.reformGroup();
         return this;
+    }
+
+    /**
+     * Removes an amount from this group without killing them, essentially freeing them.
+     * @param amount The amount to free.
+     */
+    removeAmount(amount:number){
+        //Loop until we remove the right amount.
+        var counter = 0;
+        for(var i=this.unitList.length-1;counter<=amount;i--) {
+            this.unitList[i].getSoldier().group = null; //Destroy the unit.
+            this.unitList[i].getSoldier().leader = null; //Destroy the unit.
+            this.unitList[i].behaviour.getControl().finishWithFailure(); //They need to stop following us.
+            this.unitList.splice(i,1); //Splice it out!
+            counter++; //Increment counter.
+        }
     }
 
     /**
@@ -223,7 +240,7 @@ class Group{
     }
 
     isFull():boolean{
-        return this.getNumUnits() >= this.maxGroupSize;
+        return this.getNumUnits() >= this.maxGroupSize || this.leader === null || this.leader.getBannerMan().isRetreating;
     }
 
     destroy(){

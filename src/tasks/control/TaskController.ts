@@ -9,6 +9,9 @@ class TaskController{
     finished:boolean = false;
     failed:boolean = false;
 
+    failCheck:any = null;
+    finishCallback:any = null;
+
     constructor(private task:Task){
 
     }
@@ -31,7 +34,7 @@ class TaskController{
     }
 
     safeEnd():void{
-
+        if(this.finishCallback !== null) this.finishCallback();
     }
 
     reset():void{

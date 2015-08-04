@@ -13,7 +13,8 @@ class JoinGroup extends LeafTask{
     check():boolean {
         //Neither the group nor the leader can be null or destroyed.
         return super.check() && this.bb.targetGroup !== null && !this.bb.targetGroup.destroyed
-            && this.bb.targetGroup.getLeader() !== null && !this.bb.targetGroup.getLeader().toBeDestroyed;
+            && this.bb.targetGroup.getLeader() !== null && !this.bb.targetGroup.getLeader().toBeDestroyed
+            && !this.bb.targetGroup.isFull();
     }
 
     start():void {

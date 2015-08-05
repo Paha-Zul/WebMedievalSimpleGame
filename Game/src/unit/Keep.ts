@@ -11,8 +11,8 @@ class Keep extends Building implements IDropoffPoint{
     requestedPickup:boolean = false;
     bannermanCost:number = 25;
 
-    constructor(x:number, y:number, game:Phaser.Game, playerName:string, sprite:Phaser.Sprite, width?:number, height?:number) {
-        super(x, y, game, playerName, sprite, width, height);
+    constructor(x:number, y:number, warGame:Game, playerName:string, sprite:Phaser.Sprite, width?:number, height?:number) {
+        super(x, y, warGame, playerName, sprite, width, height);
     }
 
 
@@ -32,10 +32,10 @@ class Keep extends Building implements IDropoffPoint{
 
         //If the worker is null/destroyed and the next spawn time is -1... set the next spawn time.
         if((this.worker === null || this.worker.toBeDestroyed) && this.nextSpawnTime === -1){
-            this.nextSpawnTime = this.game.time.now + this.respawnTime;
+            this.nextSpawnTime = this.warGame.game.time.now + this.respawnTime;
 
         }else if((this.worker === null || this.worker.toBeDestroyed) && this.nextSpawnTime !== -1) {
-            if(this.game.time.now >= this.nextSpawnTime && this.capitol.food >= this.bannermanCost) {
+            if(this.warGame.game.time.now >= this.nextSpawnTime && this.capitol.food >= this.bannermanCost) {
                 this.worker = this.capitol.addFreePeasant('leader', this.sprite.x, this.sprite.y);
                 this.bannerMan = null; //We have to null this so we can acquire a new one below!
                 this.capitol.food -= this.bannermanCost;

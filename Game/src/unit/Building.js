@@ -11,9 +11,9 @@ var __extends = this.__extends || function (d, b) {
  */
 var Building = (function (_super) {
     __extends(Building, _super);
-    function Building(x, y, game, playerName, sprite, width, height) {
+    function Building(x, y, warGame, playerName, sprite, width, height) {
         var _this = this;
-        _super.call(this, x, y, game, playerName, sprite, width || 30, height || 30);
+        _super.call(this, x, y, warGame, playerName, sprite, width || 30, height || 30);
         this.nextRetIncrease = 0;
         this.refillTime = 1000;
         this.worker = null;
@@ -59,11 +59,11 @@ var Building = (function (_super) {
     };
     Building.prototype.update = function (delta) {
         _super.prototype.update.call(this, delta);
-        if (this.currRetaliationStrength < this.maxRetaliationStrength && this.game.time.now >= this.nextRetIncrease) {
+        if (this.currRetaliationStrength < this.maxRetaliationStrength && this.warGame.game.time.now >= this.nextRetIncrease) {
             this.currRetaliationStrength += this.retaliationStrengthRate;
             if (this.currRetaliationStrength >= this.maxRetaliationStrength)
                 this.currRetaliationStrength = this.maxRetaliationStrength;
-            this.nextRetIncrease = this.game.time.now + this.retaliationStrengthTime;
+            this.nextRetIncrease = this.warGame.game.time.now + this.retaliationStrengthTime;
         }
     };
     return Building;

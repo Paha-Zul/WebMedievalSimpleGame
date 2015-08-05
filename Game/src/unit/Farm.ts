@@ -8,8 +8,8 @@ class Farm extends Building{
     counter:number=0;
     requestedPickup:boolean = false;
 
-    constructor(x:number, y:number, game:Phaser.Game, playerName:string, sprite:Phaser.Sprite, width:number, height:number) {
-        super(x, y, game, playerName, sprite, width, height);
+    constructor(x:number, y:number, warGame:Game, playerName:string, sprite:Phaser.Sprite, width:number, height:number) {
+        super(x, y, warGame, playerName, sprite, width, height);
     }
 
     start():void {

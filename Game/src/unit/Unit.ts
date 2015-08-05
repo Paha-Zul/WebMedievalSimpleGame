@@ -24,7 +24,7 @@ class Unit{
     toBeDestroyed:boolean = false;
     player:Player = null;
 
-    constructor(public x:number, public y:number, public game:Phaser.Game, public playerName:string, public sprite:Phaser.Sprite, public width?:number, public height?:number){
+    constructor(public x:number, public y:number, public warGame:Game, public playerName:string, public sprite:Phaser.Sprite, public width?:number, public height?:number){
         this.width = width || 10;
         this.height = height || 10;
         this.sprite.x = x;
@@ -33,7 +33,7 @@ class Unit{
         this.blackBoard = new BlackBoard();
         this.blackBoard.me = this;
         this.blackBoard.myPlayer = this.player = PlayerManager.getPlayer(this.playerName);
-        this.blackBoard.game = game;
+        this.blackBoard.game = warGame;
         this.capitol = this.blackBoard.myPlayer.capitol;
     }
 
@@ -42,7 +42,7 @@ class Unit{
 
         if(this.name !== 'house' && this.name !== 'soldier' && this.name !== 'barracks' && this.name !== 'keep'){
             var style = { font: "18px Arial", fill: ''+this.player.color, align: "center" };
-            this.text = game.add.text(this.sprite.x, this.sprite.y - this.height/2 - 20, 'fixme', style);
+            this.text = this.warGame.game.add.text(this.sprite.x, this.sprite.y - this.height/2 - 20, 'fixme', style);
         }
     }
 

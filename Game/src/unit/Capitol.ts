@@ -1,4 +1,4 @@
- /// <reference path="./../Game.ts"/>
+/// <reference path="./../Game.ts"/>
 
 /**
  * Created by Paha on 7/23/2015.
@@ -18,10 +18,10 @@ class Capitol extends Unit{
     timer : Phaser.TimerEvent;
     taskQueue:CircularQueue<any>;
 
-    constructor(x:number, y:number, game:Phaser.Game, playerName:string, sprite:Phaser.Sprite, width?:number, height?:number){
-        super(x, y, game, playerName, sprite, width, height);
+    constructor(x:number, y:number, warGame:Game, playerName:string, sprite:Phaser.Sprite, width?:number, height?:number){
+        super(x, y, warGame, playerName, sprite, width, height);
 
-        this.timer = this.game.time.events.loop(Phaser.Timer.SECOND*1, this.calcRate, this);
+        this.timer = this.warGame.game.time.events.loop(Phaser.Timer.SECOND*1, this.calcRate, this);
         this.type = 'building';
         this.name = 'capitol';
         this.taskQueue = new CircularQueue<any>(100);
@@ -81,11 +81,11 @@ class Capitol extends Unit{
     }
 
     addFreePeasant(type:string, x:number, y:number):Unit{
-        var sprite:Phaser.Sprite = peasantGroup.getFirstDead();
-        if(sprite === undefined || sprite === null) sprite = peasantGroup.create(0,0,'');
+        var sprite:Phaser.Sprite = this.warGame.peasantGroup.getFirstDead();
+        if(sprite === undefined || sprite === null) sprite = this.warGame.peasantGroup.create(0,0,'');
         else sprite.reset(0,0);
 
-        var unit = new Peasant(x, y, this.game, this.playerName, sprite);
+        var unit = new Peasant(x, y, this.warGame, this.playerName, sprite);
         unit.name = type;
         unit.type = 'humanoid';
         unit.sprite.autoCull = true;
@@ -96,17 +96,17 @@ class Capitol extends Unit{
 
     addBuilding(type:string, x:number, y:number, width?:number, height?:number):Building{
         var unit:Building = null;
-        var sprite:Phaser.Sprite = buildingGroup.getFirstDead();
+        var sprite:Phaser.Sprite = this.warGame.buildingGroup.getFirstDead();
         if(sprite === undefined || sprite === null)
-            sprite = buildingGroup.create(0,0,'');
+            sprite = this.warGame.buildingGroup.create(0,0,'');
         else
             sprite.reset(0,0);
 
-        if(type === 'house') unit = new House(x, y, this.game, this.playerName, sprite, width, height);
-        if(type === 'farm') unit = new Farm(x, y, this.game, this.playerName, sprite, width, height);
-        if(type === 'barracks') unit = new Barracks(x, y, this.game, this.playerName, sprite, width, height);
-        if(type === 'mine') unit = new Mine(x, y, this.game, this.playerName, sprite, width, height);
-        if(type === 'keep') unit = new Keep(x, y, this.game, this.playerName, sprite, width, height);
+        if(type === 'house') unit = new House(x, y, this.warGame, this.playerName, sprite, width, height);
+        if(type === 'farm') unit = new Farm(x, y, this.warGame, this.playerName, sprite, width, height);
+        if(type === 'barracks') unit = new Barracks(x, y, this.warGame, this.playerName, sprite, width, height);
+        if(type === 'mine') unit = new Mine(x, y, this.warGame, this.playerName, sprite, width, height);
+        if(type === 'keep') unit = new Keep(x, y, this.warGame, this.playerName, sprite, width, height);
 
         unit.name = type;
         unit.type = 'building';
@@ -179,6 +179,6 @@ class Capitol extends Unit{
 
         this.text.destroy();
 
-        this.game.time.events.remove(this.timer);
+        this.warGame.game.time.events.remove(this.timer);
     }
 }

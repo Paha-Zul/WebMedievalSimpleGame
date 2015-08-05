@@ -14,7 +14,7 @@ class Idle extends LeafTask{
     start() {
         super.start();
 
-        this.timer = this.bb.game.time.events.add(this.bb.idleTime, this.finish, this);
+        this.timer = this.bb.game.game.time.events.add(this.bb.idleTime, this.finish, this);
     }
 
     update(delta) {

@@ -13,8 +13,8 @@ class Building extends Unit {
     retaliationStrengthRate:number = 1;
     retaliationStrengthTime:number = 1000;
 
-    constructor(x:number, y:number, game:Phaser.Game, playerName:string, sprite:Phaser.Sprite, width:number, height:number) {
-        super(x, y, game, playerName, sprite, width || 30, height || 30);
+    constructor(x:number, y:number, warGame:Game, playerName:string, sprite:Phaser.Sprite, width:number, height:number) {
+        super(x, y, warGame, playerName, sprite, width || 30, height || 30);
 
         this.type = 'building';
         this.name = 'farm';
@@ -31,12 +31,12 @@ class Building extends Unit {
     update(delta):void{
         super.update(delta);
 
-        if(this.currRetaliationStrength < this.maxRetaliationStrength && this.game.time.now >= this.nextRetIncrease){
+        if(this.currRetaliationStrength < this.maxRetaliationStrength && this.warGame.game.time.now >= this.nextRetIncrease){
             this.currRetaliationStrength += this.retaliationStrengthRate;
             if(this.currRetaliationStrength >= this.maxRetaliationStrength)
                 this.currRetaliationStrength = this.maxRetaliationStrength;
 
-            this.nextRetIncrease = this.game.time.now + this.retaliationStrengthTime;
+            this.nextRetIncrease = this.warGame.game.time.now + this.retaliationStrengthTime;
         }
     }
 

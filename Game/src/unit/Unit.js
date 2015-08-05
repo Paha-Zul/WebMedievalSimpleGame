@@ -5,11 +5,11 @@
  * A prototyping class. Needs to be cleaned up later but such you know?
  */
 var Unit = (function () {
-    function Unit(x, y, game, playerName, sprite, width, height) {
+    function Unit(x, y, warGame, playerName, sprite, width, height) {
         var _this = this;
         this.x = x;
         this.y = y;
-        this.game = game;
+        this.warGame = warGame;
         this.playerName = playerName;
         this.sprite = sprite;
         this.width = width;
@@ -45,14 +45,14 @@ var Unit = (function () {
         this.blackBoard = new BlackBoard();
         this.blackBoard.me = this;
         this.blackBoard.myPlayer = this.player = PlayerManager.getPlayer(this.playerName);
-        this.blackBoard.game = game;
+        this.blackBoard.game = warGame;
         this.capitol = this.blackBoard.myPlayer.capitol;
     }
     Unit.prototype.start = function () {
         this.started = true;
         if (this.name !== 'house' && this.name !== 'soldier' && this.name !== 'barracks' && this.name !== 'keep') {
             var style = { font: "18px Arial", fill: '' + this.player.color, align: "center" };
-            this.text = game.add.text(this.sprite.x, this.sprite.y - this.height / 2 - 20, 'fixme', style);
+            this.text = this.warGame.game.add.text(this.sprite.x, this.sprite.y - this.height / 2 - 20, 'fixme', style);
         }
     };
     Unit.prototype.update = function (delta) {

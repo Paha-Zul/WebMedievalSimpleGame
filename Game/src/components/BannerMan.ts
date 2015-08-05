@@ -1,5 +1,3 @@
-
-
 /// <reference path="./../Game.ts"/>
 
 /**
@@ -27,9 +25,9 @@ class BannerMan implements IUpdateable{
         this.sizeToAttack = this.group.maxGroupSize/4;
 
         this.owner.blackBoard.moveSpeed = 1;
-        this.flag = flagGroup.getFirstDead();
+        this.flag = this.owner.warGame.flagGroup.getFirstDead();
         if(this.flag === undefined || this.flag === null)
-            this.flag = flagGroup.create(this.owner.x, this.owner.y, 'flag');
+            this.flag = this.owner.warGame.flagGroup.create(this.owner.x, this.owner.y, 'flag');
         else
             this.flag.reset(0,0);
 
@@ -79,7 +77,7 @@ class BannerMan implements IUpdateable{
     removeExtraUnits(){
         //If we are over the limit and we haven't started the time limit, start it!
         if(this.group.getNumUnits() > this.group.maxGroupSize && this.nextRemoveTime === -1){
-            this.nextRemoveTime = this.owner.game.time.now + 5000; //Remove in 5 seconds!.
+            this.nextRemoveTime = this.owner.warGame.game.time.now + 5000; //Remove in 5 seconds!.
 
         //Otherwise if we are counting...
         }else if(this.nextRemoveTime !== -1){
@@ -88,7 +86,7 @@ class BannerMan implements IUpdateable{
                 this.nextRemoveTime = -1;
 
             //If the time limit is met and it is still valid, remove the max size - the group size.
-            }if(this.owner.game.time.now >= this.nextRemoveTime){
+            }if(this.owner.warGame.game.time.now >= this.nextRemoveTime){
                 this.group.removeAmount(-(this.group.maxGroupSize - this.group.getNumUnits()));
                 this.nextRemoveTime = -1;
             }

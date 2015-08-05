@@ -8,8 +8,8 @@ class Peasant extends Unit{
     private soldier:Soldier = null;
     private bannerMan:BannerMan = null;
 
-    constructor(x:number, y:number, game:Phaser.Game, playerName:string, sprite:Phaser.Sprite, width?:number, height?:number) {
-        super(x, y, game, playerName, sprite, width, height);
+    constructor(x:number, y:number, warGame:Game, playerName:string, sprite:Phaser.Sprite, width?:number, height?:number) {
+        super(x, y, warGame, playerName, sprite, width, height);
 
         this.type ='peasant';
     }
@@ -18,7 +18,7 @@ class Peasant extends Unit{
         super.start();
         this.type ='peasant';
 
-        this.sprite.loadTexture(makeSquareSprite(10,10));
+        this.sprite.loadTexture(makeSquareSprite(this.warGame.game, 10,10));
 
         if(this.name === 'peasant'){
 

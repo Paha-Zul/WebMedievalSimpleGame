@@ -16,7 +16,7 @@ class BlackBoard{
 
     myPlayer:Player;
     me:Unit;
-    game:Phaser.Game;
+    game:Game;
 
     constructor(){}
 }

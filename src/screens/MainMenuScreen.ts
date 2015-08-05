@@ -13,8 +13,11 @@ class MainMenuScreen implements IScreen{
     }
 
     start():void {
-        this.singleplayerButton = this.game.add.button(200, 200, '', ()=>changeScreen(new GameScreen(this.game)), this, 2, 1, 0);
-        this.multiplayerButton = this.game.add.button(200, 400, '', ()=>changeScreen(new GameScreen(this.game)), this, 2, 1, 0);
+        var x = this.game.camera.width/2 - 50;
+        var y = 100;
+
+        this.singleplayerButton = this.game.add.button(x, y, 'mainMenuButtons', ()=>changeScreen(new GameScreen(this.game)), this, 2, 1, 0);
+        this.multiplayerButton = this.game.add.button(x, y + 100, 'mainMenuButtons', ()=>changeScreen(new GameScreen(this.game)), this, 5, 4, 3);
 
     }
 

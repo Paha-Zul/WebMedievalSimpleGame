@@ -14,6 +14,10 @@
 
 /// <reference path="./interfaces/IUpdateable.ts"/>
 /// <reference path="./interfaces/IPickupable.ts"/>
+/// <reference path="./interfaces/IScreen.ts"/>
+
+/// <reference path="./screens/MainMenuScreen.ts"/>
+/// <reference path="./screens/GameScreen.ts"/>
 
 /// <reference path="./util/Helper.ts"/>
 /// <reference path="./util/Behaviours.ts"/>
@@ -74,6 +78,8 @@ var cursors:Phaser.CursorKeys;
 var preview:Phaser.Sprite = null;
 
 var buildingGroup:Phaser.Group, peasantGroup:Phaser.Group, buttonGroup:Phaser.Group, flagGroup:Phaser.Group;
+
+var currScreen:IScreen = null;
 
 function preload () {
     game.load.image('normal', 'img/normal_button.png');
@@ -224,23 +230,10 @@ function render(){
     //}
 }
 
-function createColonyAndUnitsLeader(playerName:string){
-    var numUnits = 30;
-    var player = PlayerManager.getPlayer(playerName);
-
-    //Create a colony.
-    var capitol = new Capitol(game.world.centerX, game.world.centerY, game, playerName, buildingGroup.create(0,0,'capitol'), 100, 100);
-    PlayerManager.getPlayer("player1").capitol = capitol;
-
-    //Create a leader
-    leader = capitol.addFreePeasant('leader', game.world.centerX, game.world.centerY);
-    leader.blackBoard.moveSpeed = 1.5;
-
-    for(var i=0;i<numUnits;i++)
-        capitol.addFreePeasant('soldier', game.world.centerX, game.world.centerY);
-
-    leader.capitol.food = 100000;
-    leader.capitol.iron = 100000;
+function changeScreen(screen:IScreen){
+    if(currScreen !== null) currScreen.destroy();
+    currScreen = screen;
+    currScreen.start();
 }
 
 function startExample(start:Phaser.Point, playerName:string, multiplier?:number){

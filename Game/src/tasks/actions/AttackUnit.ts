@@ -1,7 +1,14 @@
 ///<reference path="../../Game.ts"/>
 
-class AttackUnit extends LeafTask{
+import LeafTask = require('LeafTask');
+import BlackBoard = require('BlackBoard');
+import U = require('../../unit/Unit');
+import Building = require('../../unit/Building');
+import Peasant = require('../../unit/Peasant');
+import Unit = U.Unit;
+import Group = U.Group;
 
+class AttackUnit extends LeafTask{
     constructor(bb:BlackBoard) {
         super(bb);
     }
@@ -70,3 +77,5 @@ class AttackUnit extends LeafTask{
         super.end();
     }
 }
+
+export = AttackUnit;

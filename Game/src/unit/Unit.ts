@@ -1,30 +1,47 @@
 /// <reference path="./../Game.ts"/>
 
+import Game = require('../Game');
+import Capitol = require('./Capitol');
+import Peasant = require('./Peasant');
+import BlackBoard = require('../tasks/BlackBoard');
+
+import Task = require('../tasks/Task');
+
+import Sequence = require('../tasks/composite/Sequence');
+import Idle = require('../tasks/actions/Idle');
+import MoveTo = require('../tasks/actions/MoveTo');
+import RandomLocation = require('../tasks/actions/RandomLocation');
+import FollowPointRelativeToTarget = require('../tasks/actions/FollowPointRelativeToTarget');
+
+import PM = require('../util/PlayerManager');
+import PlayerManager = PM.PlayerManager
+import Player = PM.Player;
+
 /**
  * Created by Paha on 7/23/2015.
- *
  * A prototyping class. Needs to be cleaned up later but such you know?
+ * We export the class because we have 2 classes in this file.
  */
-class Unit{
-    name : string = 'peasant';
-    type : string = 'humanoid';
-    control : string = 'auto';
-    active : boolean = true;
-    started : boolean = false;
-    behaviour : Task = null;
-    idleCounter : number = 0;
-    walkCounter : number = 0;
-    food : number = 0;
-    iron : number = 0;
-    posCounter : number = 0;
-    flag : boolean = false;
+export class Unit {
+    name:string = 'peasant';
+    type:string = 'humanoid';
+    control:string = 'auto';
+    active:boolean = true;
+    started:boolean = false;
+    behaviour:Task = null;
+    idleCounter:number = 0;
+    walkCounter:number = 0;
+    food:number = 0;
+    iron:number = 0;
+    posCounter:number = 0;
+    flag:boolean = false;
     text:Phaser.Text;
     blackBoard:BlackBoard;
     capitol:Capitol;
     toBeDestroyed:boolean = false;
     player:Player = null;
 
-    constructor(public x:number, public y:number, public warGame:Game, public playerName:string, public sprite:Phaser.Sprite, public width?:number, public height?:number){
+    constructor(public x:number, public y:number, public warGame:Game, public playerName:string, public sprite:Phaser.Sprite, public width?:number, public height?:number) {
         this.width = width || 10;
         this.height = height || 10;
         this.sprite.x = x;
@@ -37,46 +54,46 @@ class Unit{
         this.capitol = this.blackBoard.myPlayer.capitol;
     }
 
-    start():void{
+    start():void {
         this.started = true;
 
-        if(this.name !== 'house' && this.name !== 'soldier' && this.name !== 'barracks' && this.name !== 'keep'){
-            var style = { font: "18px Arial", fill: ''+this.player.color, align: "center" };
-            this.text = this.warGame.game.add.text(this.sprite.x, this.sprite.y - this.height/2 - 20, 'fixme', style);
+        if (this.name !== 'house' && this.name !== 'soldier' && this.name !== 'barracks' && this.name !== 'keep') {
+            var style = {font: "18px Arial", fill: '' + this.player.color, align: "center"};
+            this.text = this.warGame.game.add.text(this.sprite.x, this.sprite.y - this.height / 2 - 20, 'fixme', style);
         }
     }
 
-    public update(delta : number):void {
-        if(!this.started) this.start();
+    public update(delta:number):void {
+        if (!this.started) this.start();
 
-        if(this.text !== undefined && this.text !== null) {
-            if(this.name === 'capitol') {
-                this.text.text = 'F: ' + this.food+" I: "+this.iron;
-            }else if(this.name === 'mine') {
+        if (this.text !== undefined && this.text !== null) {
+            if (this.name === 'capitol') {
+                this.text.text = 'F: ' + this.food + " I: " + this.iron;
+            } else if (this.name === 'mine') {
                 this.text.text = 'I: ' + this.iron;
-            }else if(this.name === 'peasant'){
-                this.text.text = ''+(this.iron+this.food);
-            }else{
+            } else if (this.name === 'peasant') {
+                this.text.text = '' + (this.iron + this.food);
+            } else {
                 this.text.text = 'F: ' + this.food;
             }
 
-            if(this.name !== 'leader')
-                this.text.position.set(this.sprite.x - this.text.width/2, this.sprite.y - this.height / 2 - 20);
+            if (this.name !== 'leader')
+                this.text.position.set(this.sprite.x - this.text.width / 2, this.sprite.y - this.height / 2 - 20);
         }
 
         this.updateBehaviours(delta);
     }
 
-    updateBehaviours(delta){
+    updateBehaviours(delta) {
         //If we have a behaviour, execute it.
-        if(this.behaviour !== null){
-            if(!this.behaviour.getControl().started) this.behaviour.getControl().safeStart(); //Start the behaviour
+        if (this.behaviour !== null) {
+            if (!this.behaviour.getControl().started) this.behaviour.getControl().safeStart(); //Start the behaviour
             this.behaviour.update(delta); //Update it.
-            if(this.behaviour.getControl().finished){ //If finished, null it out.
+            if (this.behaviour.getControl().finished) { //If finished, null it out.
                 this.behaviour = null;
             }
-        }else{
-            if(this.name === 'peasant') {
+        } else {
+            if (this.name === 'peasant') {
                 //Try to get a task from the capitol...
                 var task:any = this.capitol.getTaskFromQueue();
 
@@ -93,7 +110,7 @@ class Unit{
     }
 
     //Walks in a direction.
-    public walkTowardsRotation = (rotation:number, moveSpeed:number, disToStop?) =>{
+    public walkTowardsRotation = (rotation:number, moveSpeed:number, disToStop?) => {
         //Get X and Y moving values.
         var x = Math.cos(rotation) * moveSpeed;
         var y = Math.sin(rotation) * moveSpeed;
@@ -105,21 +122,21 @@ class Unit{
     };
 
     //Walks towards a position stopping when it gets within the disToStop range.
-    public walkTowardsPosition(position:Phaser.Point, disToStop:number, moveSpeed:number, disToTarget?, rotToTarget?):boolean{
-        if(disToTarget === undefined) //Set the disToTarget if it wasn't passed
+    public walkTowardsPosition(position:Phaser.Point, disToStop:number, moveSpeed:number, disToTarget?, rotToTarget?):boolean {
+        if (disToTarget === undefined) //Set the disToTarget if it wasn't passed
             disToTarget = this.sprite.position.distance(position);
-        if(rotToTarget === undefined) //Set the rotToTarget if it wasn't passed.
+        if (rotToTarget === undefined) //Set the rotToTarget if it wasn't passed.
             rotToTarget = this.sprite.position.angle(position, false);
 
         //If we are still outside the stop range, move!
-        if(disToTarget >= disToStop) {
+        if (disToTarget >= disToStop) {
             var x = Math.cos(rotToTarget) * moveSpeed;
             var y = Math.sin(rotToTarget) * moveSpeed;
 
             this.sprite.x += x;
             this.sprite.y += y;
-            this.sprite.angle = rotToTarget*(180/Math.PI);
-        }else{
+            this.sprite.angle = rotToTarget * (180 / Math.PI);
+        } else {
             //this.sprite.position.set(position.x, position.y);
             //this.sprite.body.velocity.set(0, 0);
             return true;
@@ -128,17 +145,17 @@ class Unit{
         return false;
     }
 
-    destroy():void{
+    destroy():void {
         this.toBeDestroyed = true;
     }
 
-    public finalDestroy(){
+    public finalDestroy() {
         this.sprite.kill();
-        if(this.text !== undefined && this.text !== null) this.text.destroy(true);
+        if (this.text !== undefined && this.text !== null) this.text.destroy(true);
         this.behaviour = null;
     }
 
-    wander(bb:BlackBoard):Task{
+    wander(bb:BlackBoard):Task {
         var seq:Sequence = new Sequence(bb);
         seq.control.addTask(new RandomLocation(bb));
         seq.control.addTask(new MoveTo(bb));
@@ -149,7 +166,7 @@ class Unit{
 
 }
 
-class Group{
+export class Group {
     private leader:Peasant = null;
     private unitList:Peasant[];
     private positions:Phaser.Point[];
@@ -160,23 +177,23 @@ class Group{
     maxGroupSize:number = 0;
     destroyed:boolean = false;
 
-    constructor(leader:Peasant){
+    constructor(leader:Peasant) {
         this.leader = leader;
         this.positions = [];
         this.unitList = [];
-        this.maxGroupSize = ~~(Math.random()*75 + 25); //25 - 100
+        this.maxGroupSize = ~~(Math.random() * 75 + 25); //25 - 100
     }
 
-    addUnit(unit:Peasant):Group{
+    addUnit(unit:Peasant):Group {
         this.unitList.push(unit);
         this.reformGroup();
         return this;
     }
 
-    removeUnit(unit:Peasant):Group{
+    removeUnit(unit:Peasant):Group {
         //Remove the unit from the list by searching/splicing.
-        for(var i=0;i<this.unitList.length;i++){
-            if(this.unitList[i] === unit) {
+        for (var i = 0; i < this.unitList.length; i++) {
+            if (this.unitList[i] === unit) {
                 this.unitList.splice(i, 1);
                 break;
             }
@@ -189,14 +206,14 @@ class Group{
      * Removes an amount from this group without killing them, essentially freeing them.
      * @param amount The amount to free.
      */
-    removeAmount(amount:number){
+    removeAmount(amount:number) {
         //Loop until we remove the right amount.
         var counter = 0;
-        for(var i=this.unitList.length-1;counter<=amount;i--) {
+        for (var i = this.unitList.length - 1; counter <= amount; i--) {
             this.unitList[i].getSoldier().group = null; //Destroy the unit.
             this.unitList[i].getSoldier().leader = null; //Destroy the unit.
             this.unitList[i].behaviour.getControl().finishWithFailure(); //They need to stop following us.
-            this.unitList.splice(i,1); //Splice it out!
+            this.unitList.splice(i, 1); //Splice it out!
             counter++; //Increment counter.
         }
     }
@@ -205,15 +222,15 @@ class Group{
      * Kills an amount of this group. Will remove and destroy the units
      * @param amount
      */
-    killAmount(amount:number){
-        if(amount >= this.unitList.length)
+    killAmount(amount:number) {
+        if (amount >= this.unitList.length)
             this.destroy();
-        else{
+        else {
             //Loop until we remove the right amount.
             var counter = 0;
-            for(var i=this.unitList.length-1;counter<=amount;i--) {
+            for (var i = this.unitList.length - 1; counter <= amount; i--) {
                 this.unitList[i].destroy(); //Destroy the unit.
-                this.unitList.splice(i,1); //Splice it out!
+                this.unitList.splice(i, 1); //Splice it out!
                 counter++; //Increment counter.
             }
 
@@ -221,51 +238,51 @@ class Group{
         }
     }
 
-    private killGroup(){
-        for(var i=0;i<this.unitList.length;i++)
+    private killGroup() {
+        for (var i = 0; i < this.unitList.length; i++)
             this.unitList[i].destroy();
 
         this.unitList = [];
         this.positions = [];
-        if(this.leader !== null) this.leader.destroy();
+        if (this.leader !== null) this.leader.destroy();
         this.leader = null;
     }
 
-    getLeader():Peasant{
+    getLeader():Peasant {
         return this.leader;
     }
 
-    getNumUnits():number{
+    getNumUnits():number {
         return this.unitList.length;
     }
 
-    isFull():boolean{
+    isFull():boolean {
         return this.getNumUnits() >= this.maxGroupSize || this.leader === null || this.leader.toBeDestroyed || this.leader.getBannerMan().isRetreating;
     }
 
-    destroy(){
+    destroy() {
         this.leader.capitol.removeGroup(this); //Remove the group from the capitol.
         this.killGroup();
         this.destroyed = true;
     }
 
-    private reformGroup(){
+    private reformGroup() {
         //TODO Kinda performance heavy to do for every addition/subtraction. Maybe have a timer to wait
         //TODO since an add/remove?
         //TODO Maybe not... got up to 700 units before getting under 50 frames and that's probably due to rendering.
         this.posCounter = 0;
-        this.lines = ~~(this.unitList.length/this.unitsPerLine) + 1;
+        this.lines = ~~(this.unitList.length / this.unitsPerLine) + 1;
         this.positions = [];
 
         var num = this.unitList.length;
         var spacing = 15; //Spacing between spaces
 
         //calculate all the new positions...
-        for(var i=0;i<num;i++){
-            var index = ~~(i/~~(num/this.lines));
-            var div = ~~(num/this.lines);
-            var x = -(index+1)*spacing;
-            var y = i%div*spacing - div/2*spacing;
+        for (var i = 0; i < num; i++) {
+            var index = ~~(i / ~~(num / this.lines));
+            var div = ~~(num / this.lines);
+            var x = -(index + 1) * spacing;
+            var y = i % div * spacing - div / 2 * spacing;
             var point = new Phaser.Point(x, y);
             this.positions.push(point);
 
@@ -278,5 +295,3 @@ class Group{
         }
     }
 }
-
-

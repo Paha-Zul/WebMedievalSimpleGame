@@ -2,7 +2,6 @@
 /// <reference path="./../build/socket.io.d.ts"/>
 /// <reference path="./../build/phaser.d.ts"/>
 
-
 /// <reference path="./unit/Unit.ts"/>
 /// <reference path="./unit/Capitol.ts"/>
 /// <reference path="./unit/Building.ts"/>
@@ -55,6 +54,29 @@
 
 /// <reference path="tasks/control/TaskController.ts"/>
 /// <reference path="tasks/control/ParentTaskController.ts"/>
+
+import io = require('socket.io');
+var socket = io('http://localhost');
+socket.on('such', function(data:any){
+    console.log('Okay');
+});
+
+//Screens
+import GameScreen = require('./screens/GameScreen');
+import MainMenuScreen = require('./screens/MainMenuScreen');
+
+//Units
+import Unit = require('./unit/Unit');
+import Building = require('./unit/Building');
+import Barracks = require('./unit/Barracks');
+import Capitol = require('./unit/Capitol');
+import Farm = require('./unit/Farm');
+import House = require('./unit/House');
+import Mine = require('./unit/Mine');
+import Keep = require('./unit/Keep');
+
+//Task stuff
+import BlackBoard = require('./tasks/BlackBoard');
 
 'use strict';
 class Game {
@@ -137,3 +159,4 @@ class Game {
 }
 
 new Game();
+export = Game;

@@ -2,6 +2,8 @@
  * Created by Paha on 7/25/2015.
  */
 
+import Task = require('Task');
+
 ///<reference path="../../Game.ts"/>
 
 class TaskController{
@@ -44,3 +46,5 @@ class TaskController{
     }
 
 }
+
+export = TaskController;

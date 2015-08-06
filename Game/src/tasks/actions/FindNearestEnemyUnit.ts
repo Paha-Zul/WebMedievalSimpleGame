@@ -1,5 +1,13 @@
 ///<reference path="../../Game.ts"/>
 
+import BlackBoard = require("BlackBoard");
+import LeafTask = require("LeafTask");
+import U = require("../../unit/Unit");
+import Unit = U.Unit;
+import PM = require('../../util/PlayerManager');
+import PlayerManager = PM.PlayerManager
+import Player = PM.Player;
+
 class FindNearestEnemyUnit extends LeafTask{
 
     constructor(bb:BlackBoard) {
@@ -62,3 +70,5 @@ class FindNearestEnemyUnit extends LeafTask{
         super.end();
     }
 }
+
+export = FindNearestEnemyUnit;

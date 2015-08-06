@@ -1,9 +1,11 @@
 ///<reference path="../../Game.ts"/>
 
+import TaskDecorator = require('TaskDecorator');
+import BlackBoard = require('BlackBoard');
+
 /**
  * Created by Paha on 8/2/2015.
  */
-
 class AlwaysTrue extends TaskDecorator{
 
     constructor(bb:BlackBoard) {
@@ -30,3 +32,5 @@ class AlwaysTrue extends TaskDecorator{
         super.end();
     }
 }
+
+export = AlwaysTrue;

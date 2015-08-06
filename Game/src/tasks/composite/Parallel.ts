@@ -1,9 +1,12 @@
 ///<reference path="../../Game.ts"/>
 
+import ParentTask = require('ParentTask');
+import Task = require('Task');
+import BlackBoard = require('BlackBoard');
+
 /**
  * Created by Paha on 8/2/2015.
  */
-
 class Parallel extends ParentTask{
     triggerTask:Task = null;
 
@@ -59,3 +62,5 @@ class Parallel extends ParentTask{
         super.childSucceeded();
     }
 }
+
+export = Parallel;

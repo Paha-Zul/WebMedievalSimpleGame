@@ -1,11 +1,22 @@
+///<reference path="../Game.ts"/>
+
+import Unit = require("../unit/Unit");
+import Keep = require("../unit/Keep");
+import Capitol = require("../unit/Capitol");
+import Peasant = require("../unit/Peasant");
+import BannerMan = require("./BannerMan");
+
+import Task = require("../tasks/Task");
+import Sequence = require("../tasks/composite/Sequence");
+import MoveTo = require("../tasks/actions/MoveTo");
+import FindNearestGroup = require("../tasks/actions/FindNearestGroup");
+import JoinGroup = require("../tasks/actions/JoinGroup");
+
 /**
  * Created by Paha on 7/29/2015.
  */
-
-///<reference path="../Game.ts"/>
-
 class Soldier implements IUpdateable{
-    group:Group = null;
+    group:Unit.Group = null;
     leader:BannerMan = null;
     capitol:Capitol = null;
     positionIndex:number = 0;
@@ -49,3 +60,5 @@ class Soldier implements IUpdateable{
 
     }
 }
+
+export = Soldier;

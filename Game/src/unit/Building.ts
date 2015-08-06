@@ -1,13 +1,26 @@
 /// <reference path="./../Game.ts"/>
 ///<reference path="Unit.ts"/>
 
+import Game = require('../Game');
+import Unit = require('./Unit');
+import BlackBoard = require('../tasks/BlackBoard');
+
+import Task = require('../tasks/Task');
+import TakeResource = require('../tasks/actions/TakeResource');
+import MoveTo = require('../tasks/actions/MoveTo');
+import GetColony = require('../tasks/actions/GetColony');
+import GetClosestDropoff = require('../tasks/actions/GetClosestDropoff');
+import GiveResource = require('../tasks/actions/GiveResource');
+
+import Sequence = require('../tasks/composite/Sequence');
+
 /**
  * An extension of the super prototype class.
  */
-class Building extends Unit {
+class Building extends Unit.Unit {
     nextRetIncrease:number = 0;
     refillTime:number = 1000;
-    worker:Unit = null;
+    worker:Unit.Unit = null;
     maxRetaliationStrength:number = 5;
     currRetaliationStrength:number = 5;
     retaliationStrengthRate:number = 1;
@@ -28,12 +41,12 @@ class Building extends Unit {
         super.start();
     }
 
-    update(delta):void{
+    update(delta):void {
         super.update(delta);
 
-        if(this.currRetaliationStrength < this.maxRetaliationStrength && this.warGame.game.time.now >= this.nextRetIncrease){
+        if (this.currRetaliationStrength < this.maxRetaliationStrength && this.warGame.game.time.now >= this.nextRetIncrease) {
             this.currRetaliationStrength += this.retaliationStrengthRate;
-            if(this.currRetaliationStrength >= this.maxRetaliationStrength)
+            if (this.currRetaliationStrength >= this.maxRetaliationStrength)
                 this.currRetaliationStrength = this.maxRetaliationStrength;
 
             this.nextRetIncrease = this.warGame.game.time.now + this.retaliationStrengthTime;
@@ -76,3 +89,5 @@ class Building extends Unit {
         return seq;
     };
 }
+
+export = Building;

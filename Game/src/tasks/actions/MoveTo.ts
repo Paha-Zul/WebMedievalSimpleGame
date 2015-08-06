@@ -1,9 +1,11 @@
+///<reference path="../Task.ts"/>
+
+import BlackBoard = require('../BlackBoard');
+import LeafTask = require('../LeafTask');
+
 /**
  * Created by Paha on 7/25/2015.
  */
-
-///<reference path="../Task.ts"/>
-
 class MoveTo extends LeafTask{
     constructor(bb:BlackBoard){
         super(bb);
@@ -29,3 +31,5 @@ class MoveTo extends LeafTask{
 
     }
 }
+
+export = MoveTo;

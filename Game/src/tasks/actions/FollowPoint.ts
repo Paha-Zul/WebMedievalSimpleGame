@@ -45,3 +45,5 @@ class FollowPoint extends LeafTask{
         }
     }
 }
+
+export = FollowPoint;

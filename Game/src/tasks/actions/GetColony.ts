@@ -1,9 +1,11 @@
+///<reference path="../../Game.ts"/>
+
+import LeafTask = require('LeafTask');
+import BlackBoard = require('BlackBoard');
+
 /**
  * Created by Paha on 7/25/2015.
  */
-
-///<reference path="../../Game.ts"/>
-
 class GetColony extends LeafTask{
 
     constructor(bb:BlackBoard) {
@@ -22,3 +24,5 @@ class GetColony extends LeafTask{
         this.getControl().finishWithSuccess();
     }
 }
+
+export = GetColony;

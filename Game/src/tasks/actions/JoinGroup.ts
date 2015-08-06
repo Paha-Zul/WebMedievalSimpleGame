@@ -1,9 +1,17 @@
 ///<reference path="../../Game.ts"/>
 
+import BlackBoard = require('../BlackBoard');
+import LeafTask = require('../LeafTask');
+
+import BannerMan = require('../../components/BannerMan');
+import Soldier = require('../../components/Soldier');
+
+import Unit = require('../../unit/Unit');
+import Peasant = require('../../unit/Peasant');
+
 /**
  * Created by Paha on 8/3/2015.
  */
-
 class JoinGroup extends LeafTask{
 
     constructor(bb:BlackBoard) {
@@ -39,3 +47,5 @@ class JoinGroup extends LeafTask{
         super.end();
     }
 }
+
+export = JoinGroup;

@@ -1,12 +1,14 @@
+
+///<reference path='../Game.ts'/>
+import _Game = require('../Game');
+import _Building = require('./Building');
+
 /**
  * Created by Paha on 7/27/2015.
  */
+class House extends _Building{
 
-///<reference path='../Game.ts'/>
-
-class House extends Building{
-
-    constructor(x:number, y:number, warGame:Game, playerName:string, sprite:Phaser.Sprite, width?:number, height?:number) {
+    constructor(x:number, y:number, warGame:_Game, playerName:string, sprite:Phaser.Sprite, width?:number, height?:number) {
         super(x, y, warGame, playerName, sprite, width, height);
     }
 
@@ -30,3 +32,5 @@ class House extends Building{
         this.worker.destroy();
     }
 }
+
+export = House;

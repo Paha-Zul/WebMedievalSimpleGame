@@ -2,13 +2,17 @@
  * Created by Paha on 7/27/2015.
  */
 
+import _Game = require('../Game');
+import _Building = require('./Building');
+
+
 ///<reference path='../Game.ts'/>
 
-class Farm extends Building{
+class Farm extends _Building{
     counter:number=0;
     requestedPickup:boolean = false;
 
-    constructor(x:number, y:number, warGame:Game, playerName:string, sprite:Phaser.Sprite, width:number, height:number) {
+    constructor(x:number, y:number, warGame:_Game, playerName:string, sprite:Phaser.Sprite, width:number, height:number) {
         super(x, y, warGame, playerName, sprite, width, height);
     }
 
@@ -39,3 +43,5 @@ class Farm extends Building{
         }
     }
 }
+
+export = Farm;

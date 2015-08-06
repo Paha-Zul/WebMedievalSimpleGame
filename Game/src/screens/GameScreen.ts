@@ -4,6 +4,12 @@
  * Created by Paha on 8/4/2015.
  */
 
+import _Game = require('Game');
+import _Capitol = require('../unit/Capitol');
+import PM = require('../util/PlayerManager');
+import PlayerManager = PM.PlayerManager
+import Player = PM.Player;
+
 class GameScreen implements IScreen{
     foodText:Phaser.Text;
     colonyText:Phaser.Text;
@@ -23,7 +29,7 @@ class GameScreen implements IScreen{
 
     buildingType:string = '';
 
-    constructor(private warGame:Game) {
+    constructor(private warGame:_Game) {
 
     }
 
@@ -156,7 +162,7 @@ class GameScreen implements IScreen{
         var numHouses = 10;
         var numBarracks = 2;
 
-        var capitol = new Capitol(start.x, start.y, this.warGame, playerName, this.warGame.buildingGroup.create(0, 0, 'capitol'), 100, 100);
+        var capitol = new _Capitol(start.x, start.y, this.warGame, playerName, this.warGame.buildingGroup.create(0, 0, 'capitol'), 100, 100);
         var player:Player = PlayerManager.getPlayer(playerName);
         player.capitol = capitol;
 
@@ -238,5 +244,6 @@ class GameScreen implements IScreen{
             this.preview.alpha = 0.5;
         }
     }
-
 }
+
+export = GameScreen;

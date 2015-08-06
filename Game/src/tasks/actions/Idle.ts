@@ -1,9 +1,11 @@
+///<reference path="../../Game.ts"/>
+
+import BlackBoard = require('BlackBoard');
+import LeafTask = require('LeafTask');
+
 /**
  * Created by Paha on 7/25/2015.
  */
-
-///<reference path="../../Game.ts"/>
-
 class Idle extends LeafTask{
     timer:Phaser.TimerEvent;
 
@@ -29,3 +31,5 @@ class Idle extends LeafTask{
         this.control.finishWithSuccess();
     }
 }
+
+export = Idle;

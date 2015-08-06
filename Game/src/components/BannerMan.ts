@@ -1,5 +1,23 @@
 /// <reference path="./../Game.ts"/>
 
+import Unit = require("../unit/Unit");
+import Keep = require("../unit/Keep");
+import Capitol = require("../unit/Capitol");
+import Peasant = require("../unit/Peasant");
+
+import MoveTo = require("../tasks/actions/MoveTo");
+import FindNearestEnemyUnit = require("../tasks/actions/FindNearestEnemyUnit");
+import WaitForGroupSize = require("../tasks/actions/WaitForGroupSize");
+import FollowWaypoint = require("../tasks/actions/FollowWaypoint");
+import AttackUnit = require("../tasks/actions/AttackUnit");
+import Idle = require("../tasks/actions/Idle");
+
+import Parallel = require("../tasks/composite/Parallel");
+import Repeat = require("../tasks/decorators/Repeat");
+import Sequence = require("../tasks/composite/Sequence");
+
+import Task = require("../tasks/Task");
+
 /**
  * Created by Paha on 7/29/2015.
  *
@@ -8,7 +26,7 @@
  * to the soldiers.
  */
 class BannerMan implements IUpdateable{
-    group:Group = null;
+    group:Unit.Group = null;
     capitol:Capitol = null;
     sizeToAttack = 10;
     keep:Keep = null;
@@ -179,3 +197,5 @@ class BannerMan implements IUpdateable{
         this.flag.destroy(true);
     }
 }
+
+export = BannerMan;

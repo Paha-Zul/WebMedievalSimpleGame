@@ -1,10 +1,14 @@
 ///<reference path="../control/ParentTaskController.ts"/>
+///<reference path="../../Game.ts"/>
+
+import Task = require('Task');
+import BlackBoard = require('BlackBoard');
+import ParentTaskController = require('control/ParentTaskController');
+import TaskController = require('control/TaskController');
+
 /**
  * Created by Paha on 7/25/2015.
  */
-
-///<reference path="../../Game.ts"/>
-
 class ParentTask extends Task{
     public control:ParentTaskController;
     protected index:number=0;
@@ -39,3 +43,5 @@ class ParentTask extends Task{
 
     }
 }
+
+export = ParentTask;

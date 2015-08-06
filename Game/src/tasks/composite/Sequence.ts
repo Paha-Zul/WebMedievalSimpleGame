@@ -1,9 +1,11 @@
+///<reference path="../../Game.ts"/>
+
+import BlackBoard = require('../BlackBoard');
+import ParentTask = require('./ParentTask');
+
 /**
  * Created by Paha on 7/25/2015.
  */
-
-    ///<reference path="../../Game.ts"/>
-
 class Sequence extends ParentTask{
 
     constructor(bb:BlackBoard) {
@@ -50,3 +52,5 @@ class Sequence extends ParentTask{
             this.getControl().finishWithFailure();
     }
 }
+
+export = Sequence;

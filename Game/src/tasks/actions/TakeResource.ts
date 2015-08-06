@@ -1,9 +1,11 @@
+///<reference path="../../Game.ts"/>
+
+import LeafTask = require('LeafTask');
+import BlackBoard = require('BlackBoard');
+
 /**
  * Created by Paha on 7/25/2015.
  */
-
-///<reference path="../../Game.ts"/>
-
 class TakeResource extends LeafTask{
 
     constructor(bb:BlackBoard) {
@@ -26,3 +28,5 @@ class TakeResource extends LeafTask{
         this.getControl().finishWithSuccess();
     }
 }
+
+export = TakeResource;

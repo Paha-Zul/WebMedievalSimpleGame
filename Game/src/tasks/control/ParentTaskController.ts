@@ -1,5 +1,8 @@
 ///<reference path="../../Game.ts"/>
 
+import TaskController = require('TaskController');
+import Task = require('Task');
+
 /**
  * Created by Paha on 7/25/2015.
  */
@@ -26,3 +29,5 @@ class ParentTaskController extends TaskController{
         this.tasks.forEach(task => task.getControl().reset());
     }
 }
+
+export = ParentTaskController;

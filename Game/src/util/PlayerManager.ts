@@ -1,6 +1,8 @@
 ///<reference path="../Game.ts"/>
 
-class PlayerManager{
+import Capitol = require('../unit/Capitol');
+
+export class PlayerManager{
     public static players:Player[] = [];
     private static playerID:number = 0;
 
@@ -14,7 +16,7 @@ class PlayerManager{
 
 }
 
-class Player{
+export class Player{
     public color;
 
     constructor(public name:String, public controller:String, public capitol:Capitol, public id:number){

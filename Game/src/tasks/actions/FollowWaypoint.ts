@@ -1,9 +1,11 @@
+///<reference path="../../Game.ts"/>
+
+import LeafTask = require('LeafTask');
+import BlackBoard = require('BlackBoard');
+
 /**
  * Created by Paha on 7/25/2015.
  */
-
-///<reference path="../../Game.ts"/>
-
 class FollowWaypoint extends LeafTask{
     counter:number = 0;
     timeCounter:number = 0;
@@ -37,3 +39,5 @@ class FollowWaypoint extends LeafTask{
         return super.end();
     }
 }
+
+export = FollowWaypoint;

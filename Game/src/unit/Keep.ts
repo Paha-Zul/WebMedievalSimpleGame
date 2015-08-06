@@ -1,17 +1,21 @@
 ///<reference path="../Game.ts"/>
 
+import _Game = require('../Game');
+import _Building = require('./Building');
+import _BannerMan = require('../components/BannerMan');
+import _Peasant = require('./Peasant');
+
 /**
  * Created by Paha on 8/3/2015.
  */
-
-class Keep extends Building implements IDropoffPoint{
-    bannerMan:BannerMan = null;
+class Keep extends _Building implements IDropoffPoint{
+    bannerMan:_BannerMan = null;
     nextSpawnTime:number = 0;
     respawnTime:number = 10000;
     requestedPickup:boolean = false;
     bannermanCost:number = 25;
 
-    constructor(x:number, y:number, warGame:Game, playerName:string, sprite:Phaser.Sprite, width?:number, height?:number) {
+    constructor(x:number, y:number, warGame:_Game, playerName:string, sprite:Phaser.Sprite, width?:number, height?:number) {
         super(x, y, warGame, playerName, sprite, width, height);
     }
 
@@ -42,7 +46,7 @@ class Keep extends Building implements IDropoffPoint{
                 this.nextSpawnTime = -1;
             }
         }else if(this.worker !== null && !this.worker.toBeDestroyed && this.bannerMan == null){
-            this.bannerMan = (<Peasant>this.worker).getBannerMan();
+            this.bannerMan = (<_Peasant>this.worker).getBannerMan();
             this.bannerMan.keep = this;
         }
 
@@ -58,3 +62,5 @@ class Keep extends Building implements IDropoffPoint{
         this.capitol.removeFromDropoffList(this);
     }
 }
+
+export = Keep;

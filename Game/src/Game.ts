@@ -56,15 +56,10 @@
 /// <reference path="tasks/control/TaskController.ts"/>
 /// <reference path="tasks/control/ParentTaskController.ts"/>
 
+
 'use strict';
 class Game {
-
-    game:Phaser.Game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
-        preload: this.preload,
-        create: this.create,
-        update: this.update,
-        render: this.render
-    });
+    game:Phaser.Game = null;
 
     up:Phaser.Key;
     down:Phaser.Key;
@@ -79,7 +74,9 @@ class Game {
     currScreen:IScreen = null;
     cursors:Phaser.CursorKeys;
 
-    constructor(){}
+    constructor(){
+
+    }
 
     preload() {
         this.game.load.image('normal', 'Game/img/normal_button.png');
@@ -106,13 +103,13 @@ class Game {
         this.game.stage.disableVisibilityChange = true; //Apparently turns off pausing while in the background...
     }
 
-    create() {
+    create = () => {
         this.changeScreen(new MainMenuScreen(this));
-    }
+    };
 
-    update() {
+    update = ()=> {
         if (this.currScreen !== null) this.currScreen.update(this.game.time.physicsElapsedMS)
-    }
+    };
 
     render(){
         //for(var i=0;i<colonyList[0].freePeasantList.length;i++){
@@ -136,4 +133,13 @@ class Game {
 
 }
 
-new Game();
+var warGame:Game = new Game();
+
+var game:Phaser.Game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
+    preload: warGame.preload,
+    create: warGame.create,
+    update: warGame.update,
+    render: warGame.render
+});
+
+warGame.game = game;

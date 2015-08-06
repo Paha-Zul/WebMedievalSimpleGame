@@ -48,13 +48,16 @@
 'use strict';
 var Game = (function () {
     function Game() {
-        this.game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
-            preload: this.preload,
-            create: this.create,
-            update: this.update,
-            render: this.render
-        });
+        var _this = this;
+        this.game = null;
         this.currScreen = null;
+        this.create = function () {
+            _this.changeScreen(new MainMenuScreen(_this));
+        };
+        this.update = function () {
+            if (_this.currScreen !== null)
+                _this.currScreen.update(_this.game.time.physicsElapsedMS);
+        };
     }
     Game.prototype.preload = function () {
         this.game.load.image('normal', 'Game/img/normal_button.png');
@@ -76,13 +79,6 @@ var Game = (function () {
         this.game.stage.backgroundColor = '#DDDDDD';
         this.game.stage.disableVisibilityChange = true; //Apparently turns off pausing while in the background...
     };
-    Game.prototype.create = function () {
-        this.changeScreen(new MainMenuScreen(this));
-    };
-    Game.prototype.update = function () {
-        if (this.currScreen !== null)
-            this.currScreen.update(this.game.time.physicsElapsedMS);
-    };
     Game.prototype.render = function () {
         //for(var i=0;i<colonyList[0].freePeasantList.length;i++){
         //    warGame.debug.body(colonyList[0].freePeasantList[i].sprite);
@@ -103,5 +99,12 @@ var Game = (function () {
     };
     return Game;
 })();
-new Game();
+var warGame = new Game();
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
+    preload: warGame.preload,
+    create: warGame.create,
+    update: warGame.update,
+    render: warGame.render
+});
+warGame.game = game;
 //# sourceMappingURL=Game.js.map

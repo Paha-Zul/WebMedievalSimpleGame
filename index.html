@@ -3,77 +3,14 @@
     <head>
         <meta charset="UTF-8" />
         <title>PahaGames!</title>
-		<script src="/Game/build/require.js"></script>
 		<script src="/socket.io/socket.io.js"></script>
         <script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
         <script src="//cdn.jsdelivr.net/phaser/2.4.2/phaser.min.js"></script>
 
-        <script src="Game/src/Game.js"></script>
-        <script src="Game/src/unit/Unit.js"></script>
-        <script src="Game/src/unit/Capitol.js"></script>
-        <script src="Game/src/unit/Building.js"></script>
-        <script src="Game/src/unit/House.js"></script>
-        <script src="Game/src/unit/Farm.js"></script>
-        <script src="Game/src/unit/Barracks.js"></script>
-        <script src="Game/src/unit/Mine.js"></script>
-        <script src="Game/src/unit/Peasant.js"></script>
-        <script src="Game/src/unit/Keep.js"></script>
-
-        <script src="Game/src/components/Soldier.js"></script>
-        <script src="Game/src/components/BannerMan.js"></script>
-
-        <script src="Game/src/util/Helper.js"></script>
-        <script src="Game/src/util/Behaviours.js"></script>
-        <script src="Game/src/util/CircularQueue.js"></script>
-        <script src="Game/src/util/PlayerManager.js"></script>
-
-        <!-- General task stuff -->
-        <script src="Game/src/tasks/BlackBoard.js"></script>
-        <script src="Game/src/tasks/Task.js"></script>
-        <script src="Game/src/tasks/LeafTask.js"></script>
-
-        <script src="Game/src/interfaces/IPickupable.js"></script>
-        <script src="Game/src/interfaces/IScreen.js"></script>
-
-        <script src="Game/src/screens/MainMenuScreen.js"></script>
-        <script src="Game/src/screens/GameScreen.js"></script>
-
-        <!-- action tasks -->
-        <script src="Game/src/tasks/actions/MoveTo.js"></script>
-        <script src="Game/src/tasks/actions/FollowWaypoint.js"></script>
-        <script src="Game/src/tasks/actions/FollowPointRelativeToTarget.js"></script>
-        <script src="Game/src/tasks/actions/GetRandomBuilding.js"></script>
-        <script src="Game/src/tasks/actions/GetColony.js"></script>
-        <script src="Game/src/tasks/actions/TakeResource.js"></script>
-        <script src="Game/src/tasks/actions/GiveResource.js"></script>
-        <script src="Game/src/tasks/actions/Idle.js"></script>
-        <script src="Game/src/tasks/actions/RandomLocation.js"></script>
-        <script src="Game/src/tasks/actions/FindNearestEnemyUnit.js"></script>
-        <script src="Game/src/tasks/actions/AttackUnit.js"></script>
-        <script src="Game/src/tasks/actions/FindNearestGroup.js"></script>
-        <script src="Game/src/tasks/actions/JoinGroup.js"></script>
-        <script src="Game/src/tasks/actions/WaitForGroupSize.js"></script>
-        <script src="Game/src/tasks/actions/GetClosestDropoff.js"></script>
-
-        <!-- composite tasks -->
-        <script src="Game/src/tasks/composite/ParentTask.js"></script>
-        <script src="Game/src/tasks/composite/Sequence.js"></script>
-        <script src="Game/src/tasks/composite/Parallel.js"></script>
-
-        <script src="Game/src/tasks/decorators/TaskDecorator.js"></script>
-        <script src="Game/src/tasks/decorators/AlwaysTrue.js"></script>
-        <script src="Game/src/tasks/decorators/Repeat.js"></script>
-
-        <!-- task control stuff -->
-        <script src="Game/src/tasks/control/TaskController.js"></script>
-        <script src="Game/src/tasks/control/ParentTaskController.js"></script>
+        <script src="Game/public/bundle.js"></script>
 
     </head>
     <body>
 
-    <script>
-		var socket = io();
-	</script>
-	
     </body>
 </html>

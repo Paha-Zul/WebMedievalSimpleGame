@@ -1,7 +1,7 @@
 ///<reference path="../../Game.ts"/>
 
-import TaskController = require('TaskController');
-import Task = require('Task');
+import TaskController = require('./TaskController');
+import Task = require('../Task');
 
 /**
  * Created by Paha on 7/25/2015.

@@ -1,7 +1,7 @@
 ///<reference path="../../Game.ts"/>
 
-import LeafTask = require('LeafTask');
-import BlackBoard = require('BlackBoard');
+import LeafTask = require('../LeafTask');
+import BlackBoard = require('../BlackBoard');
 import U = require('../../unit/Unit');
 import Building = require('../../unit/Building');
 import Peasant = require('../../unit/Peasant');

@@ -1,8 +1,6 @@
-/**
- * Created by Paha on 7/25/2015.
- */
 
 /**
+ * Created by Paha on 7/25/2015.
  * Circular Queue implementation so we can remove the cost
  * of splicing arrays.
  */
@@ -53,3 +51,5 @@ class CircularQueue<T>{
         return this.currIndex == this.startIndex;
     }
 }
+
+export = CircularQueue;

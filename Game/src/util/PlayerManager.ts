@@ -1,6 +1,8 @@
 ///<reference path="../Game.ts"/>
 
 import Capitol = require('../unit/Capitol');
+import Helper = require('../util/Helper');
+
 
 export class PlayerManager{
     public static players:Player[] = [];
@@ -20,6 +22,6 @@ export class Player{
     public color;
 
     constructor(public name:String, public controller:String, public capitol:Capitol, public id:number){
-        this.color = RGBtoHEX(~~(Math.random()*255), ~~(Math.random()*255), ~~(Math.random()*255));
+        this.color = Helper.RGBtoHEX(~~(Math.random()*255), ~~(Math.random()*255), ~~(Math.random()*255));
     }
 }

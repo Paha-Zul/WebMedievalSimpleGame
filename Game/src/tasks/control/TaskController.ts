@@ -1,11 +1,11 @@
+///<reference path="../../Game.ts"/>
+
+import Task = require('../Task');
+
+
 /**
  * Created by Paha on 7/25/2015.
  */
-
-import Task = require('Task');
-
-///<reference path="../../Game.ts"/>
-
 class TaskController{
     started:boolean = false;
     finished:boolean = false;

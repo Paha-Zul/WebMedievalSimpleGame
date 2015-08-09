@@ -2,8 +2,8 @@
 
 import BannerMan = require('../../components/BannerMan');
 import Peasant = require('../../unit/Peasant');
-import BlackBoard = require('BlackBoard');
-import LeafTask = require('LeafTask');
+import BlackBoard = require('../BlackBoard');
+import LeafTask = require('../LeafTask');
 
 /**
  * Created by Paha on 8/3/2015.

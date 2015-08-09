@@ -1,7 +1,7 @@
 ///<reference path="../../Game.ts"/>
 
-import BlackBoard = require('BlackBoard');
-import LeafTask = require('LeafTask');
+import BlackBoard = require('../BlackBoard');
+import LeafTask = require('../LeafTask');
 
 /**
  * Created by Paha on 7/25/2015.

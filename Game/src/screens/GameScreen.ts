@@ -4,7 +4,7 @@
  * Created by Paha on 8/4/2015.
  */
 
-import _Game = require('Game');
+import _Game = require('../Game');
 import _Capitol = require('../unit/Capitol');
 import PM = require('../util/PlayerManager');
 import PlayerManager = PM.PlayerManager
@@ -33,7 +33,7 @@ class GameScreen implements IScreen{
 
     }
 
-    start():void {
+    start = ():void => {
         this.warGame.game.physics.startSystem(Phaser.Physics.ARCADE);
         this.warGame.game.world.setBounds(0,0,2000,2000);
 
@@ -97,9 +97,9 @@ class GameScreen implements IScreen{
         this.warGame.cursors = this.warGame.game.input.keyboard.createCursorKeys();
 
         //warGame.add.plugin(Phaser.Plugin.Debug);
-    }
+    };
 
-    update(delta):void {
+    update = (delta):void => {
         var player:Player = PlayerManager.getPlayer("player1");
 
         for(var p in PlayerManager.players)
@@ -143,11 +143,11 @@ class GameScreen implements IScreen{
 
         if(this.preview !== null)
             this.preview.position.set(this.warGame.game.input.worldX*(1/this.warGame.game.world.scale.x), this.warGame.game.input.worldY*(1/this.warGame.game.world.scale.y));
-    }
+    };
 
-    destroy():void {
+    destroy = ():void => {
 
-    }
+    };
 
     startExample(start:Phaser.Point, playerName:string, multiplier?:number) {
         /*

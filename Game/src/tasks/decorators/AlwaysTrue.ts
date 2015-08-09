@@ -1,7 +1,7 @@
 ///<reference path="../../Game.ts"/>
 
-import TaskDecorator = require('TaskDecorator');
-import BlackBoard = require('BlackBoard');
+import TaskDecorator = require('./TaskDecorator');
+import BlackBoard = require('../BlackBoard');
 
 /**
  * Created by Paha on 8/2/2015.

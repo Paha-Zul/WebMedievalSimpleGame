@@ -9,6 +9,7 @@ import _Farm = require('./Farm');
 import _Mine = require('./Mine');
 import _Keep = require('./Keep');
 import _Barracks = require('./Barracks');
+import CircularQueue = require('../util/CircularQueue');
 import Task = require('../tasks/Task');
 import PM = require('../util/PlayerManager');
 import PlayerManager = PM.PlayerManager

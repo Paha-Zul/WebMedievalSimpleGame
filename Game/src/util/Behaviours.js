@@ -1,4 +1,5 @@
 /// <reference path="./../Game.ts"/>
+var Helper = require('../util/Helper');
 /**
  * Created by Paha on 7/23/2015.
  */
@@ -14,7 +15,8 @@ function transfer(unit, disToTarget, disToStop) {
         //If we are inside the range to stop, null the target and flip the flag.
         if (disToTarget <= disToStop) {
             if (unit.target.type === 'buildingType') {
-                unit.resources = takeResource(unit.target);
+                //TODO Wrong don't use this function!!
+                unit.resources = Helper.takeResource(unit.target);
             }
             else if (unit.target.type === 'colony') {
                 unit.target.food += unit.resources;

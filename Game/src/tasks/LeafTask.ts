@@ -1,8 +1,8 @@
 ///<reference path="Task.ts"/>
 
-import BlackBoard = require('BlackBoard');
-import Task = require('Task');
-import TaskController = require('control/TaskController');
+import BlackBoard = require('./BlackBoard');
+import Task = require('./Task');
+import TaskController = require('./control/TaskController');
 
 /**
  * Created by Paha on 7/25/2015.

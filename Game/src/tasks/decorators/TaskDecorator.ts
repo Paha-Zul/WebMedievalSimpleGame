@@ -1,8 +1,8 @@
 ///<reference path="../../Game.ts"/>
 
 import TaskController = require('../control/TaskController');
-import BlackBoard = require('BlackBoard');
-import Task = require('Task');
+import BlackBoard = require('../BlackBoard');
+import Task = require('../Task');
 
 /**
  * Created by Paha on 8/2/2015.

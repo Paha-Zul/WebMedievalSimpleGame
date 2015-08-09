@@ -40,6 +40,7 @@ export class Unit {
     capitol:Capitol;
     toBeDestroyed:boolean = false;
     player:Player = null;
+    id:number = 0;
 
     constructor(public x:number, public y:number, public warGame:Game, public playerName:string, public sprite:Phaser.Sprite, public width?:number, public height?:number) {
         this.width = width || 10;
@@ -52,6 +53,10 @@ export class Unit {
         this.blackBoard.myPlayer = this.player = PlayerManager.getPlayer(this.playerName);
         this.blackBoard.game = warGame;
         this.capitol = this.blackBoard.myPlayer.capitol;
+
+        //Create ID and add it to the map (maps can only use strings?)
+        this.id = ~~(Math.random()*Number.MAX_VALUE);
+        Game.giantMap[''+this.id] = this;
     }
 
     start():void {

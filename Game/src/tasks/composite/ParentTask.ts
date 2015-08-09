@@ -1,10 +1,10 @@
 ///<reference path="../control/ParentTaskController.ts"/>
 ///<reference path="../../Game.ts"/>
 
-import Task = require('Task');
-import BlackBoard = require('BlackBoard');
-import ParentTaskController = require('control/ParentTaskController');
-import TaskController = require('control/TaskController');
+import Task = require('../Task');
+import BlackBoard = require('../BlackBoard');
+import ParentTaskController = require('../control/ParentTaskController');
+import TaskController = require('../control/TaskController');
 
 /**
  * Created by Paha on 7/25/2015.

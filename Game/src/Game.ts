@@ -55,38 +55,23 @@
 /// <reference path="tasks/control/TaskController.ts"/>
 /// <reference path="tasks/control/ParentTaskController.ts"/>
 
-import io = require('socket.io');
-var socket = io('http://localhost');
-socket.on('such', function(data:any){
-    console.log('Okay');
-});
+//This will be set by the node.js server. Otherwise, it will be undefined. Handle this in the constructor of the game!
+declare var isServer;
+
+var io = require('socket.io-client');
 
 //Screens
-import GameScreen = require('./screens/GameScreen');
 import MainMenuScreen = require('./screens/MainMenuScreen');
-
-//Units
-import Unit = require('./unit/Unit');
-import Building = require('./unit/Building');
-import Barracks = require('./unit/Barracks');
-import Capitol = require('./unit/Capitol');
-import Farm = require('./unit/Farm');
-import House = require('./unit/House');
-import Mine = require('./unit/Mine');
-import Keep = require('./unit/Keep');
 
 //Task stuff
 import BlackBoard = require('./tasks/BlackBoard');
+import Unit = require('./unit/Unit');
 
 'use strict';
 class Game {
+    game:Phaser.Game = null;
 
-    game:Phaser.Game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
-        preload: this.preload,
-        create: this.create,
-        update: this.update,
-        render: this.render
-    });
+    socket:SocketIO.Socket = io('http://localhost:3000');
 
     up:Phaser.Key;
     down:Phaser.Key;
@@ -101,9 +86,22 @@ class Game {
     currScreen:IScreen = null;
     cursors:Phaser.CursorKeys;
 
-    constructor(){}
+    static giantMap:Unit.Unit[] = [];
 
-    preload() {
+    constructor(public isServer:boolean){
+        this.isServer = isServer || false;
+
+        if(!this.isServer){
+            this.game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
+                preload: warGame.preload,
+                create: warGame.create,
+                update: warGame.update,
+                render: warGame.render
+            });
+        }
+    }
+
+    preload = () => {
         this.game.load.image('normal', 'Game/img/normal_button.png');
         this.game.load.image('war', 'Game/img/war_button.png');
         this.game.load.image('house', 'Game/img/house.png');
@@ -126,17 +124,17 @@ class Game {
 
         this.game.stage.backgroundColor = '#DDDDDD';
         this.game.stage.disableVisibilityChange = true; //Apparently turns off pausing while in the background...
-    }
+    };
 
-    create() {
+    create = () => {
         this.changeScreen(new MainMenuScreen(this));
-    }
+    };
 
-    update() {
+    update = () => {
         if (this.currScreen !== null) this.currScreen.update(this.game.time.physicsElapsedMS)
-    }
+    };
 
-    render(){
+    render = () => {
         //for(var i=0;i<colonyList[0].freePeasantList.length;i++){
         //    warGame.debug.body(colonyList[0].freePeasantList[i].sprite);
         //}
@@ -148,15 +146,16 @@ class Game {
         //        warGame.debug.body(player.capitol.freePeasantList[i].sprite);
         //    }
         //}
-    }
+    };
 
-    changeScreen(screen:IScreen) {
+    changeScreen = (screen:IScreen) => {
         if (this.currScreen !== null) this.currScreen.destroy();
         this.currScreen = screen;
         this.currScreen.start();
-    }
+    };
 
 }
 
-new Game();
+var warGame = new Game(isServer);
+
 export = Game;

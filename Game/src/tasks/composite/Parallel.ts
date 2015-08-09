@@ -1,8 +1,8 @@
 ///<reference path="../../Game.ts"/>
 
-import ParentTask = require('ParentTask');
-import Task = require('Task');
-import BlackBoard = require('BlackBoard');
+import ParentTask = require('./ParentTask');
+import Task = require('../Task');
+import BlackBoard = require('../BlackBoard');
 
 /**
  * Created by Paha on 8/2/2015.

@@ -2,8 +2,8 @@
 ///<reference path="BlackBoard.ts"/>
 ///<reference path="../Game.ts"/>
 
-import BlackBoard = require('BlackBoard');
-import TaskController = require('control/TaskController');
+import BlackBoard = require('./BlackBoard');
+import TaskController = require('./control/TaskController');
 
 /**
  * Created by Paha on 7/24/2015.

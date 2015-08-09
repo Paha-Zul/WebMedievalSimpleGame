@@ -1,10 +1,12 @@
 ///<reference path="../LeafTask.ts"/>
+///<reference path="../../Game.ts"/>
+
+import LeafTask = require('../LeafTask');
+import BlackBoard = require('../BlackBoard');
+
 /**
  * Created by Paha on 7/25/2015.
  */
-
-///<reference path="../../Game.ts"/>
-
 class FollowPoint extends LeafTask{
     constructor(bb:BlackBoard) {
         super(bb);

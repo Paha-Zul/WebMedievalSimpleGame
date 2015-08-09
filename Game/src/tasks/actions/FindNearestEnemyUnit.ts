@@ -1,7 +1,7 @@
 ///<reference path="../../Game.ts"/>
 
-import BlackBoard = require("BlackBoard");
-import LeafTask = require("LeafTask");
+import BlackBoard = require("../BlackBoard");
+import LeafTask = require("../LeafTask");
 import U = require("../../unit/Unit");
 import Unit = U.Unit;
 import PM = require('../../util/PlayerManager');

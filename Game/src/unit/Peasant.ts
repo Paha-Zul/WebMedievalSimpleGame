@@ -4,6 +4,7 @@ import _Game = require('../Game');
 import Unit = require('./Unit');
 import BannerMan = require('../components/BannerMan');
 import Soldier = require('../components/Soldier');
+import Helper = require('../util/Helper');
 
 /**
  * Created by Paha on 7/29/2015.
@@ -22,7 +23,7 @@ class Peasant extends Unit.Unit{
         super.start();
         this.type ='peasant';
 
-        this.sprite.loadTexture(makeSquareSprite(this.warGame.game, 10,10));
+        this.sprite.loadTexture(Helper.makeSquareSprite(this.warGame.game, 10,10));
 
         if(this.name === 'peasant'){
 

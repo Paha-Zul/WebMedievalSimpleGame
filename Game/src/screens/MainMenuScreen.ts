@@ -4,8 +4,8 @@
  * Created by Paha on 8/4/2015.
  */
 
-import _Game = require('Game');
-import _GameScreen = require('GameScreen');
+import _Game = require('../Game');
+import _GameScreen = require('./GameScreen');
 
 class MainMenuScreen implements IScreen{
     singleplayerButton:Phaser.Button;

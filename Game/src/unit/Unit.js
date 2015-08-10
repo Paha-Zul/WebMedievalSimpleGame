@@ -1,5 +1,4 @@
 /// <reference path="./../Game.ts"/>
-var Game = require('../Game');
 var BlackBoard = require('../tasks/BlackBoard');
 var Sequence = require('../tasks/composite/Sequence');
 var Idle = require('../tasks/actions/Idle');
@@ -59,7 +58,8 @@ var Unit = (function () {
         this.capitol = this.blackBoard.myPlayer.capitol;
         //Create ID and add it to the map (maps can only use strings?)
         this.id = ~~(Math.random() * Number.MAX_VALUE);
-        Game.giantMap['' + this.id] = this;
+        //TODO Causing stuff to crash.
+        //Game.giantMap[''+this.id] = this;
     }
     Unit.prototype.start = function () {
         this.started = true;

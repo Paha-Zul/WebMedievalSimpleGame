@@ -1,6 +1,7 @@
 /// <reference path="./../build/node.d.ts"/>
 /// <reference path="./../build/socket.io.d.ts"/>
 /// <reference path="./../build/phaser.d.ts"/>
+/// <reference path="./../build/socket.io-client.d.ts"/>
 
 /// <reference path="./unit/Unit.ts"/>
 /// <reference path="./unit/Capitol.ts"/>
@@ -56,9 +57,9 @@
 /// <reference path="tasks/control/ParentTaskController.ts"/>
 
 //This will be set by the node.js server. Otherwise, it will be undefined. Handle this in the constructor of the game!
-declare var isServer;
+var isServer:boolean = false;
 
-var io = require('socket.io-client');
+import sockio = require('socket.io-client');
 
 //Screens
 import MainMenuScreen = require('./screens/MainMenuScreen');
@@ -71,7 +72,7 @@ import Unit = require('./unit/Unit');
 class Game {
     game:Phaser.Game = null;
 
-    socket:SocketIO.Socket = io('http://localhost:3000');
+    socket = sockio.connect('http://localhost:3000');
 
     up:Phaser.Key;
     down:Phaser.Key;
@@ -93,10 +94,10 @@ class Game {
 
         if(!this.isServer){
             this.game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
-                preload: warGame.preload,
-                create: warGame.create,
-                update: warGame.update,
-                render: warGame.render
+                preload: this.preload,
+                create: this.create,
+                update: this.update,
+                render: this.render
             });
         }
     }

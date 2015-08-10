@@ -56,7 +56,9 @@ export class Unit {
 
         //Create ID and add it to the map (maps can only use strings?)
         this.id = ~~(Math.random()*Number.MAX_VALUE);
-        Game.giantMap[''+this.id] = this;
+
+        //TODO Causing stuff to crash.
+        //Game.giantMap[''+this.id] = this;
     }
 
     start():void {

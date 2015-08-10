@@ -38,8 +38,8 @@ class GameScreen implements IScreen{
         this.warGame.game.world.setBounds(0,0,2000,2000);
 
         PlayerManager.addPlayer("player1", "human", null);
-        PlayerManager.addPlayer("player2", "ai", null);
-        PlayerManager.addPlayer("player3", "ai", null);
+        //PlayerManager.addPlayer("player2", "ai", null);
+        //PlayerManager.addPlayer("player3", "ai", null);
 
         this.warGame.buildingGroup = this.warGame.game.add.group();
         this.warGame.peasantGroup = this.warGame.game.add.group();
@@ -47,8 +47,8 @@ class GameScreen implements IScreen{
         this.warGame.buttonGroup = this.warGame.game.add.group();
 
         this.startExample(new Phaser.Point(500,500), 'player1', 1);
-        this.startExample(new Phaser.Point(1100,1700), 'player2', 1);
-        this.startExample(new Phaser.Point(1900,500), 'player3', 1);
+        //this.startExample(new Phaser.Point(1100,1700), 'player2', 1);
+        //this.startExample(new Phaser.Point(1900,500), 'player3', 1);
         this.warGame.game.camera.x = PlayerManager.getPlayer('player1').capitol.x - this.warGame.game.camera.width/2;
         this.warGame.game.camera.y = PlayerManager.getPlayer('player1').capitol.y - this.warGame.game.camera.height/2;
 

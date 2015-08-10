@@ -1,9 +1,9 @@
 ///<reference path="../../Game.ts"/>
 
-import BannerMan = require('../../components/BannerMan');
-import Peasant = require('../../unit/Peasant');
-import BlackBoard = require('../BlackBoard');
-import LeafTask = require('../LeafTask');
+import BannerMan from '../../components/BannerMan';
+import Peasant from '../../unit/Peasant';
+import BlackBoard from '../BlackBoard';
+import LeafTask from '../LeafTask';
 
 /**
  * Created by Paha on 8/3/2015.
@@ -38,4 +38,4 @@ class WaitForGroupSize extends LeafTask{
     }
 }
 
-export = WaitForGroupSize;
+export default WaitForGroupSize;

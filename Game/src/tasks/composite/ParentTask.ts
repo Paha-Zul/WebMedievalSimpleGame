@@ -1,10 +1,10 @@
 ///<reference path="../control/ParentTaskController.ts"/>
 ///<reference path="../../Game.ts"/>
 
-import Task = require('../Task');
-import BlackBoard = require('../BlackBoard');
-import ParentTaskController = require('../control/ParentTaskController');
-import TaskController = require('../control/TaskController');
+import Task from '../Task';
+import BlackBoard from '../BlackBoard';
+import ParentTaskController from '../control/ParentTaskController';
+import TaskController from '../control/TaskController';
 
 /**
  * Created by Paha on 7/25/2015.
@@ -44,4 +44,4 @@ class ParentTask extends Task{
     }
 }
 
-export = ParentTask;
+export default ParentTask;

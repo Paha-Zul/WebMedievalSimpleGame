@@ -1,7 +1,7 @@
 ///<reference path="../../Game.ts"/>
 
-import BlackBoard = require('../BlackBoard');
-import ParentTask = require('./ParentTask');
+import BlackBoard from'../BlackBoard';
+import ParentTask from'./ParentTask';
 
 /**
  * Created by Paha on 7/25/2015.
@@ -53,4 +53,4 @@ class Sequence extends ParentTask{
     }
 }
 
-export = Sequence;
+export default Sequence;

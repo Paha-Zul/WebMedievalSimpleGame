@@ -1,39 +1,37 @@
 /// <reference path="./../Game.ts"/>
 
-import _Game = require('../Game');
-import _Unit = require('./Unit');
-import _Peasant = require('./Peasant');
-import _Building = require('./Building');
-import _House = require('./House');
-import _Farm = require('./Farm');
-import _Mine = require('./Mine');
-import _Keep = require('./Keep');
-import _Barracks = require('./Barracks');
-import CircularQueue = require('../util/CircularQueue');
-import Task = require('../tasks/Task');
-import PM = require('../util/PlayerManager');
-import PlayerManager = PM.PlayerManager
-import Player = PM.Player;
+import Game from '../Game';
+import {Unit, Group} from './Unit';
+import Peasant from './Peasant';
+import Building from './Building';
+import House from './House';
+import Farm from './Farm';
+import Mine from './Mine';
+import Keep from './Keep';
+import Barracks from './Barracks';
+import CircularQueue from '../util/CircularQueue';
+import Task from '../tasks/Task';
+import {PlayerManager, Player} from '../util/PlayerManager';
 
 /**
  * Created by Paha on 7/23/2015.
  *
  * Super prototyping extension of the prototype class.
  */
-class Capitol extends _Unit.Unit{
+class Capitol extends Unit{
     static playerCounter : number;
-    freePeasantList : _Unit.Unit[] = [];
-    workerList : _Unit.Unit[] = [];
-    armyList : _Unit.Unit[] = [];
-    buildingList : _Unit.Unit[] = [];
-    groupList : _Unit.Group[] = [];
-    dropoffList : _Unit.Unit[] = [];
+    freePeasantList : Unit[] = [];
+    workerList : Unit[] = [];
+    armyList : Unit[] = [];
+    buildingList : Unit[] = [];
+    groupList : Group[] = [];
+    dropoffList : Unit[] = [];
     lastResources : number = 0;
     avgResources : number = 0;
     timer : Phaser.TimerEvent;
     taskQueue:CircularQueue<any>;
 
-    constructor(x:number, y:number, warGame:_Game, playerName:string, sprite:Phaser.Sprite, width?:number, height?:number){
+    constructor(x:number, y:number, warGame:Game, playerName:string, sprite:Phaser.Sprite, width?:number, height?:number){
         super(x, y, warGame, playerName, sprite, width, height);
 
         this.timer = this.warGame.game.time.events.loop(Phaser.Timer.SECOND*1, this.calcRate, this);
@@ -54,7 +52,7 @@ class Capitol extends _Unit.Unit{
 
     update(delta){
         super.update(delta);
-        var unit:_Unit.Unit = null;
+        var unit:Unit = null;
 
         var i;
         for(i=0;i<this.freePeasantList.length;i++) {
@@ -95,12 +93,12 @@ class Capitol extends _Unit.Unit{
         }
     }
 
-    addFreePeasant(type:string, x:number, y:number):_Unit.Unit{
+    addFreePeasant(type:string, x:number, y:number):Unit{
         var sprite:Phaser.Sprite = this.warGame.peasantGroup.getFirstDead();
         if(sprite === undefined || sprite === null) sprite = this.warGame.peasantGroup.create(0,0,'');
         else sprite.reset(0,0);
 
-        var unit = new _Peasant(x, y, this.warGame, this.playerName, sprite);
+        var unit = new Peasant(x, y, this.warGame, this.playerName, sprite);
         unit.name = type;
         unit.type = 'humanoid';
         unit.sprite.autoCull = true;
@@ -109,19 +107,19 @@ class Capitol extends _Unit.Unit{
         return unit;
     }
 
-    addBuilding(type:string, x:number, y:number, width?:number, height?:number):_Building{
-        var unit:_Building = null;
+    addBuilding(type:string, x:number, y:number, width?:number, height?:number):Building{
+        var unit:Building = null;
         var sprite:Phaser.Sprite = this.warGame.buildingGroup.getFirstDead();
         if(sprite === undefined || sprite === null)
             sprite = this.warGame.buildingGroup.create(0,0,'');
         else
             sprite.reset(0,0);
 
-        if(type === 'house') unit = new _House(x, y, this.warGame, this.playerName, sprite, width, height);
-        if(type === 'farm') unit = new _Farm(x, y, this.warGame, this.playerName, sprite, width, height);
-        if(type === 'barracks') unit = new _Barracks(x, y, this.warGame, this.playerName, sprite, width, height);
-        if(type === 'mine') unit = new _Mine(x, y, this.warGame, this.playerName, sprite, width, height);
-        if(type === 'keep') unit = new _Keep(x, y, this.warGame, this.playerName, sprite, width, height);
+        if(type === 'house') unit = new House(x, y, this.warGame, this.playerName, sprite, width, height);
+        if(type === 'farm') unit = new Farm(x, y, this.warGame, this.playerName, sprite, width, height);
+        if(type === 'barracks') unit = new Barracks(x, y, this.warGame, this.playerName, sprite, width, height);
+        if(type === 'mine') unit = new Mine(x, y, this.warGame, this.playerName, sprite, width, height);
+        if(type === 'keep') unit = new Keep(x, y, this.warGame, this.playerName, sprite, width, height);
 
         unit.name = type;
         unit.type = 'building';
@@ -131,18 +129,18 @@ class Capitol extends _Unit.Unit{
         return unit;
     }
 
-    addGroup(leader:_Peasant){
-        var group:_Unit.Group = new _Unit.Group(leader);
+    addGroup(leader:Peasant){
+        var group:Group = new Group(leader);
         leader.getBannerMan().group = group;
         this.groupList.push(group);
         return group;
     }
 
-    addToDropoffList(unit:_Unit.Unit):void{
+    addToDropoffList(unit:Unit):void{
         this.dropoffList.push(unit);
     }
 
-    removeFromDropoffList(unit:_Unit.Unit):void{
+    removeFromDropoffList(unit:Unit):void{
         for(var i=0;i<this.dropoffList.length;i++){
             if(this.dropoffList[i] === unit){
                 this.dropoffList.splice(i, 1);
@@ -151,7 +149,7 @@ class Capitol extends _Unit.Unit{
         }
     }
 
-    removeGroup(group:_Unit.Group){
+    removeGroup(group:Group){
         for(var i=0;i<=this.groupList.length;i++)
             if(this.groupList[i] === group){
                 this.groupList.splice(i, 1);
@@ -159,7 +157,7 @@ class Capitol extends _Unit.Unit{
             }
     }
 
-    getGroupList():_Unit.Group[]{
+    getGroupList():Group[]{
         return this.groupList;
     }
 
@@ -198,4 +196,4 @@ class Capitol extends _Unit.Unit{
     }
 }
 
-export = Capitol;
+export default Capitol;

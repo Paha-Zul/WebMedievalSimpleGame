@@ -1,6 +1,6 @@
 ///<reference path="../../Game.ts"/>
 
-import Task = require('../Task');
+import Task from '../Task';
 
 
 /**
@@ -47,4 +47,4 @@ class TaskController{
 
 }
 
-export = TaskController;
+export default TaskController;

@@ -1,8 +1,8 @@
 ///<reference path="../../Game.ts"/>
 
-import ParentTask = require('./ParentTask');
-import Task = require('../Task');
-import BlackBoard = require('../BlackBoard');
+import ParentTask from './ParentTask';
+import Task from '../Task';
+import BlackBoard from '../BlackBoard';
 
 /**
  * Created by Paha on 8/2/2015.
@@ -63,4 +63,4 @@ class Parallel extends ParentTask{
     }
 }
 
-export = Parallel;
+export default Parallel;

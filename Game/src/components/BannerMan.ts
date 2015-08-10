@@ -1,22 +1,22 @@
 /// <reference path="./../Game.ts"/>
 
-import Unit = require("../unit/Unit");
-import Keep = require("../unit/Keep");
-import Capitol = require("../unit/Capitol");
-import Peasant = require("../unit/Peasant");
+import {Unit, Group} from "../unit/Unit";
+import Keep from "../unit/Keep";
+import Capitol from "../unit/Capitol";
+import Peasant from "../unit/Peasant";
 
-import MoveTo = require("../tasks/actions/MoveTo");
-import FindNearestEnemyUnit = require("../tasks/actions/FindNearestEnemyUnit");
-import WaitForGroupSize = require("../tasks/actions/WaitForGroupSize");
-import FollowWaypoint = require("../tasks/actions/FollowWaypoint");
-import AttackUnit = require("../tasks/actions/AttackUnit");
-import Idle = require("../tasks/actions/Idle");
+import MoveTo from "../tasks/actions/MoveTo";
+import FindNearestEnemyUnit from "../tasks/actions/FindNearestEnemyUnit";
+import WaitForGroupSize from "../tasks/actions/WaitForGroupSize";
+import FollowWaypoint from "../tasks/actions/FollowWaypoint";
+import AttackUnit from "../tasks/actions/AttackUnit";
+import Idle from "../tasks/actions/Idle";
 
-import Parallel = require("../tasks/composite/Parallel");
-import Repeat = require("../tasks/decorators/Repeat");
-import Sequence = require("../tasks/composite/Sequence");
+import Parallel from "../tasks/composite/Parallel";
+import Repeat from "../tasks/decorators/Repeat";
+import Sequence from "../tasks/composite/Sequence";
 
-import Task = require("../tasks/Task");
+import Task from "../tasks/Task";
 
 /**
  * Created by Paha on 7/29/2015.
@@ -26,7 +26,7 @@ import Task = require("../tasks/Task");
  * to the soldiers.
  */
 class BannerMan implements IUpdateable{
-    group:Unit.Group = null;
+    group:Group = null;
     capitol:Capitol = null;
     sizeToAttack = 10;
     keep:Keep = null;
@@ -198,4 +198,4 @@ class BannerMan implements IUpdateable{
     }
 }
 
-export = BannerMan;
+export default BannerMan;

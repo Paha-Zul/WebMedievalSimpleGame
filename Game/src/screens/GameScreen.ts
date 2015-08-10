@@ -4,11 +4,9 @@
  * Created by Paha on 8/4/2015.
  */
 
-import _Game = require('../Game');
-import _Capitol = require('../unit/Capitol');
-import PM = require('../util/PlayerManager');
-import PlayerManager = PM.PlayerManager
-import Player = PM.Player;
+import Game from '../Game';
+import Capitol from '../unit/Capitol';
+import {PlayerManager, Player} from '../util/PlayerManager';
 
 class GameScreen implements IScreen{
     foodText:Phaser.Text;
@@ -29,7 +27,7 @@ class GameScreen implements IScreen{
 
     buildingType:string = '';
 
-    constructor(private warGame:_Game) {
+    constructor(private warGame:Game) {
 
     }
 
@@ -38,8 +36,8 @@ class GameScreen implements IScreen{
         this.warGame.game.world.setBounds(0,0,2000,2000);
 
         PlayerManager.addPlayer("player1", "human", null);
-        PlayerManager.addPlayer("player2", "ai", null);
-        PlayerManager.addPlayer("player3", "ai", null);
+        //PlayerManager.addPlayer("player2", "ai", null);
+        //PlayerManager.addPlayer("player3", "ai", null);
 
         this.warGame.buildingGroup = this.warGame.game.add.group();
         this.warGame.peasantGroup = this.warGame.game.add.group();
@@ -47,8 +45,9 @@ class GameScreen implements IScreen{
         this.warGame.buttonGroup = this.warGame.game.add.group();
 
         this.startExample(new Phaser.Point(500,500), 'player1', 1);
-        this.startExample(new Phaser.Point(1100,1700), 'player2', 1);
-        this.startExample(new Phaser.Point(1900,500), 'player3', 1);
+        //this.startExample(new Phaser.Point(1100,1700), 'player2', 1);
+        //this.startExample(new Phaser.Point(1900,500), 'player3', 1);
+
         this.warGame.game.camera.x = PlayerManager.getPlayer('player1').capitol.x - this.warGame.game.camera.width/2;
         this.warGame.game.camera.y = PlayerManager.getPlayer('player1').capitol.y - this.warGame.game.camera.height/2;
 
@@ -154,6 +153,10 @@ class GameScreen implements IScreen{
          * Incredibly ugly prototype code here. Quick and dirty...
          */
 
+        var player:Player = PlayerManager.getPlayer(playerName);
+        if(player === null || player === undefined)
+            return;
+
         multiplier = multiplier || 1;
 
         var numPeasants = 0;
@@ -162,8 +165,7 @@ class GameScreen implements IScreen{
         var numHouses = 10;
         var numBarracks = 2;
 
-        var capitol = new _Capitol(start.x, start.y, this.warGame, playerName, this.warGame.buildingGroup.create(0, 0, 'capitol'), 100, 100);
-        var player:Player = PlayerManager.getPlayer(playerName);
+        var capitol = new Capitol(start.x, start.y, this.warGame, playerName, this.warGame.buildingGroup.create(0, 0, 'capitol'), 100, 100);
         player.capitol = capitol;
 
         var x = capitol.sprite.x, y = capitol.sprite.y;
@@ -246,4 +248,4 @@ class GameScreen implements IScreen{
     }
 }
 
-export = GameScreen;
+export default GameScreen;

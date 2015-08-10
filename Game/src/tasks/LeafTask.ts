@@ -1,8 +1,8 @@
 ///<reference path="Task.ts"/>
 
-import BlackBoard = require('./BlackBoard');
-import Task = require('./Task');
-import TaskController = require('./control/TaskController');
+import BlackBoard from './BlackBoard';
+import Task from './Task';
+import TaskController from './control/TaskController';
 
 /**
  * Created by Paha on 7/25/2015.
@@ -34,4 +34,4 @@ class LeafTask extends Task{
     }
 }
 
-export = LeafTask;
+export default LeafTask;

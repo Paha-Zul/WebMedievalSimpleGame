@@ -1,8 +1,8 @@
 ///<reference path="../../Game.ts"/>
 
-import TaskController = require('../control/TaskController');
-import BlackBoard = require('../BlackBoard');
-import Task = require('../Task');
+import TaskController from '../control/TaskController';
+import BlackBoard from '../BlackBoard';
+import Task from '../Task';
 
 /**
  * Created by Paha on 8/2/2015.
@@ -45,4 +45,4 @@ class TaskDecorator extends Task{
     }
 }
 
-export = TaskDecorator;
+export default TaskDecorator;

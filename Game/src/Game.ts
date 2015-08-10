@@ -55,23 +55,22 @@
 /// <reference path="tasks/control/TaskController.ts"/>
 /// <reference path="tasks/control/ParentTaskController.ts"/>
 
-//This will be set by the node.js server. Otherwise, it will be undefined. Handle this in the constructor of the game!
-declare var isServer;
+var isServer:boolean = false;
 
-var io = require('socket.io-client');
+export var io = require('socket.io-client');
 
 //Screens
-import MainMenuScreen = require('./screens/MainMenuScreen');
+import MainMenuScreen from './screens/MainMenuScreen';
 
 //Task stuff
-import BlackBoard = require('./tasks/BlackBoard');
-import Unit = require('./unit/Unit');
+import BlackBoard from './tasks/BlackBoard';
+import {Unit, Group} from './unit/Unit';
 
 'use strict';
 class Game {
     game:Phaser.Game = null;
 
-    socket:SocketIO.Socket = io('http://localhost:3000');
+    static socket:SocketIO.Socket = io('http://localhost:3000');
 
     up:Phaser.Key;
     down:Phaser.Key;
@@ -86,17 +85,17 @@ class Game {
     currScreen:IScreen = null;
     cursors:Phaser.CursorKeys;
 
-    static giantMap:Unit.Unit[] = [];
+    static giantMap:Unit[] = [];
 
     constructor(public isServer:boolean){
         this.isServer = isServer || false;
 
         if(!this.isServer){
             this.game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
-                preload: warGame.preload,
-                create: warGame.create,
-                update: warGame.update,
-                render: warGame.render
+                preload: this.preload,
+                create: this.create,
+                update: this.update,
+                render: this.render
             });
         }
     }
@@ -158,4 +157,4 @@ class Game {
 
 var warGame = new Game(isServer);
 
-export = Game;
+export default Game;

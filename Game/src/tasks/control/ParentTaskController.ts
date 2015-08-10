@@ -1,7 +1,7 @@
 ///<reference path="../../Game.ts"/>
 
-import TaskController = require('./TaskController');
-import Task = require('../Task');
+import TaskController from './TaskController';
+import Task from '../Task';
 
 /**
  * Created by Paha on 7/25/2015.
@@ -30,4 +30,4 @@ class ParentTaskController extends TaskController{
     }
 }
 
-export = ParentTaskController;
+export default ParentTaskController;

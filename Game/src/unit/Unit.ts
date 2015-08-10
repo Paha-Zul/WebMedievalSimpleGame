@@ -1,21 +1,20 @@
 /// <reference path="./../Game.ts"/>
 
-import Game = require('../Game');
-import Capitol = require('./Capitol');
-import Peasant = require('./Peasant');
-import BlackBoard = require('../tasks/BlackBoard');
+import Game from '../Game';
+import Capitol from './Capitol';
+import Peasant from './Peasant';
+import BlackBoard from '../tasks/BlackBoard';
 
-import Task = require('../tasks/Task');
+import Task from '../tasks/Task';
 
-import Sequence = require('../tasks/composite/Sequence');
-import Idle = require('../tasks/actions/Idle');
-import MoveTo = require('../tasks/actions/MoveTo');
-import RandomLocation = require('../tasks/actions/RandomLocation');
-import FollowPointRelativeToTarget = require('../tasks/actions/FollowPointRelativeToTarget');
+import Sequence from '../tasks/composite/Sequence';
+import Idle from '../tasks/actions/Idle';
+import MoveTo from '../tasks/actions/MoveTo';
+import RandomLocation from '../tasks/actions/RandomLocation';
+import FollowPointRelativeToTarget from '../tasks/actions/FollowPointRelativeToTarget';
 
-import PM = require('../util/PlayerManager');
-import PlayerManager = PM.PlayerManager
-import Player = PM.Player;
+import {PlayerManager, Player} from '../util/PlayerManager';
+import NetworkManager from '../util/NetworkManager';
 
 /**
  * Created by Paha on 7/23/2015.
@@ -57,6 +56,7 @@ export class Unit {
         //Create ID and add it to the map (maps can only use strings?)
         this.id = ~~(Math.random()*Number.MAX_VALUE);
         Game.giantMap[''+this.id] = this;
+        NetworkManager.event('created', 'garbage');
     }
 
     start():void {

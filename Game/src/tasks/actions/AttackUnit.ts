@@ -1,12 +1,10 @@
 ///<reference path="../../Game.ts"/>
 
-import LeafTask = require('../LeafTask');
-import BlackBoard = require('../BlackBoard');
-import U = require('../../unit/Unit');
-import Building = require('../../unit/Building');
-import Peasant = require('../../unit/Peasant');
-import Unit = U.Unit;
-import Group = U.Group;
+import LeafTask from '../LeafTask';
+import BlackBoard from '../BlackBoard';
+import {Unit, Group} from '../../unit/Unit';
+import Building from '../../unit/Building';
+import Peasant from '../../unit/Peasant';
 
 class AttackUnit extends LeafTask{
     constructor(bb:BlackBoard) {
@@ -78,4 +76,4 @@ class AttackUnit extends LeafTask{
     }
 }
 
-export = AttackUnit;
+export default AttackUnit;

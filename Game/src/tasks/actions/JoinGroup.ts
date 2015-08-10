@@ -1,13 +1,13 @@
 ///<reference path="../../Game.ts"/>
 
-import BlackBoard = require('../BlackBoard');
-import LeafTask = require('../LeafTask');
+import BlackBoard from '../BlackBoard';
+import LeafTask from '../LeafTask';
 
-import BannerMan = require('../../components/BannerMan');
-import Soldier = require('../../components/Soldier');
+import BannerMan from '../../components/BannerMan';
+import Soldier from '../../components/Soldier';
 
-import Unit = require('../../unit/Unit');
-import Peasant = require('../../unit/Peasant');
+import {Unit, Group} from '../../unit/Unit';
+import Peasant from '../../unit/Peasant';
 
 /**
  * Created by Paha on 8/3/2015.
@@ -48,4 +48,4 @@ class JoinGroup extends LeafTask{
     }
 }
 
-export = JoinGroup;
+export default JoinGroup;

@@ -2,8 +2,8 @@
 ///<reference path="BlackBoard.ts"/>
 ///<reference path="../Game.ts"/>
 
-import BlackBoard = require('./BlackBoard');
-import TaskController = require('./control/TaskController');
+import BlackBoard from './BlackBoard';
+import TaskController from './control/TaskController';
 
 /**
  * Created by Paha on 7/24/2015.
@@ -36,4 +36,4 @@ class Task{
     }
 }
 
-export = Task;
+export default Task;

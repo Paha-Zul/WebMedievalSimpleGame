@@ -1,8 +1,8 @@
 ///<reference path="../LeafTask.ts"/>
 ///<reference path="../../Game.ts"/>
 
-import LeafTask = require('../LeafTask');
-import BlackBoard = require('../BlackBoard');
+import LeafTask from '../LeafTask' ;
+import BlackBoard from '../BlackBoard';
 
 /**
  * Created by Paha on 7/25/2015.
@@ -48,4 +48,4 @@ class FollowPoint extends LeafTask{
     }
 }
 
-export = FollowPoint;
+export default FollowPoint;

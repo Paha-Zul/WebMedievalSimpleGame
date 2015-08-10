@@ -1,15 +1,14 @@
 ///<reference path="../../Game.ts"/>
 
-import BlackBoard = require('../BlackBoard');
-import LeafTask = require('../LeafTask');
+import BlackBoard from '../BlackBoard';
+import LeafTask from '../LeafTask';
 
-import Unit = require('../../unit/Unit');
+import {Unit, Group} from '../../unit/Unit';
 
 /**
  * Created by Paha on 8/4/2015.
  */
 class GetClosestDropoff extends LeafTask{
-
     constructor(bb:BlackBoard) {
         super(bb);
     }
@@ -25,9 +24,9 @@ class GetClosestDropoff extends LeafTask{
     update(delta):void {
         super.update(delta);
 
-        var list:Unit.Unit[] = this.bb.me.capitol.dropoffList;
+        var list:Unit[] = this.bb.me.capitol.dropoffList;
         var l = list.length;
-        var closestDrop:Unit.Unit=null;
+        var closestDrop:Unit=null;
         var closestDis:number=0;
         var _dst;
         for(var i=0;i<l;i++){
@@ -52,4 +51,4 @@ class GetClosestDropoff extends LeafTask{
     }
 }
 
-export = GetClosestDropoff;
+export default GetClosestDropoff;

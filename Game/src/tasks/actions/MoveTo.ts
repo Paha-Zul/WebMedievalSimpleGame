@@ -1,7 +1,7 @@
 ///<reference path="../Task.ts"/>
 
-import BlackBoard = require('../BlackBoard');
-import LeafTask = require('../LeafTask');
+import BlackBoard from '../BlackBoard';
+import LeafTask from '../LeafTask';
 
 /**
  * Created by Paha on 7/25/2015.
@@ -32,4 +32,4 @@ class MoveTo extends LeafTask{
     }
 }
 
-export = MoveTo;
+export default MoveTo;

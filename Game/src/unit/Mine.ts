@@ -1,15 +1,15 @@
 ///<reference path='../Game.ts'/>
 
-import _Game = require('../Game');
-import _Building = require('./Building');
+import Game from '../Game';
+import Building from './Building';
 
 /**
  * Created by Paha on 7/27/2015.
  */
-class Mine extends _Building{
+class Mine extends Building{
     counter:number = 0;
 
-    constructor(x:number, y:number, warGame:_Game, playerName:string, sprite:Phaser.Sprite, width:number, height:number) {
+    constructor(x:number, y:number, warGame:Game, playerName:string, sprite:Phaser.Sprite, width:number, height:number) {
         super(x, y, warGame, playerName, sprite, width, height);
     }
 
@@ -41,4 +41,4 @@ class Mine extends _Building{
     }
 }
 
-export = Mine;
+export default Mine;

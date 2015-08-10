@@ -1,7 +1,7 @@
 ///<reference path="../../Game.ts"/>
 
-import TaskDecorator = require('./TaskDecorator');
-import BlackBoard = require('../BlackBoard');
+import TaskDecorator from './TaskDecorator';
+import BlackBoard from '../BlackBoard';
 
 /**
  * Created by Paha on 8/2/2015.
@@ -33,4 +33,4 @@ class AlwaysTrue extends TaskDecorator{
     }
 }
 
-export = AlwaysTrue;
+export default AlwaysTrue;

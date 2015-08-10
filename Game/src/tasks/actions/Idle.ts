@@ -1,7 +1,7 @@
 ///<reference path="../../Game.ts"/>
 
-import BlackBoard = require('../BlackBoard');
-import LeafTask = require('../LeafTask');
+import BlackBoard from '../BlackBoard';
+import LeafTask from '../LeafTask';
 
 /**
  * Created by Paha on 7/25/2015.
@@ -32,4 +32,4 @@ class Idle extends LeafTask{
     }
 }
 
-export = Idle;
+export default Idle;

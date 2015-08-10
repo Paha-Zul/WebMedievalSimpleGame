@@ -1,5 +1,4 @@
-/// <reference path="./../Game.ts"/>
-var Helper = require('../util/Helper');
+import Helper from '../util/Helper';
 /**
  * Created by Paha on 7/23/2015.
  */

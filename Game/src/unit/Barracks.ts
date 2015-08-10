@@ -2,15 +2,15 @@
  * Created by Paha on 7/27/2015.
  */
 
-import _Game = require('../Game');
-import _Building = require('./Building');
+import Game from '../Game';
+import Building from './Building';
 
 /// <reference path="./../Game.ts"/>
 
-class Barracks extends _Building {
+class Barracks extends Building {
     nextSpawn:number = 0;
 
-    constructor(x:number, y:number, warGame:_Game, playerName:string, sprite:Phaser.Sprite, width:number, height:number) {
+    constructor(x:number, y:number, warGame:Game, playerName:string, sprite:Phaser.Sprite, width:number, height:number) {
         super(x, y, warGame, playerName, sprite, width, height);
     }
 
@@ -36,4 +36,4 @@ class Barracks extends _Building {
     }
 }
 
-export = Barracks;
+export default Barracks;

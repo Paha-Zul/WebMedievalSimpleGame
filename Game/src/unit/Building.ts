@@ -1,26 +1,26 @@
 /// <reference path="./../Game.ts"/>
 ///<reference path="Unit.ts"/>
 
-import Game = require('../Game');
-import Unit = require('./Unit');
-import BlackBoard = require('../tasks/BlackBoard');
+import Game from '../Game';
+import {Unit, Group} from './Unit';
+import BlackBoard from '../tasks/BlackBoard';
 
-import Task = require('../tasks/Task');
-import TakeResource = require('../tasks/actions/TakeResource');
-import MoveTo = require('../tasks/actions/MoveTo');
-import GetColony = require('../tasks/actions/GetColony');
-import GetClosestDropoff = require('../tasks/actions/GetClosestDropoff');
-import GiveResource = require('../tasks/actions/GiveResource');
+import Task from '../tasks/Task';
+import TakeResource from '../tasks/actions/TakeResource';
+import MoveTo from '../tasks/actions/MoveTo';
+import GetColony from '../tasks/actions/GetColony';
+import GetClosestDropoff from '../tasks/actions/GetClosestDropoff';
+import GiveResource from '../tasks/actions/GiveResource';
 
-import Sequence = require('../tasks/composite/Sequence');
+import Sequence from '../tasks/composite/Sequence';
 
 /**
  * An extension of the super prototype class.
  */
-class Building extends Unit.Unit {
+class Building extends Unit {
     nextRetIncrease:number = 0;
     refillTime:number = 1000;
-    worker:Unit.Unit = null;
+    worker:Unit = null;
     maxRetaliationStrength:number = 5;
     currRetaliationStrength:number = 5;
     retaliationStrengthRate:number = 1;
@@ -90,4 +90,4 @@ class Building extends Unit.Unit {
     };
 }
 
-export = Building;
+export default Building;

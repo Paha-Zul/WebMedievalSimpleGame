@@ -52,4 +52,4 @@ class CircularQueue<T>{
     }
 }
 
-export = CircularQueue;
+export default CircularQueue;

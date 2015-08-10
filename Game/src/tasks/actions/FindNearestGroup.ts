@@ -1,10 +1,10 @@
 ///<reference path="../../Game.ts"/>
 
-import BlackBoard = require('../BlackBoard');
-import LeafTask = require('../LeafTask');
+import BlackBoard from '../BlackBoard';
+import LeafTask from '../LeafTask';
 
-import BannerMan = require('../../components/BannerMan');
-import Unit = require('../../unit/Unit');
+import BannerMan from '../../components/BannerMan';
+import {Unit, Group} from '../../unit/Unit';
 
 /**
  * Created by Paha on 8/3/2015.
@@ -32,7 +32,7 @@ class FindNearestGroup extends LeafTask{
             var closestDist = 99999999999999999;
             var closestLeader:BannerMan = null;
             for(var i=0;i<l;i++){
-                var group:Unit.Group = list[i];
+                var group:Group = list[i];
                 if(group.isFull()) continue;
 
                 //If the group is null or the leader is null or the leader is destroyed... continue.
@@ -62,4 +62,4 @@ class FindNearestGroup extends LeafTask{
 
 }
 
-export = FindNearestGroup;
+export default FindNearestGroup;

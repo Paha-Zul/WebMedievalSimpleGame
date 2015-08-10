@@ -1,19 +1,19 @@
 /// <reference path="./../Game.ts"/>
 
-import _Game = require('../Game');
-import Unit = require('./Unit');
-import BannerMan = require('../components/BannerMan');
-import Soldier = require('../components/Soldier');
-import Helper = require('../util/Helper');
+import Game from '../Game';
+import {Unit, Group} from './Unit';
+import BannerMan from '../components/BannerMan';
+import Soldier from '../components/Soldier';
+import Helper from '../util/Helper';
 
 /**
  * Created by Paha on 7/29/2015.
  */
-class Peasant extends Unit.Unit{
+class Peasant extends Unit{
     private soldier:Soldier = null;
     private bannerMan:BannerMan = null;
 
-    constructor(x:number, y:number, warGame:_Game, playerName:string, sprite:Phaser.Sprite, width?:number, height?:number) {
+    constructor(x:number, y:number, warGame:Game, playerName:string, sprite:Phaser.Sprite, width?:number, height?:number) {
         super(x, y, warGame, playerName, sprite, width, height);
 
         this.type ='peasant';
@@ -63,4 +63,4 @@ class Peasant extends Unit.Unit{
     }
 }
 
-export = Peasant;
+export default Peasant;

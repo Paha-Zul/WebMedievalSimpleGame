@@ -14,6 +14,8 @@ import PlayerManager = PM.PlayerManager
 import Player = PM.Player;
 import sockio = require('socket.io-client');
 
+declare var url;
+
 class GameScreen implements IScreen{
     foodText:Phaser.Text;
     colonyText:Phaser.Text;
@@ -50,7 +52,8 @@ class GameScreen implements IScreen{
 
         //If multiplayer...
         if(this.multiplayer) {
-            this.warGame.socket = sockio.connect('http://stark-shelf-9838.herokuapp.com/');
+            console.log('url: '+url);
+            this.warGame.socket = sockio.connect(url);
             new NetworkManager(this.warGame, this);
 
         //Otherwise, some singleplayer fun!

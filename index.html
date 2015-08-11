@@ -12,6 +12,11 @@
     </head>
     <body>
         <script>
+            function getBaseURL () {
+                return location.protocol + "//" + location.hostname +
+                        (location.port && ":" + location.port) + "/";
+            }
+            var url = getBaseURL();
         </script>
     </body>
 </html>

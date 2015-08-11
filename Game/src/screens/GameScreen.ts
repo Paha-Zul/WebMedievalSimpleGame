@@ -201,13 +201,13 @@ class GameScreen implements IScreen{
 
             //Make some houses
             for (var i = 0; i < numHouses; i++)
-                capitol.addBuilding('house', x, i * 40 + y, width, height);
+                capitol.addBuilding('house', x, i * 40 + y);
 
             x = capitol.sprite.x - 350;
 
             //Make some more houses
             for (var i = 0; i < numHouses; i++)
-                capitol.addBuilding('house', x, i * 40 + y, width, height);
+                capitol.addBuilding('house', x, i * 40 + y);
 
             x = capitol.sprite.x - 200;
             y = capitol.sprite.y - 100;
@@ -223,7 +223,7 @@ class GameScreen implements IScreen{
 
             //Make some farms
             for (var i = 0; i < numFarms; i++) {
-                capitol.addBuilding('farm', x, y, width, height);
+                capitol.addBuilding('farm', x, y);
                 if (i < numFarms / 2) {
                     y += height;
                 } else {
@@ -236,7 +236,7 @@ class GameScreen implements IScreen{
 
             //Make some mines
             for (var i = 0; i < numMines; i++) {
-                capitol.addBuilding('mine', x, y, 75, 75);
+                capitol.addBuilding('mine', x, y);
                 x += 90;
             }
         }
@@ -246,7 +246,7 @@ class GameScreen implements IScreen{
         if (this.buildingType !== '') {
             var x = (this.warGame.game.input.worldX) * (1 / this.warGame.game.world.scale.x);
             var y = (this.warGame.game.input.worldY) * (1 / this.warGame.game.world.scale.y);
-            PlayerManager.getPlayer("player1").capitol.addBuilding(this.buildingType, x, y, 100, 100);
+            PlayerManager.getPlayer("player1").capitol.addBuilding(this.buildingType, x, y);
         }
     }
 

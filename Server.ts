@@ -37,6 +37,7 @@ class Server{
             var playerName = 'player'+this.playerCounter++;
             this.playerList.push(playerName);
             socket.emit('connected', {playerName:playerName, ID:this.playerCounter-1});
+            socket.broadcast.emit('playerConnected', {playerName:playerName, ID:this.playerCounter-1});
 
             socket.on('created', data => console.log('I have some data created! '+data));
         });

@@ -5,16 +5,17 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var _Unit = require('./Unit');
-var _Peasant = require('./Peasant');
-var _House = require('./House');
-var _Farm = require('./Farm');
-var _Mine = require('./Mine');
-var _Keep = require('./Keep');
-var _Barracks = require('./Barracks');
+var Peasant = require('./Peasant');
+var House = require('./House');
+var Farm = require('./Farm');
+var Mine = require('./Mine');
+var Keep = require('./Keep');
+var Barracks = require('./Barracks');
 var CircularQueue = require('../util/CircularQueue');
 var PM = require('../util/PlayerManager');
 var PlayerManager = PM.PlayerManager;
+var U = require('./Unit');
+var Unit = U.Unit;
 /**
  * Created by Paha on 7/23/2015.
  *
@@ -95,44 +96,46 @@ var Capitol = (function (_super) {
                 this.buildingList[i].update(delta);
         }
     };
-    Capitol.prototype.addFreePeasant = function (type, x, y) {
+    Capitol.prototype.addFreePeasant = function (name, x, y, id) {
         var sprite = this.warGame.peasantGroup.getFirstDead();
         if (sprite === undefined || sprite === null)
             sprite = this.warGame.peasantGroup.create(0, 0, '');
         else
             sprite.reset(0, 0);
-        var unit = new _Peasant(x, y, this.warGame, this.playerName, sprite);
-        unit.name = type;
-        unit.type = 'humanoid';
+        var unit = new Peasant(x, y, this.warGame, this.playerName, sprite);
+        unit.name = name;
+        unit.type = 'peasant';
+        unit.id = id || unit.id; //ID is made in the constructor, but if we have one supplied, use that instead.
         unit.sprite.autoCull = true;
         this.freePeasantList.push(unit);
         return unit;
     };
-    Capitol.prototype.addBuilding = function (type, x, y, width, height) {
+    Capitol.prototype.addBuilding = function (name, x, y, id) {
         var unit = null;
         var sprite = this.warGame.buildingGroup.getFirstDead();
         if (sprite === undefined || sprite === null)
             sprite = this.warGame.buildingGroup.create(0, 0, '');
         else
             sprite.reset(0, 0);
-        if (type === 'house')
-            unit = new _House(x, y, this.warGame, this.playerName, sprite, width, height);
-        if (type === 'farm')
-            unit = new _Farm(x, y, this.warGame, this.playerName, sprite, width, height);
-        if (type === 'barracks')
-            unit = new _Barracks(x, y, this.warGame, this.playerName, sprite, width, height);
-        if (type === 'mine')
-            unit = new _Mine(x, y, this.warGame, this.playerName, sprite, width, height);
-        if (type === 'keep')
-            unit = new _Keep(x, y, this.warGame, this.playerName, sprite, width, height);
-        unit.name = type;
+        if (name === 'house')
+            unit = new House(x, y, this.warGame, this.playerName, sprite, width, height);
+        if (name === 'farm')
+            unit = new Farm(x, y, this.warGame, this.playerName, sprite, width, height);
+        if (name === 'barracks')
+            unit = new Barracks(x, y, this.warGame, this.playerName, sprite, width, height);
+        if (name === 'mine')
+            unit = new Mine(x, y, this.warGame, this.playerName, sprite, width, height);
+        if (name === 'keep')
+            unit = new Keep(x, y, this.warGame, this.playerName, sprite, width, height);
+        unit.name = name;
         unit.type = 'building';
+        unit.id = id || unit.id;
         unit.sprite.autoCull = true;
         this.buildingList.push(unit);
         return unit;
     };
     Capitol.prototype.addGroup = function (leader) {
-        var group = new _Unit.Group(leader);
+        var group = new Group(leader);
         leader.getBannerMan().group = group;
         this.groupList.push(group);
         return group;
@@ -182,6 +185,6 @@ var Capitol = (function (_super) {
         this.warGame.game.time.events.remove(this.timer);
     };
     return Capitol;
-})(_Unit.Unit);
+})(Unit);
 module.exports = Capitol;
 //# sourceMappingURL=Capitol.js.map

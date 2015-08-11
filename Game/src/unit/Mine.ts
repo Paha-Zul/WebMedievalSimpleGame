@@ -9,7 +9,7 @@ import _Building = require('./Building');
 class Mine extends _Building{
     counter:number = 0;
 
-    constructor(x:number, y:number, warGame:_Game, playerName:string, sprite:Phaser.Sprite, width:number, height:number) {
+    constructor(x:number, y:number, warGame:_Game, playerName:string, sprite:Phaser.Sprite, width?:number, height?:number) {
         super(x, y, warGame, playerName, sprite, width, height);
     }
 

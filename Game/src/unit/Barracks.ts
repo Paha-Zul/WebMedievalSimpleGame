@@ -10,7 +10,7 @@ import _Building = require('./Building');
 class Barracks extends _Building {
     nextSpawn:number = 0;
 
-    constructor(x:number, y:number, warGame:_Game, playerName:string, sprite:Phaser.Sprite, width:number, height:number) {
+    constructor(x:number, y:number, warGame:_Game, playerName:string, sprite:Phaser.Sprite, width?:number, height?:number) {
         super(x, y, warGame, playerName, sprite, width, height);
     }
 

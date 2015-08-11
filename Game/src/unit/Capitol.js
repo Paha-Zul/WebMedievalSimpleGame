@@ -16,6 +16,7 @@ var PM = require('../util/PlayerManager');
 var PlayerManager = PM.PlayerManager;
 var U = require('./Unit');
 var Unit = U.Unit;
+var Group = U.Group;
 /**
  * Created by Paha on 7/23/2015.
  *
@@ -118,15 +119,15 @@ var Capitol = (function (_super) {
         else
             sprite.reset(0, 0);
         if (name === 'house')
-            unit = new House(x, y, this.warGame, this.playerName, sprite, width, height);
+            unit = new House(x, y, this.warGame, this.playerName, sprite);
         if (name === 'farm')
-            unit = new Farm(x, y, this.warGame, this.playerName, sprite, width, height);
+            unit = new Farm(x, y, this.warGame, this.playerName, sprite);
         if (name === 'barracks')
-            unit = new Barracks(x, y, this.warGame, this.playerName, sprite, width, height);
+            unit = new Barracks(x, y, this.warGame, this.playerName, sprite);
         if (name === 'mine')
-            unit = new Mine(x, y, this.warGame, this.playerName, sprite, width, height);
+            unit = new Mine(x, y, this.warGame, this.playerName, sprite);
         if (name === 'keep')
-            unit = new Keep(x, y, this.warGame, this.playerName, sprite, width, height);
+            unit = new Keep(x, y, this.warGame, this.playerName, sprite);
         unit.name = name;
         unit.type = 'building';
         unit.id = id || unit.id;

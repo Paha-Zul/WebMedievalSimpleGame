@@ -15,6 +15,7 @@ import PlayerManager = PM.PlayerManager
 import Player = PM.Player;
 import U = require('./Unit');
 import Unit = U.Unit;
+import Group = U.Group;
 
 /**
  * Created by Paha on 7/23/2015.
@@ -119,11 +120,11 @@ class Capitol extends Unit{
         else
             sprite.reset(0,0);
 
-        if(name === 'house') unit = new House(x, y, this.warGame, this.playerName, sprite, width, height);
-        if(name === 'farm') unit = new Farm(x, y, this.warGame, this.playerName, sprite, width, height);
-        if(name === 'barracks') unit = new Barracks(x, y, this.warGame, this.playerName, sprite, width, height);
-        if(name === 'mine') unit = new Mine(x, y, this.warGame, this.playerName, sprite, width, height);
-        if(name === 'keep') unit = new Keep(x, y, this.warGame, this.playerName, sprite, width, height);
+        if(name === 'house') unit = new House(x, y, this.warGame, this.playerName, sprite);
+        if(name === 'farm') unit = new Farm(x, y, this.warGame, this.playerName, sprite);
+        if(name === 'barracks') unit = new Barracks(x, y, this.warGame, this.playerName, sprite);
+        if(name === 'mine') unit = new Mine(x, y, this.warGame, this.playerName, sprite);
+        if(name === 'keep') unit = new Keep(x, y, this.warGame, this.playerName, sprite);
 
         unit.name = name;
         unit.type = 'building';

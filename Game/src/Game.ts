@@ -59,7 +59,6 @@
 //This will be set by the node.js server. Otherwise, it will be undefined. Handle this in the constructor of the game!
 var isServer:boolean = false;
 
-import sockio = require('socket.io-client');
 
 //Screens
 import MainMenuScreen = require('./screens/MainMenuScreen');
@@ -67,13 +66,12 @@ import MainMenuScreen = require('./screens/MainMenuScreen');
 //Task stuff
 import BlackBoard = require('./tasks/BlackBoard');
 import Unit = require('./unit/Unit');
+import NetworkManager = require('./util/NetworkManager');
 
 'use strict';
 class Game {
     game:Phaser.Game = null;
-
-    socket = sockio.connect('http://localhost:3000');
-
+    socket;
     up:Phaser.Key;
     down:Phaser.Key;
     left:Phaser.Key;
@@ -87,7 +85,7 @@ class Game {
     currScreen:IScreen = null;
     cursors:Phaser.CursorKeys;
 
-    static giantMap:Unit.Unit[] = [];
+    giantMap:Unit.Unit[] = [];
 
     constructor(public isServer:boolean){
         this.isServer = isServer || false;

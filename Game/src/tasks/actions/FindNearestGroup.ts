@@ -50,10 +50,12 @@ class FindNearestGroup extends LeafTask{
                 this.bb.targetGroup = closestLeader.group;
                 this.bb.targetPosition = closestLeader.owner.sprite.position;
                 this.control.finishWithSuccess();
-            }else
+            }else {
                 this.control.finishWithFailure();
-        }else
-            this.control.finishWithFailure()
+            }
+        }else {
+            this.control.finishWithFailure();
+        }
     }
 
     end():void {

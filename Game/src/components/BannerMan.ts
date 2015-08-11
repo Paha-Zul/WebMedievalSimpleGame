@@ -58,20 +58,15 @@ class BannerMan implements IUpdateable{
 
     update(delta:number):void {
         if(this.keep === null) return;
+        var beh = this.owner.getBehaviour();
 
         //If we have too little numbers and we are still attacking, null the behaviour so we can retreat.
-        if(this.group.getNumUnits() < this.sizeToAttack && this.owner.behaviour !== null && this.owner.behaviour.name === 'attack')
-            this.owner.behaviour.getControl().finishWithFailure();
+        if(this.group.getNumUnits() < this.sizeToAttack && (beh === null || beh.name !== 'retreat'))
+            this.owner.changeBehaviour(this.retreat());
 
-        //Wait for troops
-        if(this.owner.behaviour === null && this.group.getNumUnits() < this.sizeToAttack) {
-            this.owner.behaviour = this.retreat();
-        }
-
-        //If we have enough people to attack and we're patrolling, issue an attack order!
-        if(this.group.getNumUnits() >= this.sizeToAttack && this.owner.behaviour === null){
-            this.attackTarget();
-        }
+        //If we have enough people to attack, issue an attack order!
+        if(this.group.getNumUnits() >= this.sizeToAttack && (beh === null || beh.name !== 'attack'))
+            this.owner.changeBehaviour(this.attackTarget());
 
         //Scale the speed based on the size of the group!
         var speed = 20/this.group.getNumUnits();
@@ -132,7 +127,7 @@ class BannerMan implements IUpdateable{
         return seq;
     }
 
-    moveInCircle(){
+    moveInCircle():Task{
         this.owner.control = 'manual';
         this.owner.blackBoard.disToStop = 2;
         var dis = 300;
@@ -153,10 +148,10 @@ class BannerMan implements IUpdateable{
         this.owner.blackBoard.idleTime = 10000000000;
 
         seq.name = 'patrol';
-        this.owner.behaviour = seq;
+        return seq;
     }
 
-    attackTarget(){
+    attackTarget():Task{
         //  Sequence
         //      Parallel
         //          Repeat
@@ -190,7 +185,7 @@ class BannerMan implements IUpdateable{
         seq.control.addTask(attackTarget);
 
         seq.name = 'attack';
-        this.owner.behaviour = seq;
+        return seq;
     }
 
     destroy(){

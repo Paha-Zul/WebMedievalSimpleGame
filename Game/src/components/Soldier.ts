@@ -30,13 +30,15 @@ class Soldier implements IUpdateable{
     }
 
     update(delta:number):void {
-        if(this.group !== null && this.owner.behaviour === null) {
+        var beh = this.owner.getBehaviour();
+
+        if(this.group !== null && beh === null) {
             //this.owner.blackBoard.target = this.leader.owner;
             //this.owner.blackBoard.targetPosition = this.group.positions[this.positionIndex];
             //this.owner.blackBoard.disToStop = 2;
             //this.owner.behaviour = new FollowPointRelativeToTarget(this.owner.blackBoard);
-        }if(this.owner.behaviour === null){
-            this.owner.behaviour = this.getInGroup();
+        }if(beh === null || beh === undefined){
+            this.owner.changeBehaviour(this.getInGroup());
         }
     }
 
@@ -47,7 +49,7 @@ class Soldier implements IUpdateable{
         var move:MoveTo = new MoveTo(this.owner.blackBoard);
 
         //Fail the move task if the group is full or destroyed.
-        move.getControl().failCheck = () => {return this.owner.blackBoard.targetGroup.isFull() || this.owner.blackBoard.targetGroup.destroyed};
+        move.getControl().failCheck = () => {return this.owner.blackBoard.targetGroup.isFull() || this.owner.blackBoard.targetGroup.destroyed;};
 
         seq.control.addTask(new FindNearestGroup(this.owner.blackBoard));
         seq.control.addTask(move);

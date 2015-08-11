@@ -1,14 +1,18 @@
 /// <reference path="./../Game.ts"/>
+/// <reference path="../../build/socket.io-client.d.ts"/>
+
 
 /**
  * Created by Paha on 8/4/2015.
  */
 
-import _Game = require('../Game');
-import _Capitol = require('../unit/Capitol');
+import Game = require('../Game');
+import Capitol = require('../unit/Capitol');
+import NetworkManager = require('../util/NetworkManager');
 import PM = require('../util/PlayerManager');
 import PlayerManager = PM.PlayerManager
 import Player = PM.Player;
+import sockio = require('socket.io-client');
 
 class GameScreen implements IScreen{
     foodText:Phaser.Text;
@@ -29,7 +33,9 @@ class GameScreen implements IScreen{
 
     buildingType:string = '';
 
-    constructor(private warGame:_Game) {
+    localPlayer:Player = null;
+
+    constructor(private warGame:Game, public multiplayer:boolean) {
 
     }
 
@@ -37,20 +43,29 @@ class GameScreen implements IScreen{
         this.warGame.game.physics.startSystem(Phaser.Physics.ARCADE);
         this.warGame.game.world.setBounds(0,0,2000,2000);
 
-        PlayerManager.addPlayer("player1", "human", null);
-        //PlayerManager.addPlayer("player2", "ai", null);
-        //PlayerManager.addPlayer("player3", "ai", null);
-
         this.warGame.buildingGroup = this.warGame.game.add.group();
         this.warGame.peasantGroup = this.warGame.game.add.group();
         this.warGame.flagGroup = this.warGame.game.add.group();
         this.warGame.buttonGroup = this.warGame.game.add.group();
 
-        this.startExample(new Phaser.Point(500,500), 'player1', 1);
-        //this.startExample(new Phaser.Point(1100,1700), 'player2', 1);
-        //this.startExample(new Phaser.Point(1900,500), 'player3', 1);
-        this.warGame.game.camera.x = PlayerManager.getPlayer('player1').capitol.x - this.warGame.game.camera.width/2;
-        this.warGame.game.camera.y = PlayerManager.getPlayer('player1').capitol.y - this.warGame.game.camera.height/2;
+        //If multiplayer...
+        if(this.multiplayer) {
+            this.warGame.socket = sockio.connect('http://stark-shelf-9838.herokuapp.com/');
+            new NetworkManager(this.warGame, this);
+
+        //Otherwise, some singleplayer fun!
+        }else{
+            PlayerManager.addPlayer("player1", "human", null);
+            PlayerManager.addPlayer("player2", "ai", null);
+            //PlayerManager.addPlayer("player3", "ai", null);
+
+            this.startExample(new Phaser.Point(500,500), 'player1', 1);
+            this.startExample(new Phaser.Point(1100,1700), 'player2', 1);
+            //this.startExample(new Phaser.Point(1900,500), 'player3', 1);
+
+            this.warGame.game.camera.x = PlayerManager.getPlayer('player1').capitol.x - this.warGame.game.camera.width/2;
+            this.warGame.game.camera.y = PlayerManager.getPlayer('player1').capitol.y - this.warGame.game.camera.height/2;
+        }
 
         //Adds an event to the mouse.
         this.warGame.game.input.onDown.add(()=> {if(!this.warGame.game.input.disabled) this.placeBuilding();} , this);
@@ -96,12 +111,11 @@ class GameScreen implements IScreen{
 
         this.warGame.cursors = this.warGame.game.input.keyboard.createCursorKeys();
 
+
         //warGame.add.plugin(Phaser.Plugin.Debug);
     };
 
     update = (delta):void => {
-        var player:Player = PlayerManager.getPlayer("player1");
-
         for(var p in PlayerManager.players)
             PlayerManager.getPlayer(p).capitol.update(delta)
 
@@ -136,10 +150,12 @@ class GameScreen implements IScreen{
         posX = (this.warGame.game.camera.x)*(1/this.warGame.game.world.scale.x);
         posY = (this.warGame.game.camera.y)*(1/this.warGame.game.world.scale.x);
 
-        this.foodText.text = 'food: '+player.capitol.food+', rate: '+player.capitol.avgResources;
-        this.foodText.position.set(posX, posY);
-        this.colonyText.text = 'peasants: '+player.capitol.freePeasantList.length;
-        this.colonyText.position.set(posX, posY+25);
+        if(this.localPlayer !== null && this.localPlayer.capitol !== null) {
+            this.foodText.text = 'food: ' + this.localPlayer.capitol.food + ', rate: ' + this.localPlayer.capitol.avgResources;
+            this.foodText.position.set(posX, posY);
+            this.colonyText.text = 'peasants: ' + this.localPlayer.capitol.freePeasantList.length;
+            this.colonyText.position.set(posX, posY + 25);
+        }
 
         if(this.preview !== null)
             this.preview.position.set(this.warGame.game.input.worldX*(1/this.warGame.game.world.scale.x), this.warGame.game.input.worldY*(1/this.warGame.game.world.scale.y));
@@ -162,7 +178,7 @@ class GameScreen implements IScreen{
         var numHouses = 10;
         var numBarracks = 2;
 
-        var capitol = new _Capitol(start.x, start.y, this.warGame, playerName, this.warGame.buildingGroup.create(0, 0, 'capitol'), 100, 100);
+        var capitol = new Capitol(start.x, start.y, this.warGame, playerName, this.warGame.buildingGroup.create(0, 0, 'capitol'), 100, 100);
         var player:Player = PlayerManager.getPlayer(playerName);
         player.capitol = capitol;
 

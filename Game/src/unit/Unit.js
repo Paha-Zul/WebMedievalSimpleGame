@@ -27,7 +27,6 @@ var Unit = (function () {
         this.control = 'auto';
         this.active = true;
         this.started = false;
-        this.behaviour = null;
         this.idleCounter = 0;
         this.walkCounter = 0;
         this.food = 0;
@@ -37,6 +36,7 @@ var Unit = (function () {
         this.toBeDestroyed = false;
         this.player = null;
         this.id = 0;
+        this.behaviour = null;
         //Walks in a direction.
         this.walkTowardsRotation = function (rotation, moveSpeed, disToStop) {
             //Get X and Y moving values.
@@ -57,9 +57,10 @@ var Unit = (function () {
         this.blackBoard.game = warGame;
         this.capitol = this.blackBoard.myPlayer.capitol;
         //Create ID and add it to the map (maps can only use strings?)
-        this.id = ~~(Math.random() * Number.MAX_VALUE);
+        this.id = (Math.random() * Number.MAX_VALUE);
         //TODO Causing stuff to crash.
-        //Game.giantMap[''+this.id] = this;
+        this.warGame.giantMap['' + this.id] = this;
+        //NetworkManager.sendEvent('created', 'poo');
     }
     Unit.prototype.start = function () {
         this.started = true;
@@ -95,9 +96,8 @@ var Unit = (function () {
             if (!this.behaviour.getControl().started)
                 this.behaviour.getControl().safeStart(); //Start the behaviour
             this.behaviour.update(delta); //Update it.
-            if (this.behaviour.getControl().finished) {
-                this.behaviour = null;
-            }
+            if (this.behaviour.getControl().finished)
+                this.changeBehaviour(null);
         }
         else {
             if (this.name === 'peasant') {
@@ -105,10 +105,9 @@ var Unit = (function () {
                 var task = this.capitol.getTaskFromQueue();
                 //If we actually got one, execute the function which will return a behaviour.
                 if (task !== null)
-                    this.behaviour = task(this.blackBoard);
-                else {
-                    this.behaviour = this.wander(this.blackBoard);
-                }
+                    this.changeBehaviour(task(this.blackBoard));
+                else
+                    this.changeBehaviour(this.wander(this.blackBoard));
             }
         }
     };
@@ -141,6 +140,29 @@ var Unit = (function () {
         if (this.text !== undefined && this.text !== null)
             this.text.destroy(true);
         this.behaviour = null;
+    };
+    /**
+     * Changes the behaviour of this unit, ending the old (if not null) and starting the new (if check() passes). If
+     * something goes wrong (check() doesn't pass), the behaviour becomes null.
+     * @param task The Task to make the new behaviour.
+     */
+    Unit.prototype.changeBehaviour = function (task) {
+        if (this.behaviour !== null) {
+            //TODO Should this finish with success or failure?
+            this.behaviour.getControl().finishWithSuccess();
+            this.behaviour.getControl().safeEnd();
+        }
+        this.behaviour = task;
+        if (this.behaviour !== null && this.behaviour.check())
+            this.behaviour.start();
+        else
+            this.behaviour = null;
+    };
+    /**
+     * @returns {Task} The current behaviour of this unit, or null if it doesn't have one.
+     */
+    Unit.prototype.getBehaviour = function () {
+        return this.behaviour;
     };
     Unit.prototype.wander = function (bb) {
         var seq = new Sequence(bb);
@@ -191,7 +213,7 @@ var Group = (function () {
         for (var i = this.unitList.length - 1; counter <= amount; i--) {
             this.unitList[i].getSoldier().group = null; //Destroy the unit.
             this.unitList[i].getSoldier().leader = null; //Destroy the unit.
-            this.unitList[i].behaviour.getControl().finishWithFailure(); //They need to stop following us.
+            this.unitList[i].changeBehaviour(null); //They need to stop following us.
             this.unitList.splice(i, 1); //Splice it out!
             counter++; //Increment counter.
         }
@@ -257,7 +279,7 @@ var Group = (function () {
             this.unitList[i].blackBoard.target = this.leader;
             this.unitList[i].blackBoard.targetPosition = point;
             this.unitList[i].blackBoard.disToStop = 2;
-            this.unitList[i].behaviour = new FollowPointRelativeToTarget(this.unitList[i].blackBoard);
+            this.unitList[i].changeBehaviour(new FollowPointRelativeToTarget(this.unitList[i].blackBoard));
         }
     };
     return Group;

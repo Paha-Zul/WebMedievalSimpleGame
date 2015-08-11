@@ -13,6 +13,8 @@ import MoveTo = require('../tasks/actions/MoveTo');
 import RandomLocation = require('../tasks/actions/RandomLocation');
 import FollowPointRelativeToTarget = require('../tasks/actions/FollowPointRelativeToTarget');
 
+import NetworkManager = require('../util/NetworkManager');
+
 import PM = require('../util/PlayerManager');
 import PlayerManager = PM.PlayerManager
 import Player = PM.Player;
@@ -28,7 +30,6 @@ export class Unit {
     control:string = 'auto';
     active:boolean = true;
     started:boolean = false;
-    behaviour:Task = null;
     idleCounter:number = 0;
     walkCounter:number = 0;
     food:number = 0;
@@ -41,6 +42,8 @@ export class Unit {
     toBeDestroyed:boolean = false;
     player:Player = null;
     id:number = 0;
+
+    private behaviour:Task = null;
 
     constructor(public x:number, public y:number, public warGame:Game, public playerName:string, public sprite:Phaser.Sprite, public width?:number, public height?:number) {
         this.width = width || 10;
@@ -55,10 +58,11 @@ export class Unit {
         this.capitol = this.blackBoard.myPlayer.capitol;
 
         //Create ID and add it to the map (maps can only use strings?)
-        this.id = ~~(Math.random()*Number.MAX_VALUE);
+        this.id = (Math.random()*Number.MAX_VALUE);
 
         //TODO Causing stuff to crash.
-        //Game.giantMap[''+this.id] = this;
+        this.warGame.giantMap[''+this.id] = this;
+        //NetworkManager.sendEvent('created', 'poo');
     }
 
     start():void {
@@ -96,9 +100,10 @@ export class Unit {
         if (this.behaviour !== null) {
             if (!this.behaviour.getControl().started) this.behaviour.getControl().safeStart(); //Start the behaviour
             this.behaviour.update(delta); //Update it.
-            if (this.behaviour.getControl().finished) { //If finished, null it out.
-                this.behaviour = null;
-            }
+            if (this.behaviour.getControl().finished)//If finished, null it out.
+                this.changeBehaviour(null);
+
+        //If our behaviour is null, pick a default behaviour..
         } else {
             if (this.name === 'peasant') {
                 //Try to get a task from the capitol...
@@ -106,12 +111,11 @@ export class Unit {
 
                 //If we actually got one, execute the function which will return a behaviour.
                 if (task !== null)
-                    this.behaviour = task(this.blackBoard);
+                    this.changeBehaviour(task(this.blackBoard));
 
                 //Otherwise, just wander...
-                else {
-                    this.behaviour = this.wander(this.blackBoard);
-                }
+                else
+                   this.changeBehaviour(this.wander(this.blackBoard));
             }
         }
     }
@@ -160,6 +164,32 @@ export class Unit {
         this.sprite.kill();
         if (this.text !== undefined && this.text !== null) this.text.destroy(true);
         this.behaviour = null;
+    }
+
+    /**
+     * Changes the behaviour of this unit, ending the old (if not null) and starting the new (if check() passes). If
+     * something goes wrong (check() doesn't pass), the behaviour becomes null.
+     * @param task The Task to make the new behaviour.
+     */
+    changeBehaviour(task:Task){
+        if(this.behaviour !== null){
+            //TODO Should this finish with success or failure?
+            this.behaviour.getControl().finishWithSuccess();
+            this.behaviour.getControl().safeEnd();
+        }
+
+        this.behaviour = task;
+        if(this.behaviour !== null && this.behaviour.check())
+            this.behaviour.start();
+        else
+            this.behaviour = null;
+    }
+
+    /**
+     * @returns {Task} The current behaviour of this unit, or null if it doesn't have one.
+     */
+    getBehaviour():Task{
+        return this.behaviour;
     }
 
     wander(bb:BlackBoard):Task {
@@ -219,7 +249,7 @@ export class Group {
         for (var i = this.unitList.length - 1; counter <= amount; i--) {
             this.unitList[i].getSoldier().group = null; //Destroy the unit.
             this.unitList[i].getSoldier().leader = null; //Destroy the unit.
-            this.unitList[i].behaviour.getControl().finishWithFailure(); //They need to stop following us.
+            this.unitList[i].changeBehaviour(null); //They need to stop following us.
             this.unitList.splice(i, 1); //Splice it out!
             counter++; //Increment counter.
         }
@@ -298,7 +328,7 @@ export class Group {
             this.unitList[i].blackBoard.target = this.leader;
             this.unitList[i].blackBoard.targetPosition = point;
             this.unitList[i].blackBoard.disToStop = 2;
-            this.unitList[i].behaviour = new FollowPointRelativeToTarget(this.unitList[i].blackBoard);
+            this.unitList[i].changeBehaviour(new FollowPointRelativeToTarget(this.unitList[i].blackBoard));
         }
     }
 }
